@@ -1,15 +1,14 @@
 <?php
 //include_once("helper/MysqlDatabase.php");
-//include_once("helper/MysqlObjectDatabase.php");
+include_once("helper/MysqlObjectDatabase.php");
 include_once("helper/IncludeFilePresenter.php");
 include_once("helper/Router.php");
 include_once("helper/MustachePresenter.php");
 
-include_once("model/PokedexModel.php");
+include_once("model/AuthModel.php");
 include_once("controller/PreguntaleController.php");
+include_once("controller/AuthController.php");
 
-include_once("controller/UsuarioController.php");
-include_once("model/UsuarioModel.php");
 
 include_once('vendor/mustache/src/Mustache/Autoloader.php');
 
@@ -19,14 +18,17 @@ class Configuration
     {
     }
 
-    public function getLoginController(){
-        return new PreguntaleController($this->getPokedexModel(), $this->getPresenter());
+//    public function getLoginController(){
+//        return new PreguntaleController($this->getPokedexModel(), $this->getPresenter());
+//    }
+
+    public function getAuthController(){
+        return new AuthController($this->getAuthModel(), $this->getPresenter());
     }
 
 
-    private function getPokedexModel()
-    {
-        return;
+    private function getAuthModel(){
+        return new AuthModel($this->getDatabase());
     }
 
 
@@ -36,21 +38,20 @@ class Configuration
     }
 
 
-//    private function getDatabase()
-//    {
-//        $config = parse_ini_file('configuration/config.ini');
-//        return new MysqlObjectDatabase(
-//            $config['host'],
-//            $config['port'],
-//            $config['user'],
-//            $config['password'],
-//            $config["database"]
-//        );
-//    }
+    private function getDatabase()
+    {
+        $config = parse_ini_file('configuration/config.ini');
+        return new MysqlObjectDatabase(
+            $config['host'],
+            $config['username'],
+            $config['password'],
+            $config["database"]
+        );
+    }
 
     public function getRouter()
     {
-        return new Router($this, "getLoginController", "list");
+        return new Router($this, "getAuthController", "init");
     }
 
 }

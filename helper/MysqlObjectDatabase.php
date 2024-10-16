@@ -2,9 +2,9 @@
 class MysqlObjectDatabase
 {
     private $conn;
-    public function __construct($host, $port, $username, $password, $database)
+    public function __construct($host, $username, $password, $database)
     {
-        $this->conn = new mysqli($host, $username, $password, $database, $port);
+        $this->conn = new mysqli($host, $username, $password, $database);
     }
 
     public function query($sql){

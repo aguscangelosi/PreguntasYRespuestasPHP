@@ -2,9 +2,9 @@
 class MysqlDatabase
 {
     private $conn;
-    public function __construct($host, $port, $username, $password, $database)
+    public function __construct($host, $username, $password, $database)
     {
-        $this->conn = mysqli_connect($host, $username, $password, $database, $port);
+        $this->conn = mysqli_connect($host, $username, $password, $database);
 
         if (!$this->conn) {
             die("Connection failed: " . mysqli_connect_error());
