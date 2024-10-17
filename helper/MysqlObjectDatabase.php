@@ -17,6 +17,11 @@ class MysqlObjectDatabase
         return $this->conn->affected_rows;
     }
 
+    public function prepare($sql)
+    {
+        return $this->conn->prepare($sql);
+    }
+
     public function __destruct()
     {
         $this->conn->close();

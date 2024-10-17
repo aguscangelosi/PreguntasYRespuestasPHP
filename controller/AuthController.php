@@ -30,6 +30,12 @@ class AuthController
         $this->redirectHome();
     }
 
+    public function redirectHome()
+    {
+        header('location: /PreguntasYRespuestasPHP/index.php');
+        exit();
+    }
+
 
 
 

@@ -34,17 +34,32 @@ class AuthModel
 
     public function register($name, $email, $password, $birthday, $username)
     {
-        if (!$this->validateEmail($email)) {
-            return;
+        if ($this->validateEmail($email)) {
+            return false;
         }
+
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         $stmt = $this->database->prepare("INSERT INTO user (username, password, rol_id, email, birthday, name, profile_picture, register_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-        $stmt->bind_param('ssissss', $username, $password, 2, $email, $birthday, $name, "" );
-        $stmt->execute();
 
-        $sql = ";";
-        $this->database->execute($sql);
+        if ($stmt === false) {
+            return false;
+        }
+
+        $rolId = 2;
+        $profilePicture = "default.png";
+
+        $stmt->bind_param('ssissss', $username, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture);
+
+        if ($stmt->execute()) {
+            echo "Registro exitoso!";
+            return true;
+        } else {
+            return false;
+        }
+
+        $stmt->close();
     }
 
 
