@@ -24,10 +24,13 @@ class AuthController
         $birthday = $_POST['birthday'];
         $username = $_POST['username'];
 
+        $result = $this->model->register($name, $email, $password, $birthday, $username);
 
-        $this->model->register($name, $email, $password, $birthday, $username);
-
-        $this->redirectHome();
+        if ($result !== true) {
+            $this->presenter->show('register', ['error_message' => $result]);
+        } else {
+            $this->redirectHome();
+        }
     }
 
     public function redirectHome()
@@ -35,9 +38,5 @@ class AuthController
         header('location: /PreguntasYRespuestasPHP/index.php');
         exit();
     }
-
-
-
-
 
 }

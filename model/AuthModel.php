@@ -21,6 +21,7 @@ class AuthModel
 //        return sizeof($usuario) == 1;
 //    }
 
+
     public function validateEmail($email)
     {
         $sql = "SELECT 1 
@@ -35,33 +36,40 @@ class AuthModel
     public function register($name, $email, $password, $birthday, $username)
     {
         if ($this->validateEmail($email)) {
-            return false;
+            return "Usuario ya registrado";
         }
 
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $stmt = $this->database->prepare("INSERT INTO user (username, password, rol_id, email, birthday, name, profile_picture, register_date)
+        $stmt = null;
+
+        try {
+            $stmt = $this->database->prepare("INSERT INTO user (username, password, rol_id, email, birthday, name, profile_picture, register_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
 
-        if ($stmt === false) {
-            return false;
-        }
+            if ($stmt === false) {
+                throw new Exception("Error al preparar la consulta");
+            }
 
-        $rolId = 2;
-        $profilePicture = "default.png";
+            $rolId = 2;
+            $profilePicture = "default.png";
 
-        $stmt->bind_param('ssissss', $username, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture);
+            $stmt->bind_param('ssissss', $username, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture);
 
-        if ($stmt->execute()) {
-            echo "Registro exitoso!";
+            if (!$stmt->execute()) {
+                throw new Exception("Error al crear el usuario");
+            }
+
             return true;
-        } else {
-            return false;
+        } catch (Exception $e) {
+            return $e->getMessage();
+
+        } finally {
+            if ($stmt !== null) {
+                $stmt->close();
+            }
         }
-
-        $stmt->close();
     }
-
 
 
 }
