@@ -2,7 +2,6 @@
 
 class PreguntaleController
 {
-
     private $model;
     private $presenter;
 
@@ -16,10 +15,6 @@ class PreguntaleController
     {
         $this->presenter->show('login');
     }
-
-
-
-
 
     public function redirectHome()
     {
