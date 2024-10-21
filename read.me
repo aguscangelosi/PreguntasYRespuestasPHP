@@ -1,0 +1,35 @@
+- El ranking muestra el puntaje de la mejor partida de cada persona,  limitando a los mejores 50.
+- si están iguales los 10 primeros, son todos top 1
+- el siguiente es 11?
+ -Por ahora, la persona juega sola, no contra bot o personas.  Si a futuro (proximo feature) aparece, usaremos otra tabla
+ - El Admin "NO" podrá jugar partidas.
+ - El aditor "NO" podrá jugar partidas.
+ - "Responde hasta que pierda"
+ - siempre tengo que entregar otra pregunta
+ - Los datos no se borran, son borrados logicos
+ - Caso pregunta, tiene un campo activo, solo se entregan las activas
+ - Definimos campo estado: pendiente, aprobada, rechazada, reportada, desactivada
+ - Cuando se reporta una pregunta, tiene que venir con un texto que indica lo reportado
+ - El editor PUEDE modificar la pregunta reportada
+ - El reportar pregunta es luego de responder la pregunta,    no cambia el estado de la partida (continuo respondiendo esa pregunta, o me lo permite hacer despues de responderla)
+ - Lo que NO puede pasar, es que saltee la pregunta
+ - Existe una tabla aparte que guarda: id, idpregunta, idUsuarioQueReporto, texto/seleccion
+ - El QR se genera bajo demanda (lo vemos en clase)
+ - Tabla de preguntas y tabla de respuesta, una pregunta tiene X respuestas.  Las respuestas no se reutilizan
+ - Las respuestas se muestras desordenadas--------------------------------------------------- Correo
+ - Estadistica de usuario
+ - Quiero un gráfico de cantidad de preguntas por estado
+ - Todo se muestra en una tabla, luego en un gráfico, también se puede descargar
+ - Todo lo que se pueda se filtra por fecha- Dificultad
+ - % Acierto de la pregunta -> tabla de pregunta -> cantidad correcta | cantidad entregada  - % > 70 Facil | % < 30 dificil | otro normal
+ - El usuario, tiene un % acierto -> preguntas correctas / preguntas jugadas
+ -  Primeras partidas?     - para el usuario 10 primeras preguntas, es random y no depende del nivel
+ - Las preguntas entregadas menos de 5 veces, son medianas en dificultad
+ - Cada vez que un usuario ve una pregunta, se almacena en la base, y no se entrega en las siguientes partidas (historico)
+ - Cuando la cantidad de preguntas sea 0, tengo que borrar todos los registros de preguntas vistas por ese usuario
+ - Las preguntas entregadas tiene que ser un RANDOM- Trampas a resolver:
+ - F5 ante pregunta: pierde partida (tengo que almacenar de alguna forma, en que partida está y que pregunta la di en que momento)
+ - Si cierra el browser: pierde la partida (esto obliga a que es en base de datos el almacenaje de partida)
+ - Solo se puede responder a la pregunta que te entregue, en el tiempo que corresponde, sino perdes por trampa (/responder/id=5&respuesta=10)
+ - Cuando entro al lobby, si hay una partida abierta que expiro, la pierdo y voy al lobby. Si no expiro, voy a jugarla
+ - que es expiro? Que paso el tiempo en que podia responder-...¿?

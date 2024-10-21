@@ -16,6 +16,10 @@ class AuthController
     {
         $this->presenter->show('register');
     }
+    public function initLogin()
+    {
+        $this->presenter->show('login');
+    }
 
     public function register()
     {
@@ -39,10 +43,26 @@ class AuthController
         }
     }
 
+    public function login(){
+        if(isset($_POST['username']) && isset($_POST['password'])) {
+            $password = $_POST['password'];
+            $username = $_POST['username'];
+
+            $result = $this->model->login($username, $password);
+                if($result){
+                    $this->presenter->show('home', ['mensaje' => "Bienvenido al perfil $username. \n Pagina en construcción", 'username'=>$username,
+                        'email'=>$result['email'], 'birthday'=>$result['birthday'],  'register_date'=>$result['register_date']]);
+                }else{
+                    $this->presenter->show('register');
+                }
+            }
+    }
+
     public function redirectHome()
     {
         header('location: /PreguntasYRespuestasPHP/index.php');
         exit();
     }
+
 
 }

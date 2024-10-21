@@ -92,5 +92,26 @@ class AuthModel
         }
     }
 
+    public function login($username, $password) {
+        // Consulta con un placeholder para evitar inyección SQL
+        $sql = "SELECT * FROM user WHERE username = ?";
+
+        $stmt = $this->database->prepare($sql);
+        if (!$stmt) {
+            die("Error al preparar la consulta: " . $this->database->error);
+        }
+
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $usuario = $result->fetch_assoc();
+
+        if ($usuario && password_verify($password, $usuario['password'])) {
+            return $usuario;
+        }
+
+        // Si no coincide la contraseña o el usuario no existe, retorna null
+        return null;
+    }
 
 }
