@@ -33,10 +33,31 @@ class AuthModel
         return sizeof($usuario) == 1;
     }
 
+    public function validatePassword($password)
+    {
+        return preg_match('/^(?=.*[A-Z])(?=.*[\W])(?=.{8,})/', $password);
+    }
+
+    private function validateAge($birthday)
+    {
+        $birthDate = new DateTime($birthday);
+        $today = new DateTime();
+        $age = $today->diff($birthDate)->y;
+
+        return $age >= 13;
+    }
     public function register($name, $email, $password, $birthday, $username)
     {
         if ($this->validateEmail($email)) {
             return "Usuario ya registrado";
+        }
+
+        if (!$this->validatePassword($password)) {
+            return "Contraseña inválida";
+        }
+
+        if (!$this->validateAge($birthday)) {
+            return "Eres muy pequeñ@";
         }
 
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);

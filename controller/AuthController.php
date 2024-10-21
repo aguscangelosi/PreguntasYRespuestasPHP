@@ -16,15 +16,21 @@ class AuthController
     {
         $this->presenter->show('register');
     }
+
     public function register()
     {
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
+        $repeatPassword = $_POST['repeat_password'];
         $birthday = $_POST['birthday'];
         $username = $_POST['username'];
 
-        $result = $this->model->register($name, $email, $password, $birthday, $username);
+        if ($repeatPassword == $password) {
+            $result = $this->model->register($name, $email, $password, $birthday, $username);
+        } else {
+            $result = "Las contraseñas no coinciden";
+        }
 
         if ($result !== true) {
             $this->presenter->show('register', ['error_message' => $result]);
