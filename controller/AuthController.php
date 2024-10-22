@@ -1,13 +1,15 @@
 <?php
-
+include_once("./helper/FileEmailSender.php");
 class AuthController
 {
 
     private $model;
     private $presenter;
+    private $mail;
 
     public function __construct($model, $presenter)
     {
+        $this->mail = new MailService(true);
         $this->model = $model;
         $this->presenter = $presenter;
     }
@@ -18,6 +20,7 @@ class AuthController
     }
     public function initLogin()
     {
+        $this->mail->sendMail("","","");
         $this->presenter->show('login');
     }
 
