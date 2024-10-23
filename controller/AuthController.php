@@ -1,8 +1,8 @@
 <?php
-include_once("./helper/FileEmailSender.php");
+include_once("./helper/EmailSender.php");
 class AuthController
 {
-//    $this->mail->sendMail("psolomeo2000@gmail.com","fefef","feeff");
+
     private $model;
     private $presenter;
     private $mail;
@@ -39,9 +39,10 @@ class AuthController
             $result = "Las contraseñas no coinciden";
         }
 
-        if ($result !== true) {
+        if ($result != "" || !$result ) {
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
+            $this->mail->sendMail( $email,"Validacion de correo","localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result");
             $this->redirectHome();
         }
     }

@@ -81,7 +81,8 @@ class AuthModel
                 throw new Exception("Error al crear el usuario");
             }
 
-            return true;
+            $lastId = $this->database->insert_id();
+            return $lastId;
         } catch (Exception $e) {
             return $e->getMessage();
 

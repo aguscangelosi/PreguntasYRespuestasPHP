@@ -22,6 +22,11 @@ class MysqlObjectDatabase
         return $this->conn->prepare($sql);
     }
 
+    public function insert_id()
+    {
+        return $this->conn->insert_id;
+    }
+
     public function __destruct()
     {
         $this->conn->close();

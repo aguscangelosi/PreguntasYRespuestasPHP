@@ -16,7 +16,6 @@ class MailService {
         $this->mail->Host = 'smtp.gmail.com';
         $this->mail->SMTPAuth = true;
 
-        // Estos datos deben almacenarse de forma segura
         $this->mail->Username = 'facundortega1234@gmail.com';
         $this->mail->Password = 'tyjc nybr ypbn bbpw';
 
@@ -28,7 +27,7 @@ class MailService {
     public function sendMail($to, $subject, $body) {
         try {
             $this->mail->setFrom('facundortega1234@gmail.com', 'Solomeo');
-            $this->mail->addAddress($to);   // Usa la dirección que se pasa como parámetro
+            $this->mail->addAddress($to);
             $this->mail->isHTML(true);
             $this->mail->Subject = $subject;
             $this->mail->Body = $body;
