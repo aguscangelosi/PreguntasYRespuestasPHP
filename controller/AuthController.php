@@ -2,7 +2,7 @@
 include_once("./helper/FileEmailSender.php");
 class AuthController
 {
-
+//    $this->mail->sendMail("psolomeo2000@gmail.com","fefef","feeff");
     private $model;
     private $presenter;
     private $mail;
@@ -20,12 +20,12 @@ class AuthController
     }
     public function initLogin()
     {
-        $this->mail->sendMail("","","");
         $this->presenter->show('login');
     }
 
     public function register()
     {
+
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
