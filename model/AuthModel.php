@@ -33,10 +33,31 @@ class AuthModel
         return sizeof($usuario) == 1;
     }
 
+    public function validatePassword($password)
+    {
+        return preg_match('/^(?=.*[A-Z])(?=.*[\W])(?=.{8,})/', $password);
+    }
+
+    private function validateAge($birthday)
+    {
+        $birthDate = new DateTime($birthday);
+        $today = new DateTime();
+        $age = $today->diff($birthDate)->y;
+
+        return $age >= 13;
+    }
     public function register($name, $email, $password, $birthday, $username)
     {
         if ($this->validateEmail($email)) {
             return "Usuario ya registrado";
+        }
+
+        if (!$this->validatePassword($password)) {
+            return "Contraseña inválida";
+        }
+
+        if (!$this->validateAge($birthday)) {
+            return "Eres muy pequeñ@";
         }
 
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
@@ -71,5 +92,26 @@ class AuthModel
         }
     }
 
+    public function login($username, $password) {
+        // Consulta con un placeholder para evitar inyección SQL
+        $sql = "SELECT * FROM user WHERE username = ?";
+
+        $stmt = $this->database->prepare($sql);
+        if (!$stmt) {
+            die("Error al preparar la consulta: " . $this->database->error);
+        }
+
+        $stmt->bind_param('s', $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $usuario = $result->fetch_assoc();
+
+        if ($usuario && password_verify($password, $usuario['password'])) {
+            return $usuario;
+        }
+
+        // Si no coincide la contraseña o el usuario no existe, retorna null
+        return null;
+    }
 
 }
