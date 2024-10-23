@@ -20,7 +20,8 @@ CREATE TABLE user
     name VARCHAR(60) NOT NULL ,
     profile_picture VARCHAR(255),
     register_date DATE,
-    FOREIGN KEY (rol_id) REFERENCES rol (id)
+    FOREIGN KEY (rol_id) REFERENCES rol (id),
+    hasAccess BOOLEAN NOT NULL
 );
 
 INSERT INTO rol (description)

@@ -39,10 +39,10 @@ class AuthController
             $result = "Las contraseñas no coinciden";
         }
 
-        if ($result != "" || !$result ) {
+        if ($result == "" || !$result ) {
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
-            $this->mail->sendMail( $email,"Validacion de correo","localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result");
+            $this->mail->sendMail( $email,"Validacion de correo","<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
             $this->redirectHome();
         }
     }
@@ -60,6 +60,16 @@ class AuthController
                     $this->presenter->show('register');
                 }
             }
+    }
+
+    public function validateEmail()
+    {
+
+        $id = isset($_GET['id']) ? $_GET['id'] : "";
+        if($id){
+            $result = $this->presenter->show('validate');
+    }
+
     }
 
     public function redirectHome()

@@ -21,7 +21,7 @@ class MailService {
 
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $this->mail->Port = 587;
-
+        $this->mail->SMTPDebug = 2;  // 2 para mensajes detallados de cliente y servidor
     }
 
     public function sendMail($to, $subject, $body) {

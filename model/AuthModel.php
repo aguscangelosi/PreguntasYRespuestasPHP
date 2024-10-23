@@ -115,4 +115,32 @@ class AuthModel
         return null;
     }
 
+    public function allowUser($id) {
+        $sql = "UPDATE user SET hasAccess = ? WHERE id = ?";
+
+        try {
+            $stmt = $this->database->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->database->error);
+            }
+
+            $true = 1;
+            $stmt->bind_param('ii', $true, $id);
+            $stmt->execute();
+
+            if ($stmt->affected_rows > 0) {
+                return true;
+            } else {
+                return "No se actualizó ningún registro. Verifica que el ID exista.";
+            }
+        } catch (Exception $e) {
+            return "Error: " . $e->getMessage();
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+        }
+    }
+
+
 }
