@@ -1,5 +1,6 @@
 <?php
 include_once("./helper/EmailSender.php");
+
 class AuthController
 {
 
@@ -18,6 +19,7 @@ class AuthController
     {
         $this->presenter->show('register');
     }
+
     public function initLogin()
     {
         $this->presenter->show('login');
@@ -39,37 +41,36 @@ class AuthController
             $result = "Las contraseñas no coinciden";
         }
 
-        if ($result == "" || !$result ) {
+        if ($result == "" || !$result) {
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
-            $this->mail->sendMail( $email,"Validacion de correo","<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
+            $this->mail->sendMail($email, "Validacion de correo", "<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
             $this->redirectHome();
         }
     }
 
-    public function login(){
-        if(isset($_POST['username']) && isset($_POST['password'])) {
+    public function login()
+    {
+        if (isset($_POST['username']) && isset($_POST['password'])) {
             $password = $_POST['password'];
             $username = $_POST['username'];
 
             $result = $this->model->login($username, $password);
-                if($result){
-                    $this->presenter->show('home', ['mensaje' => "Bienvenido al perfil $username. \n Pagina en construcción", 'username'=>$username,
-                        'email'=>$result['email'], 'birthday'=>$result['birthday'],  'register_date'=>$result['register_date']]);
-                }else{
-                    $this->presenter->show('register');
-                }
+            if ($result) {
+                $this->presenter->show('home', ['mensaje' => "Bienvenido al perfil $username. \n Pagina en construcción", 'username' => $username,
+                    'email' => $result['email'], 'birthday' => $result['birthday'], 'register_date' => $result['register_date']]);
+            } else {
+                $this->presenter->show('register');
             }
+        }
     }
 
     public function validateEmail()
     {
-
-        $id = isset($_GET['id']) ? $_GET['id'] : "";
-        if($id){
-            $result = $this->presenter->show('validate');
-    }
-
+        if (isset($_GET['id'])) {
+            $this->model->allowUser($_GET['id']);
+            $this->presenter->show('login', ['validacion' => 'Correcta validación']);
+        }
     }
 
     public function redirectHome()
