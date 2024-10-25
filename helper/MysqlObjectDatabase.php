@@ -2,9 +2,9 @@
 class MysqlObjectDatabase
 {
     private $conn;
-    public function __construct($host, $port, $username, $password, $database)
+    public function __construct($host, $username, $password, $database)
     {
-        $this->conn = new mysqli($host, $username, $password, $database, $port);
+        $this->conn = new mysqli($host, $username, $password, $database);
     }
 
     public function query($sql){
@@ -15,6 +15,16 @@ class MysqlObjectDatabase
     public function execute($sql){
         $this->conn->query($sql);
         return $this->conn->affected_rows;
+    }
+
+    public function prepare($sql)
+    {
+        return $this->conn->prepare($sql);
+    }
+
+    public function insert_id()
+    {
+        return $this->conn->insert_id;
     }
 
     public function __destruct()
