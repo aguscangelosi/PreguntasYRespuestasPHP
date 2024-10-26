@@ -40,61 +40,61 @@ VALUES
 
 
 
-CREATE TABLE categorias (
+CREATE TABLE category (
                             id INT AUTO_INCREMENT PRIMARY KEY,
                             nombre_categoria VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE estados (
+CREATE TABLE status (
                          id INT AUTO_INCREMENT PRIMARY KEY,
                          nombre_estado VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE preguntas (
+CREATE TABLE question (
                            id INT AUTO_INCREMENT PRIMARY KEY,
                            enunciado TEXT NOT NULL,
                            dificultad VARCHAR(50) NOT NULL,  -- Puedes cambiar a un ID si normalizas la dificultad
                            categoria_id INT,
                            estado_id INT,
                            activo BOOLEAN DEFAULT TRUE,
-                           FOREIGN KEY (categoria_id) REFERENCES categorias(id),
-                           FOREIGN KEY (estado_id) REFERENCES estados(id)
+                           FOREIGN KEY (categoria_id) REFERENCES category(id),
+                           FOREIGN KEY (estado_id) REFERENCES status(id)
 );
 
-CREATE TABLE respuestas (
+CREATE TABLE answer (
                             id INT AUTO_INCREMENT PRIMARY KEY,
                             texto_respuesta TEXT NOT NULL,
                             categoria_id INT,
-                            FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+                            FOREIGN KEY (categoria_id) REFERENCES category(id)
 );
 
-CREATE TABLE pregunta_respuesta (
+CREATE TABLE question_answer (
                                     pregunta_id INT,
                                     respuesta_id INT,
                                     es_correcta BOOLEAN NOT NULL,
                                     PRIMARY KEY (pregunta_id, respuesta_id),
-                                    FOREIGN KEY (pregunta_id) REFERENCES preguntas(id),
-                                    FOREIGN KEY (respuesta_id) REFERENCES respuestas(id)
+                                    FOREIGN KEY (pregunta_id) REFERENCES question(id),
+                                    FOREIGN KEY (respuesta_id) REFERENCES answer(id)
 );
 
 -- Inserción de categorías de ejemplo
-INSERT INTO categorias (nombre_categoria) VALUES
+INSERT INTO category (nombre_categoria) VALUES
                                               ('Deportes'), ('Historia'), ('Ciencia'), ('Anime');
 
--- Inserción de estados de ejemplo
-INSERT INTO estados (nombre_estado) VALUES
+-- Inserción de status de ejemplo
+INSERT INTO status (nombre_estado) VALUES
                                         ('pendiente'), ('aprobada'), ('rechazada'), ('reportada'), ('desactivada');
 
 
 -- Preguntas de ejemplo
-INSERT INTO preguntas (enunciado, dificultad, categoria_id, estado_id, activo) VALUES
+INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES
                                                                                    ('¿Cuál es el país de origen del fútbol?', 'Fácil', 1, 2, TRUE),
                                                                                    ('¿Quién pintó la Mona Lisa?', 'Media', 2, 2, TRUE),
                                                                                    ('¿Qué planeta es conocido como el Planeta Rojo?', 'Fácil', 3, 2, TRUE),
                                                                                    ('¿En qué serie aparece el personaje Goku?', 'Fácil', 4, 2, TRUE);
 
 -- Respuestas de ejemplo
-INSERT INTO respuestas (texto_respuesta, categoria_id) VALUES
+INSERT INTO answer (texto_respuesta, categoria_id) VALUES
                                                            ('Inglaterra', 1),      -- Correcta para la primera pregunta
                                                            ('Italia', 1),
                                                            ('Brasil', 1),
@@ -115,21 +115,29 @@ INSERT INTO respuestas (texto_respuesta, categoria_id) VALUES
                                                            ('One Piece', 4),
                                                            ('Bleach', 4);
 
--- Relación de preguntas y respuestas
-INSERT INTO pregunta_respuesta (pregunta_id, respuesta_id, es_correcta) VALUES
+-- Relación de question y answer
+INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES
                                                                             (1, 1, TRUE), (1, 2, FALSE), (1, 3, FALSE), (1, 4, FALSE),
                                                                             (2, 5, TRUE), (2, 6, FALSE), (2, 7, FALSE), (2, 8, FALSE),
                                                                             (3, 9, TRUE), (3, 10, FALSE), (3, 11, FALSE), (3, 12, FALSE),
                                                                             (4, 13, TRUE), (4, 14, FALSE), (4, 15, FALSE), (4, 16, FALSE);
 
 
+CREATE TABLE game (
+                          id INT AUTO_INCREMENT PRIMARY KEY,
+                          fecha_inicio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                          fecha_fin TIMESTAMP NULL,
+                          estado VARCHAR(20) NOT NULL,  -- 'en curso', 'finalizada', etc.
+                          categoria_id INT,
+                          FOREIGN KEY (categoria_id) REFERENCES category(id)
+);
 
 -- Tabla intermedia para registrar usuarios en una partida y sus puntajes
-CREATE TABLE user_partida (
+CREATE TABLE user_game (
                               id INT AUTO_INCREMENT PRIMARY KEY,
                               user_id INT,
                               partida_id INT,
                               puntaje INT DEFAULT 0,
                               FOREIGN KEY (user_id) REFERENCES user(id),
-                              FOREIGN KEY (partida_id) REFERENCES partidas(id)
+                              FOREIGN KEY (partida_id) REFERENCES game(id)
 );
