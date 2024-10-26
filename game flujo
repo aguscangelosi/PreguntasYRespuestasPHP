@@ -1,25 +1,32 @@
 Flujo de Juego: Preguntados
 Inicio del Juego:
 
+ -------- TODO Falta
 El usuario hace clic en "Jugar", lo que lo lleva a una pantalla inicial con una ruleta o selector de categorías.
 Selección de Categoría:
 
-Se carga la ruleta o selector, y al hacer clic, el sistema selecciona una categoría al azar (o el usuario elige manualmente una categoría si se habilita).
+----- + ya esta
+Se carga la ruleta o selector, y al hacer clic, el sistema selecciona una categoría al azar
 Obtención de Pregunta Aleatoria:
 
+-------- SI
 El backend obtiene una pregunta aleatoria de la categoría seleccionada.
-Para evitar duplicados, el backend puede rastrear las preguntas ya respondidas en la sesión de juego y así filtrar las preguntas restantes.
+------- TODO todavia no disponible (como lo hacemos)
+Para evitar duplicados, el backend puede rastrear las preguntas ya respondidas en la sesión de juego y así filtrar las preguntas
+restantes.
 Pantalla de Pregunta:
 
 La pregunta seleccionada y las opciones de respuesta se muestran al usuario.
+-------- TODO falta
 La pantalla incluye un botón para "reportar pregunta", permitiendo al usuario informar si considera que la pregunta tiene algún problema.
 Selección de Respuesta:
 
 El usuario elige una respuesta.
-Al enviar, el sistema valida la respuesta en el backend, enviando el ID de la pregunta y el ID de la respuesta seleccionada.
+No valida en el back valida el front enviando el ID de la pregunta y el ID de la respuesta seleccionada.
 Validación y Retroalimentación:
 
 Si la respuesta es correcta:
+-------- TODO no esta (deberiamos crear una partida cuando se inicia y ahi almacenar los puntos)
 El sistema incrementa el puntaje del usuario.
 Se actualiza la tabla user_partida con el puntaje acumulado de esa partida.
 Se muestra un mensaje de acierto y se repite el ciclo con otra pregunta.
@@ -38,3 +45,5 @@ Almacenamiento de Resultados:
 
 En la tabla user_partida, se registra el puntaje final de cada usuario en la partida junto con sus IDs.
 La tabla partidas conserva la información de la partida como fecha_inicio, fecha_fin, categoria_id y estado.
+
+

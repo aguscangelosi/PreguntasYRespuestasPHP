@@ -39,7 +39,11 @@
 
                 if (esCorrecta) {
                     resultadoDiv.innerHTML = '<p style="color: green;">¡Correcto!</p>';
+                    // deberia volver a tirar rule por ende rederigir y que tire de nuevo
+                    // Antes de la pregunta debemos crear el objeto intermedio entre user y partida, para poder ir almacenando
+                    // los puntajes y si pierda ya tener los puntos y mostrarlos
                 } else {
+                    // si pierde tiene que tocar finalizar -> pantalla de los puntos obtenidos, que se almacenaron en la tabla
                     resultadoDiv.innerHTML = '<p style="color: red;">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
                 }
             });
