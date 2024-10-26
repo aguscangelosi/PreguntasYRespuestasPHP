@@ -24,12 +24,13 @@ class GameController
 
     public function findQuestions()
     {
-        $category = isset($_GET['category']);
+        $category = isset($_GET['category']) ? $_GET['category'] : null;
         if (!$category) {
             $this->presenter->show('notFound');
+            return;
         }
-            $questions = $this->model->findQuestions($category);
-            $this->presenter->show('question', $questions);
+        $questions = $this->model->findQuestions($category);
+        $this->presenter->show('question', $questions);
     }
 
 

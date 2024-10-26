@@ -3,9 +3,47 @@
 <p>{{enunciado}}</p>
 <p><strong>Dificultad:</strong> {{dificultad}}</p>
 
-<h2>Respuestas</h2>
-<ul>
+<h2>Selecciona la respuesta</h2>
+<ul id="respuestas">
     {{#respuestas}}
-        <li>{{texto_respuesta}}</li>
+        <li>
+            <button class="respuesta-btn" data-correcta="{{es_correcta}}">
+                {{texto_respuesta}}
+            </button>
+        </li>
     {{/respuestas}}
 </ul>
+
+<div id="resultado" style="margin-top: 10px;"></div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const respuestaButtons = document.querySelectorAll('.respuesta-btn');
+        const resultadoDiv = document.getElementById('resultado');
+
+        respuestaButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const esCorrecta = this.getAttribute('data-correcta') === "1"; // Ajusta "1" si es booleano en tu base de datos
+
+                respuestaButtons.forEach(btn => {
+                    const btnEsCorrecta = btn.getAttribute('data-correcta') === "1";
+                    if (btnEsCorrecta) {
+                        btn.style.backgroundColor = 'green';
+                        btn.style.color = 'white';
+                    } else {
+                        btn.style.backgroundColor = 'red';
+                        btn.style.color = 'white';
+                    }
+                });
+
+                if (esCorrecta) {
+                    resultadoDiv.innerHTML = '<p style="color: green;">¡Correcto!</p>';
+                } else {
+                    resultadoDiv.innerHTML = '<p style="color: red;">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
+                }
+            });
+        });
+    });
+</script>
+
