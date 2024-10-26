@@ -147,5 +147,15 @@ class GameModel
         return $question;
     }
 
+    public function answerCorrectOrNotCorrect()
+    {
+        $sql = "SELECT es_correcta FROM question_answer";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $result = mysqli_fetch_assoc($stmt->get_result());
+
+        return $result['es_correcta'];
+    }
+
 
 }

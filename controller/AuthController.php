@@ -57,11 +57,20 @@ class AuthController
 
             $result = $this->model->login($username, $password);
             if ($result) {
-                $this->presenter->show('home', ['mensaje' => "Bienvenido al perfil $username. \n Pagina en construcción", 'username' => $username,
-                    'email' => $result['email'], 'birthday' => $result['birthday'], 'register_date' => $result['register_date']]);
+                $this->presenter->show('lobby', ['username'=>$username]);
+            //    $this->presenter->show('home', ['mensaje' => "Bienvenido al perfil $username. \n Pagina en construcción", 'username' => $username,
+            //       'email' => $result['email'], 'birthday' => $result['birthday'], 'register_date' => $result['register_date']]);
             } else {
                 $this->presenter->show('register');
             }
+        }
+    }
+
+    public function play(){
+        if(isset($_POST['click'])){
+            $this->presenter->show('roulette');
+        }else{
+            $this->presenter->show('notFoundView');
         }
     }
 
