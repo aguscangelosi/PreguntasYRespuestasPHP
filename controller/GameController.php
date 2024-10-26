@@ -28,8 +28,8 @@ class GameController
         if (!$category) {
             $this->presenter->show('notFound');
         }
-            $questions = $this->model->findQuestions();
-            $this->presenter->show('question', ['questions' => $questions]);
+            $questions = $this->model->findQuestions($category);
+            $this->presenter->show('question', $questions);
     }
 
 

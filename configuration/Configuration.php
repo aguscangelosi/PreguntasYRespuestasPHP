@@ -6,8 +6,9 @@ include_once("helper/MustachePresenter.php");
 
 
 include_once("model/AuthModel.php");
-include_once("controller/PreguntaleController.php");
+include_once("model/GameModel.php");
 include_once("controller/AuthController.php");
+include_once("controller/GameController.php");
 
 
 include_once('vendor/mustache/src/Mustache/Autoloader.php');
@@ -26,11 +27,19 @@ class Configuration
         return new AuthController($this->getAuthModel(), $this->getPresenter());
     }
 
+    public function getGameController()
+    {
+        return new GameController($this->getGameModel(), $this->getPresenter());
+    }
+
 
     private function getAuthModel(){
         return new AuthModel($this->getDatabase());
     }
 
+    private function getGameModel(){
+        return new GameModel($this->getDatabase());
+    }
 
     private function getPresenter()
     {
