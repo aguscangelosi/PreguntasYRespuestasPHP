@@ -1,13 +1,15 @@
 <input type="button" value="GIRA LA RULETA COKI Y GANA!" style="float:left;" id='spin'/>
 <canvas id="canvas" width="500" height="500"></canvas>
+<input type="hidden" value="{{idUser}}" id="idUser">
+<input type="hidden" value="{{idMatch}}" id="idMatch">
 
 <script>
 
     var options = [
-        { id: 1, nombre: "Deportes" },
-        { id: 2, nombre: "Historia" },
-        { id: 3, nombre: "Ciencia" },
-        { id: 4, nombre: "Anime" }
+        {id: 1, nombre: "Deportes"},
+        {id: 2, nombre: "Historia"},
+        {id: 3, nombre: "Ciencia"},
+        {id: 4, nombre: "Anime"}
     ];
 
 
@@ -138,9 +140,15 @@
     }
 
     function obtenerPregunta(categoriaId) {
-        window.location.href = `/PreguntasYRespuestasPHP/game/findQuestions?category=${categoriaId}`;
-    }
+        let idMatch = document.getElementById('idMatch')
+        let idUser = document.getElementById('idUser')
+        if (idMatch && idUser)
+        {
+            param = `&idMatch=${idMatch}&idUser=${idUser}`;
+        }
 
+        window.location.href = `/PreguntasYRespuestasPHP/game/findQuestions?category=${categoriaId}${param}`;
+    }
 
 
     function easeOut(t, b, c, d) {

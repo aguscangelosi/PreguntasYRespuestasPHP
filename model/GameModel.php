@@ -30,6 +30,7 @@ class GameModel
         $questionId = $this->addQuestionToMatch($idMatch, $category);
 
         $questionData = $this->getQuestionDetails($questionId);
+        $questionData['idMatch'] = $idMatch;
 
         return $questionData;
     }
@@ -64,6 +65,22 @@ class GameModel
             WHERE g.id = ? AND ug.user_id = ?";
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param('ii', $idMatch, $idUser);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+
+        $match = $result->fetch_assoc();
+
+        return $match;
+    }
+
+    public function findUserMatch($idUser, $idMatch)
+    {
+        $sql = "SELECT * FROM user_game ug
+                 WHERE ug.user_id = ? AND ug.partida_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('ii', $idUser, $idMatch);
         $stmt->execute();
 
         $result = $stmt->get_result();
@@ -145,6 +162,15 @@ class GameModel
         }
 
         return $question;
+    }
+
+    public function updateMatch($idUser, $idMatch)
+    {
+        $query = "UPDATE user_game SET puntaje = puntaje + 1 WHERE user_id = ? AND partida_id = ?";
+
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("ii", $idUser, $idMatch);
+        $stmt->execute();
     }
 
     public function answerCorrectOrNotCorrect()

@@ -14,22 +14,21 @@
     {{/respuestas}}
 </ul>
 <div id="botón" style="margin-top: 10px;">
-    <form action="/PreguntasYRespuestasPHP/index.php/game/answerCorrectOrNotCorrect">
-        <button name="es-correcta">Continuar</button>
-    </form>
+        <button name="es-correcta" id="boton_continuar">Continuar</button>
 </div>
 
 <div id="resultado" style="margin-top: 10px;"></div>
-
+<input type="hidden" value="{{idMatch}}" id="idMatch">
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    let esCorrecta;
+    document.addEventListener('DOMContentLoaded', function () {
         const respuestaButtons = document.querySelectorAll('.respuesta-btn');
         const resultadoDiv = document.getElementById('resultado');
 
         respuestaButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const esCorrecta = this.getAttribute('data-correcta') === "1"; // Ajusta "1" si es booleano en tu base de datos
+            button.addEventListener('click', function () {
+                esCorrecta = this.getAttribute('data-correcta') === "1"; // Ajusta "1" si es booleano en tu base de datos
 
                 respuestaButtons.forEach(btn => {
                     const btnEsCorrecta = btn.getAttribute('data-correcta') === "1";
@@ -51,8 +50,20 @@
                     // si pierde tiene que tocar finalizar -> pantalla de los puntos obtenidos, que se almacenaron en la tabla
                     resultadoDiv.innerHTML = '<p style="color: red;">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
                 }
+
             });
         });
+        const botonContinuar = document.getElementById('boton_continuar');
+        botonContinuar.addEventListener("click", function () {
+            console.log("enviando")
+            let idMatch = document.getElementById('idMatch');
+            if (esCorrecta){
+                window.location.href = `/PreguntasYRespuestasPHP/game/playAgain?id=1&idMatch=${idMatch}`;
+            } else {
+                window.location.href = `/PreguntasYRespuestasPHP/game/finish?id=1&idMatch=1`;
+            }
+        })
     });
+
 </script>
 
