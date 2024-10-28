@@ -3,6 +3,7 @@ include_once("helper/MysqlObjectDatabase.php");
 include_once("helper/IncludeFilePresenter.php");
 include_once("helper/Router.php");
 include_once("helper/MustachePresenter.php");
+include_once("helper/AuthHelper.php");
 
 
 include_once("model/AuthModel.php");
@@ -15,8 +16,16 @@ include_once('vendor/mustache/src/Mustache/Autoloader.php');
 
 class Configuration
 {
+
+    private static $authHelper;
     public function __construct()
     {
+        self::$authHelper = new AuthHelper();
+    }
+
+    public static function getAuthHelper()
+    {
+        return self::$authHelper;
     }
 
 //    public function getLoginController(){
@@ -24,7 +33,7 @@ class Configuration
 //    }
 
     public function getAuthController(){
-        return new AuthController($this->getAuthModel(), $this->getPresenter());
+        return new AuthController($this->getAuthModel(), $this->getPresenter(),$this->getAuthHelper());
     }
 
     public function getGameController()
@@ -60,7 +69,8 @@ class Configuration
 
     public function getRouter()
     {
-        return new Router($this, "getAuthController", "init");
+        return new Router($this, "getAuthController", "init", Configuration::$authHelper);
     }
+
 
 }

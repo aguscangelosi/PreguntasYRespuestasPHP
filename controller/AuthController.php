@@ -8,11 +8,14 @@ class AuthController
     private $presenter;
     private $mail;
 
-    public function __construct($model, $presenter)
+    private $authHelper;
+
+    public function __construct($model, $presenter, $authHelper)
     {
         $this->mail = new MailService(true);
         $this->model = $model;
         $this->presenter = $presenter;
+        $this->authHelper = $authHelper;
     }
 
     public function init()
@@ -55,12 +58,16 @@ class AuthController
             $password = $_POST['password'];
             $username = $_POST['username'];
 
-            $result = $this->model->login($username, $password);
-            if ($result) {
-                $this->presenter->show('lobby', ['username'=>$username]);
-            //    $this->presenter->show('home', ['mensaje' => "Bienvenido al perfil $username. \n Pagina en construcción", 'username' => $username,
-            //       'email' => $result['email'], 'birthday' => $result['birthday'], 'register_date' => $result['register_date']]);
-            } else {
+            $user = $this->model->login($username, $password);
+            $hasAccess = $this->authHelper->loginUser($user);
+            if ($user && $hasAccess) {
+                header('location: /PreguntasYRespuestasPHP/game/lobby');
+            }
+            if (!$hasAccess) {
+                $data["has_access"] = "Debe verificar su mail.";
+                $this->presenter->show('login',$data);
+            }
+            else {
                 $this->presenter->show('register');
             }
         }

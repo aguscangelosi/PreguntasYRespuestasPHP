@@ -5,16 +5,26 @@ class Router
     private $defaultController;
     private $defaultMethod;
     private $configuration;
+    private $authHelper;
 
-    public function __construct($configuration, $defaultController, $defaultMethod)
+    public function __construct($configuration, $defaultController, $defaultMethod, $authHelper)
     {
         $this->defaultController = $defaultController;
         $this->defaultMethod = $defaultMethod;
         $this->configuration = $configuration;
+        $this->authHelper = $authHelper;
     }
 
     public function route($controllerName, $methodName)
     {
+        $publicRoutes = ['auth' => ['login', 'register']];
+
+        if (!isset($publicRoutes[$controllerName]) && !$this->authHelper->isAuthenticated()) {
+            $controller = $this->getControllerFrom('auth');
+            $this->executeMethodFromController($controller, 'Login');
+            return;
+        }
+
         $controller = $this->getControllerFrom($controllerName);
         $this->executeMethodFromController($controller, $methodName);
     }

@@ -65,20 +65,16 @@ class GameController
         $this->presenter->show('question', $questions);
     }
 
-    public function answerCorrectOrNotCorrect()
-    {
-        $result = $this->model->answerCorrectOrNotCorrect(); //La idea es que traiga true o false
-        if ($result) {
-            $this->presenter->show('roulette');
-        } else {
-            $this->presenter->show('gameLost');
-        }
-
-    }
-
     public function redirectHome()
     {
         header('location: /PreguntasYRespuestasPHP/index.php');
         exit();
     }
+
+
+    public function lobby()
+    {
+        $this->presenter->show('lobby');
+    }
+
 }

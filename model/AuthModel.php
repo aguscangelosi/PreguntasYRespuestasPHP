@@ -94,14 +94,7 @@ class AuthModel
     }
 
     public function login($username, $password) {
-        session_destroy(); //Prueba
-        if(!session_start()){
-            session_start();
-        }//Termina la prueba
-         //creo la sesión en el metodo de permitir usuario
-        $_SESSION['id'] = '1'; //Le agrego el atributo 'id'
 
-        // Consulta con un placeholder para evitar inyección SQL
         $sql = "SELECT * FROM user WHERE username = ?";
 
         $stmt = $this->database->prepare($sql);
@@ -118,7 +111,6 @@ class AuthModel
             return $usuario;
         }
 
-        // Si no coincide la contraseña o el usuario no existe, retorna null
         return null;
     }
 
@@ -131,7 +123,7 @@ class AuthModel
             }
 
             $true = 1;
-            $stmt->bind_param('ii', $true, $id);
+            $stmt->bind_param('si', $true, $id);
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
