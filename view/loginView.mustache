@@ -6,7 +6,7 @@
                 <h2 class="p-3">Iniciar sesión</h2>
             </div>
             <div class="w3-container">
-                <form action="/PreguntasYRespuestasPHP/index.php/auth/login" method="POST">
+                <form action="/PreguntasYRespuestasPHP/auth/login" method="POST">
                     <div class="container text-center">
                         <div class="row justify-content-center">
                             <div class="col-md-6 mx-auto p-2">
@@ -26,8 +26,6 @@
                         <button type="submit" class="btn btn-dark p-3">Iniciar sesión</button>
                     </div>
                 </form>
-                <div class="w3-text-red" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{has_access}}</div>
-
                 <div class="w3-text-red" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
             </div>
         </div>

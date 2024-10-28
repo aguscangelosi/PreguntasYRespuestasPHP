@@ -94,7 +94,7 @@ class AuthModel
     }
 
     public function login($username, $password) {
-
+        //TODO IMPLEMENTAR INICIO DE SESION CON EMAIL O CON USERNAME
         $sql = "SELECT * FROM user WHERE username = ?";
 
         $stmt = $this->database->prepare($sql);

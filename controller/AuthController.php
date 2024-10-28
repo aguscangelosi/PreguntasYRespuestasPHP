@@ -54,27 +54,31 @@ class AuthController
 
     public function login()
     {
-        if (isset($_POST['username']) && isset($_POST['password'])) {
-            $password = $_POST['password'];
-            $username = $_POST['username'];
+        $data = [];
 
-            $user = $this->model->login($username, $password);
-            $hasAccess = $this->authHelper->loginUser($user);
-            if ($user && $hasAccess) {
-                header('location: /PreguntasYRespuestasPHP/game/lobby');
-                return;
-            }
-            if ($hasAccess == 0) {
-                $data["has_access"] = "Debe verificar su mail.";
-                $this->presenter->show('login',$data);
+        if (!empty($_POST['username']) && !empty($_POST['password'])) {
+            $user = $this->model->login($_POST['username'], $_POST['password']);
+
+            if ($user) {
+                if ($this->authHelper->loginUser($user)) {
+                    header('location: /PreguntasYRespuestasPHP/game/lobby');
+                    exit;
+                }
+                $data["error_message"] = "Debe verificar su mail.";
+            } else {
+                $data["error_message"] = "Usuario o contraseña incorrectos";
             }
         }
+
+        $this->presenter->show('login', $data);
     }
 
-    public function play(){
-        if(isset($_POST['click'])){
+
+    public function play()
+    {
+        if (isset($_POST['click'])) {
             $this->presenter->show('roulette');
-        }else{
+        } else {
             $this->presenter->show('notFoundView');
         }
     }
