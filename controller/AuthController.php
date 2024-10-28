@@ -62,13 +62,11 @@ class AuthController
             $hasAccess = $this->authHelper->loginUser($user);
             if ($user && $hasAccess) {
                 header('location: /PreguntasYRespuestasPHP/game/lobby');
+                return;
             }
-            if (!$hasAccess) {
+            if ($hasAccess == 0) {
                 $data["has_access"] = "Debe verificar su mail.";
                 $this->presenter->show('login',$data);
-            }
-            else {
-                $this->presenter->show('register');
             }
         }
     }

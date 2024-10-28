@@ -21,7 +21,7 @@ class Router
 
         if (!isset($publicRoutes[$controllerName]) && !$this->authHelper->isAuthenticated()) {
             $controller = $this->getControllerFrom('auth');
-            $this->executeMethodFromController($controller, 'Login');
+            $this->executeMethodFromController($controller, $methodName);
             return;
         }
 
