@@ -34,8 +34,9 @@
         const resultadoDiv = document.getElementById('resultado');
 
         respuestaButtons.forEach(button => {
-            button.addEventListener('click', function () {
+            button.addEventListener('click', function (event) {
                 esCorrecta = this.getAttribute('data-correcta') === "1"; // Ajusta "1" si es booleano en tu base de datos
+                event.stopImmediatePropagation();
 
                 respuestaButtons.forEach(btn => {
                     const btnEsCorrecta = btn.getAttribute('data-correcta') === "1";
@@ -43,6 +44,7 @@
                         btn.classList.add('text-center', 'p-3', 'mb-1', 'bg-success', 'text-white', 'border-success');
                         //btn.style.backgroundColor = 'green';
                         //btn.style.color = 'white';
+
                     } else {
                         btn.classList.add('text-center', 'p-3', 'mb-1', 'bg-danger', 'text-white', 'border-danger');
                         //btn.style.backgroundColor = 'red';
@@ -59,9 +61,8 @@
                     // si pierde tiene que tocar finalizar -> pantalla de los puntos obtenidos, que se almacenaron en la tabla
                     resultadoDiv.innerHTML = '<p class="text-center p-3 mb-2 bg-danger text-white fw-bold">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
                 }
-
-            });
-        });
+            }, { once: true });//Ejecuta el botón y se elimina el evento
+        }, { once: true }); //Este tiene que estar si o si para que no se ejecute más de 2 veces (preguntar a martín)
         const botonContinuar = document.getElementById('boton_continuar');
         botonContinuar.addEventListener("click", function () {
             console.log("enviando")

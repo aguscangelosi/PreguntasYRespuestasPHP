@@ -94,6 +94,13 @@ class AuthModel
     }
 
     public function login($username, $password) {
+        session_destroy(); //Prueba
+        if(!session_start()){
+            session_start();
+        }//Termina la prueba
+         //creo la sesión en el metodo de permitir usuario
+        $_SESSION['id'] = '1'; //Le agrego el atributo 'id'
+
         // Consulta con un placeholder para evitar inyección SQL
         $sql = "SELECT * FROM user WHERE username = ?";
 
@@ -117,7 +124,6 @@ class AuthModel
 
     public function allowUser($id) {
         $sql = "UPDATE user SET hasAccess = ? WHERE id = ?";
-
         try {
             $stmt = $this->database->prepare($sql);
             if (!$stmt) {
@@ -140,6 +146,7 @@ class AuthModel
                 $stmt->close();
             }
         }
+
     }
 
    

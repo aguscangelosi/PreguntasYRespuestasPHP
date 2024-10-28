@@ -17,8 +17,8 @@ class GameModel
         return $category;
     }
 
-    public function game($category, $idUser, $idMatch = null)
-    {
+    public function game($category, $idUser, $idMatch){
+        $idMatch = null; //Lo veo medio innecesario
         if ($idMatch == null) {
             $match = $this->createMatch($idUser);
             $idMatch = $match['id'];
@@ -26,6 +26,8 @@ class GameModel
             $match = $this->findMatch($idUser, $idMatch);
             $idMatch = $match['id'];
         }
+
+
 
         $questionId = $this->addQuestionToMatch($idMatch, $category);
 
