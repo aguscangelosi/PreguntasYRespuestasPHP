@@ -1,21 +1,28 @@
-<h1>Pregunta</h1>
+<div class="text-center bg-light-subtle">
+    <h1 class="p-3">Pregunta</h1>
 
-<p>{{enunciado}}</p>
-<p><strong>Dificultad:</strong> {{dificultad}}</p>
+    <p class="fs-3 fw-semibold">{{enunciado}}</p>
+    <p class="fw-bold">Dificultad: {{dificultad}}</p>
 
-<h2>Selecciona la respuesta</h2>
-<ul id="respuestas">
-    {{#respuestas}}
-        <li>
-            <button class="respuesta-btn" data-correcta="{{es_correcta}}">
-                {{texto_respuesta}}
-            </button>
-        </li>
-    {{/respuestas}}
-</ul>
-<div id="botón" style="margin-top: 10px;">
-        <button name="es-correcta" id="boton_continuar">Continuar</button>
+    <p class="fs-6 fw-medium">Selecciona la respuesta</p>
+    <ul id="respuestas" class="list-group">
+        {{#respuestas}}
+            <li>
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <button class="btn btn-outline-dark p-3 m-1 respuesta-btn" data-correcta="{{es_correcta}}">
+                        {{texto_respuesta}}
+                    </button>
+                </div>
+
+            </li>
+        {{/respuestas}}
+    </ul>
+    <div id="botón">
+        <button name="es-correcta" id="boton_continuar" class="btn btn-dark p-3 m-1">Continuar</button>
+    </div>
 </div>
+
+
 
 <div id="resultado" style="margin-top: 10px;"></div>
 <input type="hidden" value="{{idMatch}}" id="idMatch">
@@ -33,22 +40,24 @@
                 respuestaButtons.forEach(btn => {
                     const btnEsCorrecta = btn.getAttribute('data-correcta') === "1";
                     if (btnEsCorrecta) {
-                        btn.style.backgroundColor = 'green';
-                        btn.style.color = 'white';
+                        btn.classList.add('text-center', 'p-3', 'mb-1', 'bg-success', 'text-white', 'border-success');
+                        //btn.style.backgroundColor = 'green';
+                        //btn.style.color = 'white';
                     } else {
-                        btn.style.backgroundColor = 'red';
-                        btn.style.color = 'white';
+                        btn.classList.add('text-center', 'p-3', 'mb-1', 'bg-danger', 'text-white', 'border-danger');
+                        //btn.style.backgroundColor = 'red';
+                        //btn.style.color = 'white';
                     }
                 });
 
                 if (esCorrecta) {
-                    resultadoDiv.innerHTML = '<p style="color: green;">¡Correcto!</p>';
+                    resultadoDiv.innerHTML = '<p class="text-center p-3 mb-2 bg-success text-white fw-bold">¡Correcto!</p>';
                     // deberia volver a tirar rule por ende rederigir y que tire de nuevo
                     // Antes de la pregunta debemos crear el objeto intermedio entre user y partida, para poder ir almacenando
                     // los puntajes y si pierda ya tener los puntos y mostrarlos
                 } else {
                     // si pierde tiene que tocar finalizar -> pantalla de los puntos obtenidos, que se almacenaron en la tabla
-                    resultadoDiv.innerHTML = '<p style="color: red;">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
+                    resultadoDiv.innerHTML = '<p class="text-center p-3 mb-2 bg-danger text-white fw-bold">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
                 }
 
             });

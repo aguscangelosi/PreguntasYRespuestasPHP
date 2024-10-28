@@ -2,37 +2,47 @@
     <div class="w3-display-middle" style="width:50%;">
         <div class="w3-card-4">
             <div class="w3-container w3-center w3-blue">
-                <h2>Registro</h2>
+                <h2 class=p-3>Registro</h2>
             </div>
             <div class="w3-container">
                 <form action="/PreguntasYRespuestasPHP/index.php/auth/register" method="POST">
-                    <div class="w3-margin-bottom" style="padding-top: 10px">
-                        <label for="name" class="w3-text-black">Nombre</label>
-                        <input type="text" class="w3-input w3-border" id="name" name="name" placeholder="Juan" required>
+
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8 mx-auto p-2">
+                                <div class="form-floating m-2">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre completo" required>
+                                    <label for="floatingInput">Nombre completo</label>
+                                </div>
+                                <div class="form-floating m-2">
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
+                                    <label for="floatingInput">Usuario</label>
+                                </div>
+                                <div class="form-floating m-2">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                                    <label for="floatingInput">Email</label>
+                                </div>
+                                <div class="form-floating m-2">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                                    <label for="floatingInput">Contraseña</label>
+                                </div>
+                                <div class="form-floating m-2">
+                                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Repetir contraseña" required>
+                                    <label for="floatingInput">Repetir contraseña</label>
+                                </div>
+                                <div class="form-floating m-2">
+                                    <input type="date" class="form-control" id="birthday" name="birthday" placeholder="Fecha de nacimiento" required>
+                                    <label for="floatingInput">Fecha de nacimiento</label>
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
-                    <div class="w3-margin-bottom">
-                        <label for="username" class="w3-text-black">Usuario</label>
-                        <input type="text" class="w3-input w3-border" id="username" name="username" placeholder="Juancito123" required>
+
+                    <div class="d-grid gap-2 col-3 mx-auto m-2">
+                        <button type="submit" class="btn btn-dark p-3">Registrarse</button>
                     </div>
-                    <div class="w3-margin-bottom">
-                        <label for="email" class="w3-text-black">Email</label>
-                        <input type="email" class="w3-input w3-border" id="email" name="email" placeholder="email" required>
-                    </div>
-                    <div class="w3-margin-bottom">
-                        <label for="password" class="w3-text-black">Contraseña</label>
-                        <input type="password" class="w3-input w3-border" id="password" name="password" placeholder="******" required>
-                    </div>
-                    <div class="w3-margin-bottom">
-                        <label for="repeat_password" class="w3-text-black">Repetir Contraseña</label>
-                        <input type="password" class="w3-input w3-border" id="repeat_password" name="repeat_password" placeholder="******" required>
-                    </div>
-                    <div class="w3-margin-bottom">
-                        <label for="birthday" class="w3-text-black">Nacimiento</label>
-                        <input type="date" class="w3-input w3-border" id="birthday" name="birthday" required>
-                    </div>
-                    <div style="margin-bottom: 10px">
-                        <button type="submit" class="w3-button w3-block w3-blue">Enviar</button>
-                    </div>
+
                 </form>
                 <div class="w3-text-red" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
             </div>
