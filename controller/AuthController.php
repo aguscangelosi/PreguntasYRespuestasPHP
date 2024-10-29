@@ -74,15 +74,6 @@ class AuthController
     }
 
 
-    public function play()
-    {
-        if (isset($_POST['click'])) {
-            $this->presenter->show('roulette');
-        } else {
-            $this->presenter->show('notFoundView');
-        }
-    }
-
     public function validateEmail()
     {
         if (isset($_GET['id'])) {
