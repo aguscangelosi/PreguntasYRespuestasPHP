@@ -38,7 +38,7 @@ class Configuration
 
     public function getGameController()
     {
-        return new GameController($this->getGameModel(), $this->getPresenter());
+        return new GameController($this->getGameModel(), $this->getPresenter(),$this->getAuthHelper());
     }
 
 

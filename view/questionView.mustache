@@ -26,6 +26,7 @@
 
 <div id="resultado" style="margin-top: 10px;"></div>
 <input type="hidden" value="{{idMatch}}" id="idMatch">
+<input type="hidden" value="{{idUser}}" id="idUser">
 
 <script>
     let esCorrecta;
@@ -65,12 +66,12 @@
         }, { once: true }); //Este tiene que estar si o si para que no se ejecute más de 2 veces (preguntar a martín)
         const botonContinuar = document.getElementById('boton_continuar');
         botonContinuar.addEventListener("click", function () {
-            console.log("enviando")
-            let idMatch = document.getElementById('idMatch');
+            let idMatch = document.getElementById('idMatch').value;
+            let idUser = document.getElementById('idUser').value;
             if (esCorrecta){
-                window.location.href = `/PreguntasYRespuestasPHP/game/playAgain?id=1&idMatch=${idMatch}`;
+                window.location.href = `/PreguntasYRespuestasPHP/game/playAgain?id=${idUser}&idMatch=${idMatch}`;
             } else {
-                window.location.href = `/PreguntasYRespuestasPHP/game/finish?id=1&idMatch=1`;
+                window.location.href = `/PreguntasYRespuestasPHP/game/finish??id=${idUser}&idMatch=${idMatch}`;
             }
         })
     });

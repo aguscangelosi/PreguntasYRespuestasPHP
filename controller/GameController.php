@@ -6,10 +6,13 @@ class GameController
     private $model;
     private $presenter;
 
-    public function __construct($model, $presenter)
+    private $authHelper;
+
+    public function __construct($model, $presenter,$authHelper)
     {
         $this->model = $model;
         $this->presenter = $presenter;
+        $this->authHelper = $authHelper;
     }
 
     public function play()
@@ -19,31 +22,33 @@ class GameController
 
     public function playAgain()
     {
-        $idUser = isset($_GET['id']) ? $_GET['id'] : null;
+        $user = $this->authHelper->getUser();
+        $userId = $user["id"];
         $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] :  null;
 
-        if (!$idUser || !$idMatch) {
+        if (!$userId || !$idMatch) {
             $this->presenter->show('notFound');
             return;
         }
 
-        $this->model->updateMatch($idUser, $idMatch);
-        $data['id'] = $idUser;
+        $this->model->updateMatch($userId, $idMatch);
+        $data['id'] = $userId;
         $data['idMatch'] = $idMatch;
         $this->presenter->show('roulette', $data);
     }
 
     public function finish()
     {
-        $idUser = isset($_GET['id']) ? $_GET['id'] : null;
+        $user = $this->authHelper->getUser();
+        $userId = $user["id"];
         $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] :  null;
 
-        if (!$idUser || !$idMatch) {
+        if (!$userId || !$idMatch) {
             $this->presenter->show('notFound');
             return;
         }
 //        $this->model->updateMatch($idUser, $idMatch); //TODO falta cambiar el estado
-        $match = $this->model->findUserMatch($idUser, $idMatch);
+        $match = $this->model->findUserMatch($userId, $idMatch);
         $this->presenter->show('finishGame', $match);
 
     }
@@ -52,15 +57,19 @@ class GameController
     public function findQuestions()
     {
         $category = isset($_GET['category']) ? $_GET['category'] : null;
-        $idUser = isset($_GET['id']) ? $_GET['id'] : null;
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null; // ID de partida recibido
+        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+
+        $user = $this->authHelper->getUser();
+        $userId = $user["id"];
 
         if (!$category) {
             $this->presenter->show('notFound');
             return;
         }
 
-        $questions = $this->model->game($category, $idUser, $idMatch);
+        $questions = $this->model->game($category, $userId, $idMatch);
+
+        $questions["idUser"] = $userId;
 
         $this->presenter->show('question', $questions);
     }

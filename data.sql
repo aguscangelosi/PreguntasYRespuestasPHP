@@ -143,3 +143,92 @@ INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES
                                                                          (2, 5, TRUE), (2, 6, FALSE), (2, 7, FALSE), (2, 8, FALSE),
                                                                          (3, 9, TRUE), (3, 10, FALSE), (3, 11, FALSE), (3, 12, FALSE),
                                                                          (4, 13, TRUE), (4, 14, FALSE), (4, 15, FALSE), (4, 16, FALSE);
+
+
+-- Preguntas de ejemplo
+INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES
+                                                                                  ('¿En qué año se celebró el primer Mundial de Fútbol?', 'Difícil', 1, 2, TRUE),
+                                                                                  ('¿Qué país ha ganado más Copas del Mundo de fútbol?', 'Media', 1, 2, TRUE),
+                                                                                  ('¿Quién escribió "La Divina Comedia"?', 'Media', 2, 2, TRUE),
+                                                                                  ('¿En qué museo se encuentra "La Noche Estrellada" de Van Gogh?', 'Difícil', 2, 2, TRUE),
+                                                                                  ('¿Cuál es el planeta más grande del sistema solar?', 'Fácil', 3, 2, TRUE),
+                                                                                  ('¿Qué elemento químico tiene el símbolo "O"?', 'Fácil', 3, 2, TRUE),
+                                                                                  ('¿En qué serie aparece el personaje Ash Ketchum?', 'Fácil', 4, 2, TRUE),
+                                                                                  ('¿Quién es el creador de la serie "One Piece"?', 'Media', 4, 2, TRUE);
+
+-- Respuestas de ejemplo
+INSERT INTO answer (texto_respuesta, categoria_id) VALUES
+                                                       ('1930', 1),           -- Correcta para la primera pregunta
+                                                       ('1950', 1),
+                                                       ('1962', 1),
+                                                       ('1970', 1),
+
+                                                       ('Brasil', 1),         -- Correcta para la segunda pregunta
+                                                       ('Argentina', 1),
+                                                       ('Alemania', 1),
+                                                       ('Italia', 1),
+
+                                                       ('Dante Alighieri', 2), -- Correcta para la tercera pregunta
+                                                       ('Miguel de Cervantes', 2),
+                                                       ('Homer', 2),
+                                                       ('William Shakespeare', 2),
+
+                                                       ('Museo de Arte Moderno de Nueva York', 2), -- Correcta para la cuarta pregunta
+                                                       ('Museo del Louvre', 2),
+                                                       ('Museo del Prado', 2),
+                                                       ('Museo Británico', 2),
+
+                                                       ('Júpiter', 3),       -- Correcta para la quinta pregunta
+                                                       ('Saturno', 3),
+                                                       ('Marte', 3),
+                                                       ('Venus', 3),
+
+                                                       ('Oxígeno', 3),        -- Correcta para la sexta pregunta
+                                                       ('Carbono', 3),
+                                                       ('Hidrógeno', 3),
+                                                       ('Nitrógeno', 3),
+
+                                                       ('Pokémon', 4),        -- Correcta para la séptima pregunta
+                                                       ('Yu-Gi-Oh!', 4),
+                                                       ('Digimon', 4),
+                                                       ('Beyblade', 4),
+
+                                                       ('Eiichiro Oda', 4),   -- Correcta para la octava pregunta
+                                                       ('Masashi Kishimoto', 4),
+                                                       ('Akira Toriyama', 4),
+                                                       ('Yoshihiro Togashi', 4);
+
+-- Relación de question y answer
+INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES
+ (5, 17, TRUE),
+ (5, 18, FALSE),
+ (5, 19, FALSE),
+ (5, 20, FALSE),
+ (6, 21, TRUE),
+ (6, 22, FALSE),
+ (6, 23, FALSE),
+ (6, 24, FALSE),
+ (7, 25, TRUE),
+ (7, 26, FALSE),
+ (7, 27, FALSE),
+ (7, 28, FALSE),
+ (8, 29, TRUE),
+ (8, 30, FALSE),
+ (8, 31, FALSE),
+ (8, 32, FALSE),
+ (9, 33, TRUE),
+ (9, 34, FALSE),
+ (9, 35, FALSE),
+ (9, 36, FALSE),
+ (10, 37, TRUE),
+ (10, 38, FALSE),
+ (10, 39, FALSE),
+ (10, 40, FALSE),
+ (11, 41, TRUE),
+ (11, 42, FALSE),
+ (11, 43, FALSE),
+ (11, 44, FALSE),
+ (12, 45, TRUE),
+ (12, 46, FALSE),
+ (12, 47, FALSE),
+ (12, 48, FALSE);

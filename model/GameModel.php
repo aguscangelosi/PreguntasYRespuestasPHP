@@ -18,16 +18,12 @@ class GameModel
     }
 
     public function game($category, $idUser, $idMatch){
-        $idMatch = null; //Lo veo medio innecesario
         if ($idMatch == null) {
             $match = $this->createMatch($idUser);
-            $idMatch = $match['id'];
         } else {
             $match = $this->findMatch($idUser, $idMatch);
-            $idMatch = $match['id'];
         }
-
-
+        $idMatch = $match['id'];
 
         $questionId = $this->addQuestionToMatch($idMatch, $category);
 
@@ -44,6 +40,10 @@ class GameModel
 
         $matchId = $this->database->insert_id();
 
+        if (!$matchId) {
+            throw new Exception("Error al crear la partida.");
+        }
+
         $sql = "INSERT INTO user_game (user_id, partida_id, puntaje) VALUES (?, ?, 0)";
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param('ii', $idUser, $matchId);
@@ -57,7 +57,12 @@ class GameModel
         $stmt->execute();
         $result = $stmt->get_result();
 
-        return $result->fetch_assoc();
+        $match = $result->fetch_assoc();
+        if (!$match) {
+            throw new Exception("No se encontró la partida creada.");
+        }
+
+        return $match;
     }
 
     public function findMatch($idUser, $idMatch)
