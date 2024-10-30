@@ -180,15 +180,66 @@ class GameModel
         $stmt->execute();
     }
 
-    public function answerCorrectOrNotCorrect()
+    public function validateResponse($idUser, $idMatch, $idQuestion, $idResponse)
     {
-        $sql = "SELECT es_correcta FROM question_answer";
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute();
-        $result = mysqli_fetch_assoc($stmt->get_result());
+        $sqlCorrectAnswer = "SELECT respuesta_id 
+                         FROM question_answer 
+                         WHERE pregunta_id = ? AND es_correcta = TRUE";
 
-        return $result['es_correcta'];
+        $stmt = $this->database->prepare($sqlCorrectAnswer);
+        $stmt->bind_param('i', $idQuestion);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $correctAnswer = $result->fetch_assoc();
+        $stmt->close();
+
+        $correctAnswerId = $correctAnswer['respuesta_id'];
+
+        if ($idResponse == $correctAnswerId) {
+            // Actualizar puntaje del usuario en la partida
+            $sqlUpdateScore = "UPDATE user_game 
+                           SET puntaje = puntaje + 10 
+                           WHERE user_id = ? AND partida_id = ?";
+
+            $stmt = $this->database->prepare($sqlUpdateScore);
+            $stmt->bind_param('ii', $idUser, $idMatch);
+            $stmt->execute();
+            $stmt->close();
+
+            $sqlGameQuestion = "INSERT INTO game_question (partida_id, pregunta_id, respuesta_correcta_id, es_correcta) 
+                            VALUES (?, ?, ?, TRUE)";
+
+            $stmt = $this->database->prepare($sqlGameQuestion);
+            $stmt->bind_param('iii', $idMatch, $idQuestion, $correctAnswerId);
+            $stmt->execute();
+            $stmt->close();
+
+            $sqlUserQuestion = "INSERT IGNORE INTO user_question (user_id, question_id) VALUES (?, ?)";
+            $stmt = $this->database->prepare($sqlUserQuestion);
+            $stmt->bind_param('ii', $idUser, $idQuestion);
+            $stmt->execute();
+            $stmt->close();
+
+            return true;
+        } else {
+            $sqlEndGame = "UPDATE game SET estado = 'finalizada', fecha_fin = NOW() WHERE id = ?";
+            $stmt = $this->database->prepare($sqlEndGame);
+            $stmt->bind_param('i', $idMatch);
+            $stmt->execute();
+            $stmt->close();
+
+            $sqlGetScore = "SELECT puntaje FROM user_game WHERE user_id = ? AND partida_id = ?";
+            $stmt = $this->database->prepare($sqlGetScore);
+            $stmt->bind_param('ii', $idUser, $idMatch);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $score = $result->fetch_assoc();
+            $stmt->close();
+
+            return $score['puntaje'];
+        }
     }
+
 
 
 }

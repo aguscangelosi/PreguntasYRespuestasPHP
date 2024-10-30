@@ -86,4 +86,28 @@ class GameController
         $this->presenter->show('lobby');
     }
 
+    public function sendQuestion()
+    {
+        $user = $this->authHelper->getUser();
+        $idUser = $user["id"];
+        $idMatch = $_POST['idMatch'];
+        $idQuestion = $_POST['idQuestion'];
+        $idResponse = $_POST['idResponse'];
+
+        // Validar la respuesta y obtener el resultado
+        $result = $this->model->validateResponse($idUser, $idMatch, $idQuestion, $idResponse);
+
+        // Preparar la respuesta JSON
+        if ($result === true) {
+            // Respuesta correcta
+            echo json_encode(['correct' => true]);
+        } else {
+            // Respuesta incorrecta y partida terminada, incluye puntaje final
+            echo json_encode(['correct' => false, 'score' => $result]);
+        }
+
+        exit; // Finalizar para evitar renderizado adicional
+    }
+
+
 }
