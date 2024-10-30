@@ -190,5 +190,19 @@ class GameModel
         return $result['es_correcta'];
     }
 
+    public function getRanking(){
+        $sql = "SELECT DISTINCT u.id, u.username, ug.puntaje
+               FROM user_game ug JOIN user u ON ug.user_id = u.id
+               GROUP BY u.id 
+               ORDER BY ug.puntaje DESC";
+
+    $stmt = $this->database->prepare($sql);
+    $stmt->execute();
+        $result = $stmt->get_result();
+        $resultrows = $result->fetch_all(MYSQLI_ASSOC);
+
+        return $resultrows;
+    }
+
 
 }
