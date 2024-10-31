@@ -9,7 +9,7 @@
         {{#respuestas}}
             <li>
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button class="btn btn-outline-dark p-3 m-1 respuesta-btn" onclick="sendQuestion({{answer_id}})">
+                    <button id="answer-{{answer_id}}" class="btn btn-outline-dark p-3 m-1 respuesta-btn" onclick="sendQuestion({{answer_id}})">
                         {{texto_respuesta}}
                     </button>
                 </div>
@@ -18,23 +18,21 @@
     </ul>
 </div>
 
-<div id="resultado" style="margin-top: 10px;"></div>
+<div id="resultado" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px"></div>
 <input type="hidden" value="{{idMatch}}" id="idMatch">
 <input type="hidden" value="{{question_id}}" id="question_id">
 
 <script>
-    async function sendQuestion(answer_id) {
+    async function sendQuestion(selectedAnswerId) {
         let idMatch = document.getElementById('idMatch').value;
         let idQuestion = document.getElementById('question_id').value;
 
-        // Preparar los datos a enviar en la solicitud POST
         let data = new FormData();
         data.append('idMatch', idMatch);
         data.append('idQuestion', idQuestion);
-        data.append('idResponse', answer_id);
+        data.append('idResponse', selectedAnswerId);
 
         try {
-            // Realizar la solicitud AJAX al controlador `sendQuestion`
             let response = await fetch('/PreguntasYRespuestasPHP/game/sendQuestion', {
                 method: 'POST',
                 body: data
@@ -44,18 +42,37 @@
                 throw new Error('Error en la solicitud');
             }
 
-            let result = await response.json(); // Asumimos que el controlador retorna JSON
+            let result = await response.json();
+            let correctAnswerId = result.answer_id;
+            let correct = result.correct;
 
-            // Mostrar el resultado de la respuesta
-            if (result.correct) {
-                document.getElementById('resultado').innerHTML = '<p class="text-success">¡Respuesta correcta!</p>';
-            } else {
-                document.getElementById('resultado').innerHTML = `
-                    <p class="text-danger">Respuesta incorrecta. Puntaje final: ${result.score}</p>`;
-            }
+
+            let buttons = document.querySelectorAll('.respuesta-btn');
+            buttons.forEach(button => {
+                button.disabled = true;
+
+                let answerId = button.id.split('-')[1];
+                if (parseInt(answerId) === correctAnswerId) {
+                    button.classList.remove('btn-outline-dark');
+                    button.classList.add('btn-success');
+                } else if (parseInt(answerId) === selectedAnswerId) {
+                    button.classList.remove('btn-outline-dark');
+                    button.classList.add('btn-danger');
+                }
+            });
+
+            let actionButton = document.createElement('a');
+            actionButton.classList.add('btn', 'mt-3');
+            actionButton.href = correct ? `/PreguntasYRespuestasPHP/game/playAgain?idMatch=${idMatch}` : `/PreguntasYRespuestasPHP/game/finish?idMatch=${idMatch}`;
+            actionButton.innerText = correct ? 'Continuar' : 'Finalizar partida';
+            actionButton.classList.add(correct ? 'btn-primary' : 'btn-danger');
+
+            document.getElementById('resultado').appendChild(actionButton);
+
         } catch (error) {
             console.error('Error:', error);
             document.getElementById('resultado').innerHTML = '<p class="text-danger">Error al enviar la respuesta.</p>';
         }
     }
 </script>
+

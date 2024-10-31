@@ -100,6 +100,14 @@ CREATE TABLE game_question (
                                FOREIGN KEY (pregunta_id) REFERENCES question(id)
 );
 
+CREATE TABLE user_question (
+                               user_id INT NOT NULL,
+                               question_id INT NOT NULL,
+                               PRIMARY KEY (user_id, question_id),
+                               FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+                               FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
+);
+
 -- Inserción de categorías de ejemplo
 INSERT INTO category (nombre_categoria) VALUES
                                             ('Deportes'), ('Historia'), ('Ciencia'), ('Anime');

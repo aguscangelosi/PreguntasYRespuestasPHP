@@ -48,8 +48,8 @@ class GameController
             return;
         }
 //        $this->model->updateMatch($idUser, $idMatch); //TODO falta cambiar el estado
-        $match = $this->model->findUserMatch($userId, $idMatch);
-        $this->presenter->show('finishGame', $match);
+        $puntaje = $this->model->findUserMatch($userId, $idMatch);
+        $this->presenter->show('finishGame', ["puntaje" => $puntaje]);
 
     }
 
@@ -70,7 +70,6 @@ class GameController
         $questions = $this->model->game($category, $userId, $idMatch);
 
         $questions["idUser"] = $userId;
-
         $this->presenter->show('question', $questions);
     }
 
@@ -94,19 +93,22 @@ class GameController
         $idQuestion = $_POST['idQuestion'];
         $idResponse = $_POST['idResponse'];
 
-        // Validar la respuesta y obtener el resultado
         $result = $this->model->validateResponse($idUser, $idMatch, $idQuestion, $idResponse);
 
-        // Preparar la respuesta JSON
-        if ($result === true) {
-            // Respuesta correcta
-            echo json_encode(['correct' => true]);
+        if ($result['isCorrect']) {
+            echo json_encode([
+                'correct' => true,
+                'answer_id' => $result['correctAnswerId']
+            ]);
         } else {
-            // Respuesta incorrecta y partida terminada, incluye puntaje final
-            echo json_encode(['correct' => false, 'score' => $result]);
+            echo json_encode([
+                'correct' => false,
+                'answer_id' => $result['correctAnswerId'],
+                'score' => $result['score']
+            ]);
         }
 
-        exit; // Finalizar para evitar renderizado adicional
+        exit;
     }
 
 
