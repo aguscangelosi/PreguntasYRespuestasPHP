@@ -88,10 +88,9 @@ class GameController
 
     public function ranking()
     {
-        $result = $this->model->getRanking();
-        if($result){
-            var_dump($result);
-            $this->presenter->show('ranking', $result);
+        $rankingList = $this->model->getRanking();
+        if($rankingList){
+            $this->presenter->show('ranking', ['rankingList' => $rankingList]);
         }else{
             $this->presenter->show('notFound');
         }
