@@ -263,34 +263,26 @@ class GameModel
 
     public function validateResponse($idUser, $idMatch, $idQuestion, $idResponse)
     {
-        $sqlCorrectAnswer = "SELECT respuesta_id 
-                         FROM question_answer 
-                         WHERE pregunta_id = ? AND es_correcta = ?";
+        // Obtener respuesta correcta
+        $sqlCorrectAnswer = "SELECT respuesta_id FROM question_answer WHERE pregunta_id = ? AND es_correcta = ?";
         $stmt = $this->database->prepare($sqlCorrectAnswer);
         $true = 1;
         $stmt->bind_param('is', $idQuestion, $true);
         $stmt->execute();
-        $result = $stmt->get_result();
-        $correctAnswer = $result->fetch_assoc();
+        $correctAnswer = $stmt->get_result()->fetch_assoc();
+        $correctAnswerId = $correctAnswer["respuesta_id"];
         $stmt->close();
 
-        $correctAnswerId = $correctAnswer["respuesta_id"];
-
         if ($idResponse == $correctAnswerId) {
-            $sqlUpdateScore = "UPDATE user_game 
-                           SET puntaje = puntaje + 10 
-                           WHERE user_id = ? AND partida_id = ?";
+            $sqlUpdateScore = "UPDATE user_game SET puntaje = puntaje + 10, estado_pregunta = 'respondida' WHERE user_id = ? AND partida_id = ?";
             $stmt = $this->database->prepare($sqlUpdateScore);
             $stmt->bind_param('ii', $idUser, $idMatch);
             $stmt->execute();
-            $stmt->close();
 
-            $sqlGameQuestion = "INSERT INTO game_question (partida_id, pregunta_id, es_correcta) 
-                            VALUES (?, ?, TRUE)";
+            $sqlGameQuestion = "INSERT INTO game_question (partida_id, pregunta_id, es_correcta) VALUES (?, ?, TRUE)";
             $stmt = $this->database->prepare($sqlGameQuestion);
             $stmt->bind_param('ii', $idMatch, $idQuestion);
             $stmt->execute();
-            $stmt->close();
 
             $sqlUserQuestion = "INSERT IGNORE INTO user_question (user_id, question_id) VALUES (?, ?)";
             $stmt = $this->database->prepare($sqlUserQuestion);
@@ -307,14 +299,17 @@ class GameModel
             $stmt = $this->database->prepare($sqlEndGame);
             $stmt->bind_param('i', $idMatch);
             $stmt->execute();
-            $stmt->close();
+
+            $sqlUpdateScore = "UPDATE user_game SET estado_pregunta = 'respondida' WHERE user_id = ? AND partida_id = ?";
+            $stmt = $this->database->prepare($sqlUpdateScore);
+            $stmt->bind_param('ii', $idUser, $idMatch);
+            $stmt->execute();
 
             $sqlGetScore = "SELECT puntaje FROM user_game WHERE user_id = ? AND partida_id = ?";
             $stmt = $this->database->prepare($sqlGetScore);
             $stmt->bind_param('ii', $idUser, $idMatch);
             $stmt->execute();
-            $result = $stmt->get_result();
-            $score = $result->fetch_assoc();
+            $score = $stmt->get_result()->fetch_assoc();
             $stmt->close();
 
             return [
@@ -324,6 +319,7 @@ class GameModel
             ];
         }
     }
+
 
 
 
