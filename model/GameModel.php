@@ -204,5 +204,64 @@ class GameModel
         return $resultrows;
     }
 
+    public function getPosition($idUser)
+    {
+        $sql = "SELECT *
+FROM (
+    SELECT
+        u.id,
+        g.puntaje,
+        RANK() OVER (ORDER BY g.puntaje DESC) AS posicion
+    FROM
+        user u
+    JOIN
+        user_game g ON u.id = g.user_id
+) AS ranking
+WHERE
+    id = ?;";
+
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $resultFinal = $result->fetch_assoc();
+
+        return $resultFinal;
+    }
+
+    public function getDataProfile($idUser)
+        //foto perfil - agregar bdd
+        //Nombre de usuario
+        //Mejor partidas (historico)
+        //trampitas - agregar bdd
+    {
+        $sql = "SELECT DISTINCT u.id, u.username, MAX(ug.puntaje)
+               FROM user_game ug JOIN user u ON ug.user_id = u.id
+               WHERE u.id = ?";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
+    }
+
+    public function getProfile($idUser){
+        //foto perfil
+        //Nombre de usuario
+        //Mejor partidad (historico)
+        //posicion Ranking
+        //qr -- Se crea a parte
+        //porcentaje de partidas (ganadas/perdidas) -- Ver si tiene sentido
+        //trampitas -- agregar bdd
+
+        $position = $this->getPosition($idUser);
+        $dataProfile = $this->getDataProfile($idUser);
+
+        return ['position'=>$position, 'dataProfile'=>$dataProfile];
+    }
+
 
 }

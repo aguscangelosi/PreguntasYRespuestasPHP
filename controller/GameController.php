@@ -83,7 +83,7 @@ class GameController
 
     public function lobby()
     {
-        $this->presenter->show('lobby');
+        $this->presenter->show('lobby', ['username' => "Gordo"]); // sacar hardcode
     }
 
     public function ranking()
@@ -96,4 +96,18 @@ class GameController
         }
     }
 
+    public function profile()
+    {
+        $user = $this->authHelper->getUser();
+        $userId = $user["id"];
+
+        $data = $this->model->getProfile($userId);
+
+        if($data){
+            var_dump($data);
+            $this->presenter->show('profile', $data);
+        }else{
+            $this->presenter->show('notFound');
+        }
+    }
 }
