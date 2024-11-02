@@ -9,7 +9,8 @@ class GameModel
         $this->database = $database;
     }
 
-    public function dropCategory(){
+    public function dropCategory()
+    {
         $sql = "SELECT * FROM category ORDER BY RAND() LIMIT 1";
 
         $category = $this->database->query($sql);
@@ -17,12 +18,9 @@ class GameModel
         return $category;
     }
 
-    public function game($category, $idUser, $idMatch){
-        if ($idMatch == null) {
-            $match = $this->createMatch($idUser);
-        } else {
-            $match = $this->findMatch($idUser, $idMatch);
-        }
+    public function game($category, $idUser, $idMatch)
+    {
+        $match = $this->findMatch($idUser, $idMatch);
         $idMatch = $match['id'];
 
         $questionId = $this->addQuestionToMatch($idMatch, $category);
@@ -132,6 +130,7 @@ class GameModel
 
         return $questionId;
     }
+
     public function getQuestionDetails($questionId)
     {
         $sql = "
@@ -187,7 +186,7 @@ class GameModel
                          WHERE pregunta_id = ? AND es_correcta = ?";
         $stmt = $this->database->prepare($sqlCorrectAnswer);
         $true = 1;
-        $stmt->bind_param('is', $idQuestion,$true);
+        $stmt->bind_param('is', $idQuestion, $true);
         $stmt->execute();
         $result = $stmt->get_result();
         $correctAnswer = $result->fetch_assoc();
@@ -244,6 +243,21 @@ class GameModel
         }
     }
 
+    /**
+     * @param $idMatch
+     * @param $idUser
+     * @return mixed
+     * @throws Exception
+     */
+    public function getMatch($idMatch, $idUser)
+    {
+        if ($idMatch == null) {
+            $match = $this->createMatch($idUser);
+        } else {
+            $match = $this->findMatch($idUser, $idMatch);
+        }
+        return $match;
+    }
 
 
 }

@@ -8,7 +8,7 @@ class GameController
 
     private $authHelper;
 
-    public function __construct($model, $presenter,$authHelper)
+    public function __construct($model, $presenter, $authHelper)
     {
         $this->model = $model;
         $this->presenter = $presenter;
@@ -17,14 +17,19 @@ class GameController
 
     public function play()
     {
-        $this->presenter->show('roulette');
+        $user = $this->authHelper->getUser();
+        $userId = $user["id"];
+        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+        $data = $this->model->getMatch($idMatch, $userId);
+
+        $this->presenter->show('roulette', ['idMatch' => $data['id']]);
     }
 
     public function playAgain()
     {
         $user = $this->authHelper->getUser();
         $userId = $user["id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] :  null;
+        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
 
         if (!$userId || !$idMatch) {
             $this->presenter->show('notFound');
@@ -41,7 +46,7 @@ class GameController
     {
         $user = $this->authHelper->getUser();
         $userId = $user["id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] :  null;
+        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
 
         if (!$userId || !$idMatch) {
             $this->presenter->show('notFound');
@@ -70,6 +75,7 @@ class GameController
         $questions = $this->model->game($category, $userId, $idMatch);
 
         $questions["idUser"] = $userId;
+        $questions["idMatch"] = $idMatch;
         $this->presenter->show('question', $questions);
     }
 
