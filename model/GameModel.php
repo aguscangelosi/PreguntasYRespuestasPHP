@@ -18,17 +18,14 @@ class GameModel
         return $category;
     }
 
-    public function game($category, $idUser, $idMatch)
+    public function getMatch($idMatch, $idUser)
     {
-        $match = $this->findMatch($idUser, $idMatch);
-        $idMatch = $match['id'];
-
-        $questionId = $this->addQuestionToMatch($idMatch, $category);
-
-        $questionData = $this->getQuestionDetails($questionId);
-        $questionData['idMatch'] = $idMatch;
-
-        return $questionData;
+        if ($idMatch == null) {
+            $match = $this->createMatch($idUser);
+        } else {
+            $match = $this->findMatch($idUser, $idMatch);
+        }
+        return $match;
     }
 
     public function createMatch($idUser)
@@ -63,6 +60,67 @@ class GameModel
         return $match;
     }
 
+    public function game($category, $idUser, $idMatch)
+    {
+        $match = $this->findMatch($idUser, $idMatch);
+        $idMatch = $match['id'];
+
+        $pendingQuestion = $this->getPendingQuestion($idMatch, $idUser);
+
+        if ($pendingQuestion) {
+            $pendingQuestion['idMatch'] = $idMatch;
+            return $pendingQuestion;
+        }
+
+        $questionId = $this->addQuestionToMatch($idMatch, $category);
+
+        $this->updateUserGameQuestion($idMatch, $idUser, $questionId, "pendiente");
+
+        $questionData = $this->getQuestionDetails($questionId);
+        $questionData['idMatch'] = $idMatch;
+
+        return $questionData;
+    }
+
+    public function getPendingQuestion($matchId, $userId)
+    {
+        $sql = "
+    SELECT q.id AS question_id, q.enunciado, q.dificultad, a.id AS answer_id, a.texto_respuesta, qa.es_correcta
+    FROM user_game ug
+    JOIN game_question gq ON ug.ultima_pregunta_id = gq.pregunta_id
+    JOIN question q ON gq.pregunta_id = q.id
+    LEFT JOIN question_answer qa ON q.id = qa.pregunta_id
+    LEFT JOIN answer a ON qa.respuesta_id = a.id
+    WHERE ug.partida_id = ? AND ug.user_id = ? AND ug.estado_pregunta = 'pendiente'
+    ";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('ii', $matchId, $userId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $question = null;
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                if (!$question) {
+                    $question = [
+                        'question_id' => $row['question_id'],
+                        'enunciado' => $row['enunciado'],
+                        'dificultad' => $row['dificultad'],
+                        'respuestas' => []
+                    ];
+                }
+                $question['respuestas'][] = [
+                    'answer_id' => $row['answer_id'],
+                    'texto_respuesta' => $row['texto_respuesta'],
+                    'es_correcta' => $row['es_correcta']
+                ];
+            }
+        }
+
+        return $question;
+    }
+
     public function findMatch($idUser, $idMatch)
     {
         $sql = "SELECT * FROM game g
@@ -80,21 +138,29 @@ class GameModel
         return $match;
     }
 
-    public function findUserMatch($idUser, $idMatch)
+    public function updateUserGameQuestion($matchId, $userId, $questionId, $statusQuestion)
     {
-        $sql = "SELECT ug.puntaje FROM user_game ug
-                 WHERE ug.user_id = ? AND ug.partida_id = ?";
+        $sql = "
+        UPDATE user_game 
+        SET ultima_pregunta_id = ?, 
+            estado_pregunta = ?, 
+            fecha_respuesta = NOW()
+        WHERE partida_id = ? 
+          AND user_id = ?
+    ";
+
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('ii', $idUser, $idMatch);
+        $stmt->bind_param('isii', $questionId, $statusQuestion, $matchId, $userId);
+
         $stmt->execute();
 
-        $result = $stmt->get_result();
-
-
-        $match = $result->fetch_assoc();
-
-        return $match["puntaje"];
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
 
     public function addQuestionToMatch($matchId, $category)
     {
@@ -170,6 +236,22 @@ class GameModel
         return $question;
     }
 
+    public function findUserMatch($idUser, $idMatch)
+    {
+        $sql = "SELECT ug.puntaje FROM user_game ug
+                 WHERE ug.user_id = ? AND ug.partida_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('ii', $idUser, $idMatch);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+
+        $match = $result->fetch_assoc();
+
+        return $match["puntaje"];
+    }
+
     public function updateMatch($idUser, $idMatch)
     {
         $query = "UPDATE user_game SET puntaje = puntaje + 1 WHERE user_id = ? AND partida_id = ?";
@@ -243,21 +325,8 @@ class GameModel
         }
     }
 
-    /**
-     * @param $idMatch
-     * @param $idUser
-     * @return mixed
-     * @throws Exception
-     */
-    public function getMatch($idMatch, $idUser)
-    {
-        if ($idMatch == null) {
-            $match = $this->createMatch($idUser);
-        } else {
-            $match = $this->findMatch($idUser, $idMatch);
-        }
-        return $match;
-    }
+
+
 
 
 }

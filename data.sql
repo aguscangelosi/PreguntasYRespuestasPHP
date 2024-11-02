@@ -87,9 +87,14 @@ CREATE TABLE user_game (
                            user_id INT,
                            partida_id INT,
                            puntaje INT DEFAULT 0,
+                           ultima_pregunta_id INT NULL,
+                           estado_pregunta ENUM('respondida', 'pendiente') DEFAULT 'pendiente',
+                           fecha_respuesta DATETIME NULL,
                            FOREIGN KEY (user_id) REFERENCES user(id),
-                           FOREIGN KEY (partida_id) REFERENCES game(id)
+                           FOREIGN KEY (partida_id) REFERENCES game(id),
+                           FOREIGN KEY (ultima_pregunta_id) REFERENCES question(id)
 );
+
 
 CREATE TABLE game_question (
                                id INT AUTO_INCREMENT PRIMARY KEY,
