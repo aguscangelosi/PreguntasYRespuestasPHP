@@ -9,7 +9,8 @@ class GameModel
         $this->database = $database;
     }
 
-    public function dropCategory(){
+    public function dropCategory()
+    {
         $sql = "SELECT * FROM category ORDER BY RAND() LIMIT 1";
 
         $category = $this->database->query($sql);
@@ -17,20 +18,14 @@ class GameModel
         return $category;
     }
 
-    public function game($category, $idUser, $idMatch){
+    public function getMatch($idMatch, $idUser)
+    {
         if ($idMatch == null) {
             $match = $this->createMatch($idUser);
         } else {
             $match = $this->findMatch($idUser, $idMatch);
         }
-        $idMatch = $match['id'];
-
-        $questionId = $this->addQuestionToMatch($idMatch, $category);
-
-        $questionData = $this->getQuestionDetails($questionId);
-        $questionData['idMatch'] = $idMatch;
-
-        return $questionData;
+        return $match;
     }
 
     public function createMatch($idUser)
@@ -65,6 +60,73 @@ class GameModel
         return $match;
     }
 
+    public function game($category, $idUser, $idMatch)
+    {
+        $match = $this->findMatch($idUser, $idMatch);
+        $idMatch = $match['id'];
+
+        $pendingQuestion = $this->getPendingQuestion($idMatch, $idUser);
+
+        if ($pendingQuestion) {
+            $pendingQuestion['idMatch'] = $idMatch;
+            return $pendingQuestion;
+        }
+
+        $questionId = $this->addQuestionToMatch($idMatch, $category);
+
+        $this->updateUserGameQuestion($idMatch, $idUser, $questionId, "pendiente");
+
+        $questionData = $this->getQuestionDetails($questionId);
+        $questionData['idMatch'] = $idMatch;
+
+        return $questionData;
+    }
+
+    public function getPendingQuestion($matchId, $userId)
+    {
+        $sql = "
+    SELECT DISTINCT q.id AS question_id, q.enunciado, q.dificultad, a.id AS answer_id, a.texto_respuesta, qa.es_correcta
+    FROM user_game ug
+    JOIN game_question gq ON ug.ultima_pregunta_id = gq.pregunta_id
+    JOIN question q ON gq.pregunta_id = q.id
+    LEFT JOIN question_answer qa ON q.id = qa.pregunta_id
+    LEFT JOIN answer a ON qa.respuesta_id = a.id
+    WHERE ug.partida_id = ? AND ug.user_id = ? AND ug.estado_pregunta = 'pendiente'
+    ";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('ii', $matchId, $userId);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $question = null;
+        if ($result) {
+            $addedAnswers = []; // Usaremos esto para rastrear respuestas ya añadidas
+            while ($row = $result->fetch_assoc()) {
+                if (!$question) {
+                    $question = [
+                        'question_id' => $row['question_id'],
+                        'enunciado' => $row['enunciado'],
+                        'dificultad' => $row['dificultad'],
+                        'respuestas' => []
+                    ];
+                }
+                // Verificamos si la respuesta ya fue añadida usando answer_id
+                if (!in_array($row['answer_id'], $addedAnswers)) {
+                    $question['respuestas'][] = [
+                        'answer_id' => $row['answer_id'],
+                        'texto_respuesta' => $row['texto_respuesta'],
+                        'es_correcta' => $row['es_correcta']
+                    ];
+                    $addedAnswers[] = $row['answer_id'];
+                }
+            }
+        }
+
+        return $question;
+    }
+
+
     public function findMatch($idUser, $idMatch)
     {
         $sql = "SELECT * FROM game g
@@ -82,21 +144,29 @@ class GameModel
         return $match;
     }
 
-    public function findUserMatch($idUser, $idMatch)
+    public function updateUserGameQuestion($matchId, $userId, $questionId, $statusQuestion)
     {
-        $sql = "SELECT * FROM user_game ug
-                 WHERE ug.user_id = ? AND ug.partida_id = ?";
+        $sql = "
+        UPDATE user_game 
+        SET ultima_pregunta_id = ?, 
+            estado_pregunta = ?, 
+            fecha_respuesta = NOW()
+        WHERE partida_id = ? 
+          AND user_id = ?
+    ";
+
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('ii', $idUser, $idMatch);
+        $stmt->bind_param('isii', $questionId, $statusQuestion, $matchId, $userId);
+
         $stmt->execute();
 
-        $result = $stmt->get_result();
-
-
-        $match = $result->fetch_assoc();
-
-        return $match;
+        if ($stmt->affected_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
 
     public function addQuestionToMatch($matchId, $category)
     {
@@ -132,6 +202,7 @@ class GameModel
 
         return $questionId;
     }
+
     public function getQuestionDetails($questionId)
     {
         $sql = "
@@ -154,14 +225,14 @@ class GameModel
             while ($row = $result->fetch_assoc()) {
                 if (!$question) {
                     $question = [
-                        'id' => $row['question_id'],
+                        'question_id' => $row['question_id'],
                         'enunciado' => $row['enunciado'],
                         'dificultad' => $row['dificultad'],
                         'respuestas' => []
                     ];
                 }
                 $question['respuestas'][] = [
-                    'id' => $row['answer_id'],
+                    'answer_id' => $row['answer_id'],
                     'texto_respuesta' => $row['texto_respuesta'],
                     'es_correcta' => $row['es_correcta']
                 ];
@@ -169,6 +240,22 @@ class GameModel
         }
 
         return $question;
+    }
+
+    public function findUserMatch($idUser, $idMatch)
+    {
+        $sql = "SELECT ug.puntaje FROM user_game ug
+                 WHERE ug.user_id = ? AND ug.partida_id = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('ii', $idUser, $idMatch);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+
+        $match = $result->fetch_assoc();
+
+        return $match["puntaje"];
     }
 
     public function updateMatch($idUser, $idMatch)
@@ -180,14 +267,63 @@ class GameModel
         $stmt->execute();
     }
 
-    public function answerCorrectOrNotCorrect()
+    public function validateResponse($idUser, $idMatch, $idQuestion, $idResponse)
     {
-        $sql = "SELECT es_correcta FROM question_answer";
-        $stmt = $this->database->prepare($sql);
+        $sqlCorrectAnswer = "SELECT respuesta_id FROM question_answer WHERE pregunta_id = ? AND es_correcta = ?";
+        $stmt = $this->database->prepare($sqlCorrectAnswer);
+        $true = 1;
+        $stmt->bind_param('is', $idQuestion, $true);
         $stmt->execute();
-        $result = mysqli_fetch_assoc($stmt->get_result());
+        $correctAnswer = $stmt->get_result()->fetch_assoc();
+        $correctAnswerId = $correctAnswer["respuesta_id"];
+        $stmt->close();
 
-        return $result['es_correcta'];
+        if ($idResponse == $correctAnswerId) {
+            $sqlUpdateScore = "UPDATE user_game SET puntaje = puntaje + 10, estado_pregunta = 'respondida' WHERE user_id = ? AND partida_id = ?";
+            $stmt = $this->database->prepare($sqlUpdateScore);
+            $stmt->bind_param('ii', $idUser, $idMatch);
+            $stmt->execute();
+
+            $sqlGameQuestion = "UPDATE game_question SET es_correcta = ? WHERE partida_id = ? AND pregunta_id = ?";
+            $stmt = $this->database->prepare($sqlGameQuestion);
+            $true = 1;
+            $stmt->bind_param('sii', $true, $idMatch, $idQuestion);
+            $stmt->execute();
+
+            $sqlUserQuestion = "INSERT IGNORE INTO user_question (user_id, question_id) VALUES (?, ?)";
+            $stmt = $this->database->prepare($sqlUserQuestion);
+            $stmt->bind_param('ii', $idUser, $idQuestion);
+            $stmt->execute();
+            $stmt->close();
+
+            return [
+                'correctAnswerId' => $correctAnswerId,
+                'isCorrect' => true
+            ];
+        } else {
+            $sqlEndGame = "UPDATE game SET estado = 'finalizada', fecha_fin = NOW() WHERE id = ?";
+            $stmt = $this->database->prepare($sqlEndGame);
+            $stmt->bind_param('i', $idMatch);
+            $stmt->execute();
+
+            $sqlUpdateScore = "UPDATE user_game SET estado_pregunta = 'respondida' WHERE user_id = ? AND partida_id = ?";
+            $stmt = $this->database->prepare($sqlUpdateScore);
+            $stmt->bind_param('ii', $idUser, $idMatch);
+            $stmt->execute();
+
+            $sqlGetScore = "SELECT puntaje FROM user_game WHERE user_id = ? AND partida_id = ?";
+            $stmt = $this->database->prepare($sqlGetScore);
+            $stmt->bind_param('ii', $idUser, $idMatch);
+            $stmt->execute();
+            $score = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            return [
+                'correctAnswerId' => $correctAnswerId,
+                'isCorrect' => false,
+                'score' => $score['puntaje']
+            ];
+        }
     }
 
     public function getRanking(){
@@ -203,6 +339,69 @@ class GameModel
 
         return $resultrows;
     }
+
+    public function getPosition($idUser)
+    {
+        $sql = "SELECT *
+FROM (
+    SELECT
+        u.id,
+        g.puntaje,
+        RANK() OVER (ORDER BY g.puntaje DESC) AS posicion
+    FROM
+        user u
+    JOIN
+        user_game g ON u.id = g.user_id
+) AS ranking
+WHERE
+    id = ?;";
+
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $resultFinal = $result->fetch_assoc();
+
+        return $resultFinal;
+    }
+
+    public function getDataProfile($idUser)
+        //foto perfil - agregar bdd
+        //Nombre de usuario
+        //Mejor partidas (historico)
+        //trampitas - agregar bdd
+    {
+        $sql = "SELECT DISTINCT u.id, u.username, MAX(ug.puntaje)
+               FROM user_game ug JOIN user u ON ug.user_id = u.id
+               WHERE u.id = ?";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $idUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
+    }
+
+    public function getProfile($idUser){
+        //foto perfil
+        //Nombre de usuario
+        //Mejor partidad (historico)
+        //posicion Ranking
+        //qr -- Se crea a parte
+        //porcentaje de partidas (ganadas/perdidas) -- Ver si tiene sentido
+        //trampitas -- agregar bdd
+
+        $position = $this->getPosition($idUser);
+        $dataProfile = $this->getDataProfile($idUser);
+
+        return ['position'=>$position, 'dataProfile'=>$dataProfile];
+    }
+
+
+
+
 
 
 }

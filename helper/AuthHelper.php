@@ -16,7 +16,7 @@ class AuthHelper {
         }
 
         $_SESSION['user_token'] = [
-            'id' => $user["id"],
+            'user_id' => $user["id"],
             'username' => $user["username"],
             'rol_id' => $user["rol_id"],
             'email' => $user["email"],

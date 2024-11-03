@@ -87,9 +87,14 @@ CREATE TABLE user_game (
                            user_id INT,
                            partida_id INT,
                            puntaje INT DEFAULT 0,
+                           ultima_pregunta_id INT NULL,
+                           estado_pregunta ENUM('respondida', 'pendiente') DEFAULT 'pendiente',
+                           fecha_respuesta DATETIME NULL,
                            FOREIGN KEY (user_id) REFERENCES user(id),
-                           FOREIGN KEY (partida_id) REFERENCES game(id)
+                           FOREIGN KEY (partida_id) REFERENCES game(id),
+                           FOREIGN KEY (ultima_pregunta_id) REFERENCES question(id)
 );
+
 
 CREATE TABLE game_question (
                                id INT AUTO_INCREMENT PRIMARY KEY,
@@ -98,6 +103,14 @@ CREATE TABLE game_question (
                                es_correcta BOOLEAN, -- Indica si la pregunta fue respondida correctamente en esa partida
                                FOREIGN KEY (partida_id) REFERENCES game(id),
                                FOREIGN KEY (pregunta_id) REFERENCES question(id)
+);
+
+CREATE TABLE user_question (
+                               user_id INT NOT NULL,
+                               question_id INT NOT NULL,
+                               PRIMARY KEY (user_id, question_id),
+                               FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+                               FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
 
 -- Inserción de categorías de ejemplo

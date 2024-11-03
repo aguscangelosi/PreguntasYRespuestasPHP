@@ -9,72 +9,70 @@
         {{#respuestas}}
             <li>
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button class="btn btn-outline-dark p-3 m-1 respuesta-btn" data-correcta="{{es_correcta}}">
+                    <button id="answer-{{answer_id}}" class="btn btn-outline-dark p-3 m-1 respuesta-btn" onclick="sendQuestion({{answer_id}})">
                         {{texto_respuesta}}
                     </button>
                 </div>
-
             </li>
         {{/respuestas}}
     </ul>
-    <div id="botón">
-        <button name="es-correcta" id="boton_continuar" class="btn btn-dark p-3 m-1">Continuar</button>
-    </div>
 </div>
 
-
-
-<div id="resultado" style="margin-top: 10px;"></div>
+<div id="resultado" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px"></div>
 <input type="hidden" value="{{idMatch}}" id="idMatch">
-<input type="hidden" value="{{idUser}}" id="idUser">
+<input type="hidden" value="{{question_id}}" id="question_id">
 
 <script>
-    let esCorrecta;
-    document.addEventListener('DOMContentLoaded', function () {
-        const respuestaButtons = document.querySelectorAll('.respuesta-btn');
-        const resultadoDiv = document.getElementById('resultado');
+    async function sendQuestion(selectedAnswerId) {
+        let idMatch = document.getElementById('idMatch').value;
+        let idQuestion = document.getElementById('question_id').value;
 
-        respuestaButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-                esCorrecta = this.getAttribute('data-correcta') === "1"; // Ajusta "1" si es booleano en tu base de datos
-                event.stopImmediatePropagation();
+        let data = new FormData();
+        data.append('idMatch', idMatch);
+        data.append('idQuestion', idQuestion);
+        data.append('idResponse', selectedAnswerId);
 
-                respuestaButtons.forEach(btn => {
-                    const btnEsCorrecta = btn.getAttribute('data-correcta') === "1";
-                    if (btnEsCorrecta) {
-                        btn.classList.add('text-center', 'p-3', 'mb-1', 'bg-success', 'text-white', 'border-success');
-                        //btn.style.backgroundColor = 'green';
-                        //btn.style.color = 'white';
+        try {
+            let response = await fetch('/PreguntasYRespuestasPHP/game/sendQuestion', {
+                method: 'POST',
+                body: data
+            });
 
-                    } else {
-                        btn.classList.add('text-center', 'p-3', 'mb-1', 'bg-danger', 'text-white', 'border-danger');
-                        //btn.style.backgroundColor = 'red';
-                        //btn.style.color = 'white';
-                    }
-                });
-
-                if (esCorrecta) {
-                    resultadoDiv.innerHTML = '<p class="text-center p-3 mb-2 bg-success text-white fw-bold">¡Correcto!</p>';
-                    // deberia volver a tirar rule por ende rederigir y que tire de nuevo
-                    // Antes de la pregunta debemos crear el objeto intermedio entre user y partida, para poder ir almacenando
-                    // los puntajes y si pierda ya tener los puntos y mostrarlos
-                } else {
-                    // si pierde tiene que tocar finalizar -> pantalla de los puntos obtenidos, que se almacenaron en la tabla
-                    resultadoDiv.innerHTML = '<p class="text-center p-3 mb-2 bg-danger text-white fw-bold">Incorrecto. La respuesta correcta está resaltada en verde.</p>';
-                }
-            }, { once: true });//Ejecuta el botón y se elimina el evento
-        }, { once: true }); //Este tiene que estar si o si para que no se ejecute más de 2 veces (preguntar a martín)
-        const botonContinuar = document.getElementById('boton_continuar');
-        botonContinuar.addEventListener("click", function () {
-            let idMatch = document.getElementById('idMatch').value;
-            let idUser = document.getElementById('idUser').value;
-            if (esCorrecta){
-                window.location.href = `/PreguntasYRespuestasPHP/game/playAgain?id=${idUser}&idMatch=${idMatch}`;
-            } else {
-                window.location.href = `/PreguntasYRespuestasPHP/game/finish??id=${idUser}&idMatch=${idMatch}`;
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
             }
-        })
-    });
 
+            let result = await response.json();
+            let correctAnswerId = result.answer_id;
+            let correct = result.correct;
+
+
+            let buttons = document.querySelectorAll('.respuesta-btn');
+            buttons.forEach(button => {
+                button.disabled = true;
+
+                let answerId = button.id.split('-')[1];
+                if (parseInt(answerId) === correctAnswerId) {
+                    button.classList.remove('btn-outline-dark');
+                    button.classList.add('btn-success');
+                } else if (parseInt(answerId) === selectedAnswerId) {
+                    button.classList.remove('btn-outline-dark');
+                    button.classList.add('btn-danger');
+                }
+            });
+
+            let actionButton = document.createElement('a');
+            actionButton.classList.add('btn', 'mt-3');
+            actionButton.href = correct ? `/PreguntasYRespuestasPHP/game/playAgain?idMatch=${idMatch}` : `/PreguntasYRespuestasPHP/game/finish?idMatch=${idMatch}`;
+            actionButton.innerText = correct ? 'Continuar' : 'Finalizar partida';
+            actionButton.classList.add(correct ? 'btn-primary' : 'btn-danger');
+
+            document.getElementById('resultado').appendChild(actionButton);
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('resultado').innerHTML = '<p class="text-danger">Error al enviar la respuesta.</p>';
+        }
+    }
 </script>
 

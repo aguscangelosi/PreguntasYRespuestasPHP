@@ -11,22 +11,27 @@
                         <div class="row justify-content-center">
                             <div class="col-md-6 mx-auto p-2">
                                 <div class="form-floating m-2">
-                                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
+                                    <input type="text" class="form-control" id="username" name="username"
+                                           placeholder="Usuario" required>
                                     <label for="floatingInput">Nombre de usuario</label>
                                 </div>
 
                                 <div class="form-floating m-2">
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                           placeholder="Contraseña" required>
                                     <label for="floatingInput">Contraseña</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="d-grid gap-2 col-3 mx-auto">
-                        <button type="submit" class="btn btn-dark p-3">Iniciar sesión</button>
+                        <button type="submit" class="btn btn-dark p-3">Ingresar</button>
                     </div>
+                        <a href="/PreguntasYRespuestasPHP/auth/init" class="w3-text-blue"
+                             style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">Crear una cuenta</a>
                 </form>
-                <div class="w3-text-red" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
+                <div class="w3-text-red"
+                     style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
             </div>
         </div>
     </div>
