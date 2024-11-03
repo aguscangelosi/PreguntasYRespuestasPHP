@@ -118,4 +118,15 @@ class GameController
     }
 
 
+    public function ranking()
+    {
+        $result = $this->model->getRanking();
+        if($result){
+            var_dump($result);
+            $this->presenter->show('ranking', $result);
+        }else{
+            $this->presenter->show('notFound');
+        }
+    }
+
 }
