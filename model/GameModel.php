@@ -85,7 +85,7 @@ class GameModel
     public function getPendingQuestion($matchId, $userId)
     {
         $sql = "
-    SELECT q.id AS question_id, q.enunciado, q.dificultad, a.id AS answer_id, a.texto_respuesta, qa.es_correcta
+    SELECT DISTINCT q.id AS question_id, q.enunciado, q.dificultad, a.id AS answer_id, a.texto_respuesta, qa.es_correcta
     FROM user_game ug
     JOIN game_question gq ON ug.ultima_pregunta_id = gq.pregunta_id
     JOIN question q ON gq.pregunta_id = q.id
@@ -101,6 +101,7 @@ class GameModel
         $result = $stmt->get_result();
         $question = null;
         if ($result) {
+            $addedAnswers = []; // Usaremos esto para rastrear respuestas ya añadidas
             while ($row = $result->fetch_assoc()) {
                 if (!$question) {
                     $question = [
@@ -110,16 +111,21 @@ class GameModel
                         'respuestas' => []
                     ];
                 }
-                $question['respuestas'][] = [
-                    'answer_id' => $row['answer_id'],
-                    'texto_respuesta' => $row['texto_respuesta'],
-                    'es_correcta' => $row['es_correcta']
-                ];
+                // Verificamos si la respuesta ya fue añadida usando answer_id
+                if (!in_array($row['answer_id'], $addedAnswers)) {
+                    $question['respuestas'][] = [
+                        'answer_id' => $row['answer_id'],
+                        'texto_respuesta' => $row['texto_respuesta'],
+                        'es_correcta' => $row['es_correcta']
+                    ];
+                    $addedAnswers[] = $row['answer_id'];
+                }
             }
         }
 
         return $question;
     }
+
 
     public function findMatch($idUser, $idMatch)
     {
