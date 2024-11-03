@@ -18,7 +18,7 @@ class GameController
     public function play()
     {
         $user = $this->authHelper->getUser();
-        $userId = $user["id"];
+        $userId = $user["user_id"];
         $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
         $data = $this->model->getMatch($idMatch, $userId);
 
@@ -28,7 +28,7 @@ class GameController
     public function playAgain()
     {
         $user = $this->authHelper->getUser();
-        $userId = $user["id"];
+        $userId = $user["user_id"];
         $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
 
         if (!$userId || !$idMatch) {
@@ -45,7 +45,7 @@ class GameController
     public function finish()
     {
         $user = $this->authHelper->getUser();
-        $userId = $user["id"];
+        $userId = $user["user_id"];
         $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
 
         if (!$userId || !$idMatch) {
@@ -65,7 +65,7 @@ class GameController
         $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
 
         $user = $this->authHelper->getUser();
-        $userId = $user["id"];
+        $userId = $user["user_id"];
 
         if (!$category) {
             $this->presenter->show('notFound');
@@ -94,7 +94,7 @@ class GameController
     public function sendQuestion()
     {
         $user = $this->authHelper->getUser();
-        $idUser = $user["id"];
+        $idUser = $user["user_id"];
         $idMatch = $_POST['idMatch'];
         $idQuestion = $_POST['idQuestion'];
         $idResponse = $_POST['idResponse'];

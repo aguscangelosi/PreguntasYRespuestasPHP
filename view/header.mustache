@@ -22,14 +22,16 @@
                 <h1 class="p-3">Preguntale</h1>
             </div>
             <div class="col">
-                {{#user}}
-                    Hola {{user}}!
-                {{/user}}
-                {{^user}}
+                {{#token}}
+                    <form class="w3-right w3-margin-top" action="/PreguntasYRespuestasPHP/index.php/auth/logout" method="POST">
+                        <button type="submit" class="btn btn-dark p-3">Cerrar sesión</button>
+                    </form>
+                {{/token}}
+                {{^token}}
                     <form class="w3-right w3-margin-top" action="/PreguntasYRespuestasPHP/index.php/auth/initLogin" method="POST">
                         <button type="submit" class="btn btn-dark p-3">Iniciar sesión</button>
                     </form>
-                {{/user}}
+                {{/token}}
             </div>
         </div>
     </div>

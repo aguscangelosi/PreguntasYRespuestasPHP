@@ -52,7 +52,7 @@ class Configuration
 
     private function getPresenter()
     {
-        return new MustachePresenter("./view");
+        return new MustachePresenter("./view", $this->getAuthHelper());
     }
 
 

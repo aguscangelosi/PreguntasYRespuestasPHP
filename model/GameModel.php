@@ -263,7 +263,6 @@ class GameModel
 
     public function validateResponse($idUser, $idMatch, $idQuestion, $idResponse)
     {
-        // Obtener respuesta correcta
         $sqlCorrectAnswer = "SELECT respuesta_id FROM question_answer WHERE pregunta_id = ? AND es_correcta = ?";
         $stmt = $this->database->prepare($sqlCorrectAnswer);
         $true = 1;
@@ -279,9 +278,10 @@ class GameModel
             $stmt->bind_param('ii', $idUser, $idMatch);
             $stmt->execute();
 
-            $sqlGameQuestion = "INSERT INTO game_question (partida_id, pregunta_id, es_correcta) VALUES (?, ?, TRUE)";
+            $sqlGameQuestion = "UPDATE game_question SET es_correcta = ? WHERE partida_id = ? AND pregunta_id = ?";
             $stmt = $this->database->prepare($sqlGameQuestion);
-            $stmt->bind_param('ii', $idMatch, $idQuestion);
+            $true = 1;
+            $stmt->bind_param('sii', $true, $idMatch, $idQuestion);
             $stmt->execute();
 
             $sqlUserQuestion = "INSERT IGNORE INTO user_question (user_id, question_id) VALUES (?, ?)";

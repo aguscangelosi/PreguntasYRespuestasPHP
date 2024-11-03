@@ -82,6 +82,13 @@ class AuthController
         }
     }
 
+
+    public function logout()
+    {
+        $this->authHelper->logout();
+        $this->redirectHome();
+    }
+
     public function redirectHome()
     {
         header('location: /PreguntasYRespuestasPHP/initLogin');
