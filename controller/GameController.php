@@ -36,7 +36,6 @@ class GameController
             return;
         }
 
-        $this->model->updateMatch($userId, $idMatch);
         $data['id'] = $userId;
         $data['idMatch'] = $idMatch;
         $this->presenter->show('roulette', $data);
@@ -52,7 +51,6 @@ class GameController
             $this->presenter->show('notFound');
             return;
         }
-//        $this->model->updateMatch($idUser, $idMatch); //TODO falta cambiar el estado
         $puntaje = $this->model->findUserMatch($userId, $idMatch);
         $this->presenter->show('finishGame', ["puntaje" => $puntaje]);
 
@@ -88,7 +86,9 @@ class GameController
 
     public function lobby()
     {
-        $this->presenter->show('lobby', ['username' => "Gordo"]); // sacar hardcode
+        $user = $this->authHelper->getUser();
+        $username = $user["username"];
+        $this->presenter->show('lobby', ['username' => $username]);
     }
 
     public function sendQuestion()
@@ -101,7 +101,12 @@ class GameController
 
         $result = $this->model->validateResponse($idUser, $idMatch, $idQuestion, $idResponse);
 
-        if ($result['isCorrect']) {
+        if (isset($result['timeout']) && $result['timeout'] === true) {
+            echo json_encode([
+                'error' => 'timeout',
+                'message' => 'El tiempo para responder ha expirado.'
+            ]);
+        } elseif ($result['isCorrect']) {
             echo json_encode([
                 'correct' => true,
                 'answer_id' => $result['correctAnswerId']
@@ -115,31 +120,5 @@ class GameController
         }
 
         exit;
-    }
-
-
-    public function ranking()
-    {
-        $rankingList = $this->model->getRanking();
-        if($rankingList){
-            $this->presenter->show('ranking', ['rankingList' => $rankingList]);
-        }else{
-            $this->presenter->show('notFound');
-        }
-    }
-
-    public function profile()
-    {
-        $user = $this->authHelper->getUser();
-        $userId = $user["id"];
-
-        $data = $this->model->getProfile($userId);
-
-        if($data){
-            var_dump($data);
-            $this->presenter->show('profile', $data);
-        }else{
-            $this->presenter->show('notFound');
-        }
     }
 }

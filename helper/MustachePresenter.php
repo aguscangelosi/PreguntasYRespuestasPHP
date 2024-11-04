@@ -25,7 +25,6 @@ class MustachePresenter{
         $contentAsString .= file_get_contents( $contentFile );
         $contentAsString .= file_get_contents($this->partialsPathLoader . '/footer.mustache');
         $data['token'] = $this->authHelper->getUser();
-        var_dump($data);
         return $this->mustache->render($contentAsString, $data);
     }
 }

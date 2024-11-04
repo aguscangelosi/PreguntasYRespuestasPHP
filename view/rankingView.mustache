@@ -10,9 +10,11 @@
     {{#rankingList}}
         <tr>
             <td>{{id}}</td>
-            <td>{{username}}</td>
+            <td><a href="/PreguntasYRespuestasPHP/ranking/profile/id={{id}}">{{username}}</a></td>
             <td>{{puntaje}}</td>
         </tr>
     {{/rankingList}}
     </tbody>
 </table>
+
+<input type="hidden" value="{{id}}" id="id">

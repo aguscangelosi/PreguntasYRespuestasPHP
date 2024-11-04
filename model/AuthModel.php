@@ -85,7 +85,6 @@ class AuthModel
             return $lastId;
         } catch (Exception $e) {
             return $e->getMessage();
-
         } finally {
             if ($stmt !== null) {
                 $stmt->close();
