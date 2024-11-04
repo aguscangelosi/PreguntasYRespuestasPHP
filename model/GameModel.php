@@ -279,7 +279,7 @@ class GameModel
             ];
         }
     }
-}
+
     private function endGame($idMatch)
     {
         $sqlEndGame = "UPDATE game SET estado = 'finalizada', fecha_fin = NOW() WHERE id = ?";
@@ -344,3 +344,4 @@ class GameModel
         }
         return null;
     }
+}
