@@ -8,8 +8,13 @@ include_once("helper/AuthHelper.php");
 
 include_once("model/AuthModel.php");
 include_once("model/GameModel.php");
+include_once("model/RankingModel.php");
+
 include_once("controller/AuthController.php");
 include_once("controller/GameController.php");
+include_once("controller/RankingController.php");
+
+
 
 
 include_once('vendor/mustache/src/Mustache/Autoloader.php');
@@ -41,6 +46,11 @@ class Configuration
         return new GameController($this->getGameModel(), $this->getPresenter(),$this->getAuthHelper());
     }
 
+    public function getRankingController()
+    {
+        return new RankingController($this->getRankingModel(), $this->getPresenter(),$this->getAuthHelper());
+    }
+
 
     private function getAuthModel(){
         return new AuthModel($this->getDatabase());
@@ -48,6 +58,11 @@ class Configuration
 
     private function getGameModel(){
         return new GameModel($this->getDatabase());
+    }
+
+    public function getRankingModel()
+    {
+        return new RankingModel($this->getDatabase());
     }
 
     private function getPresenter()

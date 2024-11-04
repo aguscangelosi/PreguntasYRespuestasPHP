@@ -88,7 +88,9 @@ class GameController
 
     public function lobby()
     {
-        $this->presenter->show('lobby', ['username' => "Gordo"]); // sacar hardcode
+        $user = $this->authHelper->getUser();
+        $username = $user["username"];
+        $this->presenter->show('lobby', ['username' => $username]);
     }
 
     public function sendQuestion()
@@ -117,29 +119,4 @@ class GameController
         exit;
     }
 
-
-    public function ranking()
-    {
-        $rankingList = $this->model->getRanking();
-        if($rankingList){
-            $this->presenter->show('ranking', ['rankingList' => $rankingList]);
-        }else{
-            $this->presenter->show('notFound');
-        }
-    }
-
-    public function profile()
-    {
-        $user = $this->authHelper->getUser();
-        $userId = $user["id"];
-
-        $data = $this->model->getProfile($userId);
-
-        if($data){
-            var_dump($data);
-            $this->presenter->show('profile', $data);
-        }else{
-            $this->presenter->show('notFound');
-        }
-    }
 }
