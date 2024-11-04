@@ -30,7 +30,6 @@ class AuthController
 
     public function register()
     {
-
         $name = $_POST['name'];
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -38,16 +37,18 @@ class AuthController
         $birthday = $_POST['birthday'];
         $username = $_POST['username'];
 
-        if ($repeatPassword == $password) {
-            $result = $this->model->register($name, $email, $password, $birthday, $username);
-        } else {
-            $result = "Las contraseñas no coinciden";
+        if ($repeatPassword !== $password) {
+            $errorMessage = "Las contraseñas no coinciden";
+            $this->presenter->show('register', ['error_message' => $errorMessage]);
+            return;
         }
 
-        if ($result == "" || !$result) {
+        $result = $this->model->register($name, $email, $password, $birthday, $username);
+
+        if (is_string($result)) {
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
-            $this->mail->sendMail($email, "Validacion de correo", "<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
+            $this->mail->sendMail($email, "Validación de correo", "<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
             $this->redirectHome();
         }
     }
@@ -91,7 +92,7 @@ class AuthController
 
     public function redirectHome()
     {
-        header('location: /PreguntasYRespuestasPHP/initLogin');
+        header('location: /PreguntasYRespuestasPHP/index.php/initLogin');
         exit();
     }
 

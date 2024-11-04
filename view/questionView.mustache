@@ -18,7 +18,7 @@
     </ul>
 </div>
 
-<div id="resultado" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px"></div>
+<div id="resultado" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px;flex-direction: column"></div>
 <input type="hidden" value="{{idMatch}}" id="idMatch">
 <input type="hidden" value="{{question_id}}" id="question_id">
 
@@ -43,9 +43,28 @@
             }
 
             let result = await response.json();
+
+            if (result.error === 'timeout') {
+                let buttons = document.querySelectorAll('.respuesta-btn');
+                buttons.forEach(button => {
+                    button.disabled = true;
+                    button.classList.remove('btn-outline-dark');
+                    button.classList.add('btn-danger');
+                });
+
+                document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
+
+                let actionButton = document.createElement('a');
+                actionButton.classList.add('btn', 'btn-danger', 'mt-3');
+                actionButton.href = `/PreguntasYRespuestasPHP/game/finish?idMatch=${idMatch}`;
+                actionButton.innerText = 'Finalizar partida';
+                document.getElementById('resultado').appendChild(actionButton);
+
+                return;
+            }
+
             let correctAnswerId = result.answer_id;
             let correct = result.correct;
-
 
             let buttons = document.querySelectorAll('.respuesta-btn');
             buttons.forEach(button => {
