@@ -18,6 +18,17 @@ class Router
     public function route($controllerName, $methodName)
     {
         $publicRoutes = ['auth' => ['login', 'register']];
+        if(!($controllerName && $methodName)&& $this->authHelper->isAuthenticated()){
+            $controller = $this->getControllerFrom('game');
+            $this->executeMethodFromController($controller, "lobby");
+            return;
+        }
+
+        if(!($controllerName && $methodName)&& !$this->authHelper->isAuthenticated()){
+            $controller = $this->getControllerFrom('auth');
+            $this->executeMethodFromController($controller, "initLogin");
+            return;
+        }
 
         if (isset($publicRoutes[$controllerName]) && $this->authHelper->isAuthenticated()) {
             $controller = $this->getControllerFrom('game');

@@ -17,8 +17,9 @@ class RankingController
     public function rankingPosition()
     {
         $rankingList = $this->model->getRanking();
+        $data = isset($_GET['id']);
         if($rankingList){
-            $this->presenter->show('ranking', ['rankingList' => $rankingList]);
+            $this->presenter->show('ranking', ['rankingList' => $rankingList, 'id' => $data]);
         }else{
             $this->presenter->show('notFound');
         }
@@ -26,16 +27,10 @@ class RankingController
 
     public function profile()
     {
-        $user = $this->authHelper->getUser();
-        $userId = $user["user_id"];
-
+        $userId = $_GET['id'] ?? $this->authHelper->getUser()["user_id"];
         $data = $this->model->getProfile($userId);
 
-        if($data){
-            $this->presenter->show('profile', $data);
-        }else{
-            $this->presenter->show('notFound');
-        }
+        $this->presenter->show($data ? 'profile' : 'notFound', $data);
     }
 
 }
