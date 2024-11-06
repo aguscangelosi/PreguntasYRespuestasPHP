@@ -19,33 +19,33 @@ class GameController
     {
         $user = $this->authHelper->getUser();
         $userId = $user["user_id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+        $idMatch = isset($_POST['idMatch']) ? $_POST['idMatch'] : null;
         $data = $this->model->getMatch($idMatch, $userId);
 
         $this->presenter->show('roulette', ['idMatch' => $data['id']]);
     }
 
-    public function playAgain()
-    {
-        $user = $this->authHelper->getUser();
-        $userId = $user["user_id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
-
-        if (!$userId || !$idMatch) {
-            $this->presenter->show('notFound');
-            return;
-        }
-
-        $data['id'] = $userId;
-        $data['idMatch'] = $idMatch;
-        $this->presenter->show('roulette', $data);
-    }
+//    public function playAgain()
+//    {
+//        $user = $this->authHelper->getUser();
+//        $userId = $user["user_id"];
+//        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+//
+//        if (!$userId || !$idMatch) {
+//            $this->presenter->show('notFound');
+//            return;
+//        }
+//
+//        $data['id'] = $userId;
+//        $data['idMatch'] = $idMatch;
+//        $this->presenter->show('roulette', $data);
+//    }
 
     public function finish()
     {
         $user = $this->authHelper->getUser();
         $userId = $user["user_id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+        $idMatch = isset($_POST['idMatch']) ? $_POST['idMatch'] : null;
 
         if (!$userId || !$idMatch) {
             $this->presenter->show('notFound');
