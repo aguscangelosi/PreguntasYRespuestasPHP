@@ -45,4 +45,8 @@ class AuthHelper {
     public static function getUser() {
         return $_SESSION['user_token'] ?? null;
     }
+
+    public static function getRolId() {
+        return $_SESSION['user_token']["rol_id"] ?? null;
+    }
 }
