@@ -5,6 +5,8 @@
     <p class="fw-bold">Dificultad: {{dificultad}}</p>
 
     <p class="fs-6 fw-medium">Selecciona la respuesta</p>
+    <p id="timer" class="text-danger fs-5 fw-bold">Tiempo: 10 segundos</p> <!-- Temporizador visible -->
+
     <ul id="respuestas" class="list-group">
         {{#respuestas}}
             <li>
@@ -23,7 +25,32 @@
 <input type="hidden" value="{{question_id}}" id="question_id">
 
 <script>
-    async function sendQuestion(selectedAnswerId) {
+    let timeLeft = 10;
+    const timerDisplay = document.getElementById('timer');
+    const countdownInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.innerText = `Tiempo: ${timeLeft} segundos`;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            disableButtons(); // Llamada para deshabilitar los botones cuando el tiempo se acaba
+            document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
+            createForm('/PreguntasYRespuestasPHP/game/finish', document.getElementById('idMatch').value, 'Finalizar partida', 'btn-danger');
+        }
+    }, 1000);
+
+    function disableButtons() {
+        let buttons = document.querySelectorAll('.respuesta-btn');
+        buttons.forEach(button => {
+            button.disabled = true;
+            button.classList.remove('btn-outline-dark');
+            button.classList.add('btn-danger');
+        });
+    }
+
+    function sendQuestion(selectedAnswerId) {
+        clearInterval(countdownInterval); // Detener el temporizador si el usuario responde
+
         let idMatch = document.getElementById('idMatch').value;
         let idQuestion = document.getElementById('question_id').value;
 
@@ -32,66 +59,67 @@
         data.append('idQuestion', idQuestion);
         data.append('idResponse', selectedAnswerId);
 
-        try {
-            let response = await fetch('/PreguntasYRespuestasPHP/game/sendQuestion', {
-                method: 'POST',
-                body: data
-            });
+        fetch('/PreguntasYRespuestasPHP/game/sendQuestion', {
+            method: 'POST',
+            body: data
+        })
+                .then(response => {
+                    if (!response.ok) throw new Error('Error en la solicitud');
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.error === 'timeout') {
+                        disableButtons();
+                        document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
+                        createForm('/PreguntasYRespuestasPHP/game/finish', idMatch, 'Finalizar partida', 'btn-danger');
+                        return;
+                    }
 
-            if (!response.ok) {
-                throw new Error('Error en la solicitud');
-            }
+                    let correctAnswerId = result.answer_id;
+                    let correct = result.correct;
 
-            let result = await response.json();
+                    let buttons = document.querySelectorAll('.respuesta-btn');
+                    buttons.forEach(button => {
+                        button.disabled = true;
+                        let answerId = button.id.split('-')[1];
+                        if (parseInt(answerId) === correctAnswerId) {
+                            button.classList.remove('btn-outline-dark');
+                            button.classList.add('btn-success');
+                        } else if (parseInt(answerId) === selectedAnswerId) {
+                            button.classList.remove('btn-outline-dark');
+                            button.classList.add('btn-danger');
+                        }
+                    });
 
-            if (result.error === 'timeout') {
-                let buttons = document.querySelectorAll('.respuesta-btn');
-                buttons.forEach(button => {
-                    button.disabled = true;
-                    button.classList.remove('btn-outline-dark');
-                    button.classList.add('btn-danger');
+                    if (correct) {
+                        createForm('/PreguntasYRespuestasPHP/game/play', idMatch, 'Continuar', 'btn-primary');
+                    } else {
+                        createForm('/PreguntasYRespuestasPHP/game/finish', idMatch, 'Finalizar partida', 'btn-danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('resultado').innerHTML = '<p class="text-danger">Error al enviar la respuesta.</p>';
                 });
+    }
 
-                document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
+    function createForm(actionUrl, idMatch, buttonText, buttonClass) {
+        let form = document.createElement('form');
+        form.method = 'POST';
+        form.action = actionUrl;
 
-                let actionButton = document.createElement('a');
-                actionButton.classList.add('btn', 'btn-danger', 'mt-3');
-                actionButton.href = `/PreguntasYRespuestasPHP/game/finish?idMatch=${idMatch}`;
-                actionButton.innerText = 'Finalizar partida';
-                document.getElementById('resultado').appendChild(actionButton);
+        let input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'idMatch';
+        input.value = idMatch;
 
-                return;
-            }
+        let button = document.createElement('button');
+        button.type = 'submit';
+        button.classList.add('btn', 'mt-3', buttonClass);
+        button.innerText = buttonText;
 
-            let correctAnswerId = result.answer_id;
-            let correct = result.correct;
-
-            let buttons = document.querySelectorAll('.respuesta-btn');
-            buttons.forEach(button => {
-                button.disabled = true;
-
-                let answerId = button.id.split('-')[1];
-                if (parseInt(answerId) === correctAnswerId) {
-                    button.classList.remove('btn-outline-dark');
-                    button.classList.add('btn-success');
-                } else if (parseInt(answerId) === selectedAnswerId) {
-                    button.classList.remove('btn-outline-dark');
-                    button.classList.add('btn-danger');
-                }
-            });
-
-            let actionButton = document.createElement('a');
-            actionButton.classList.add('btn', 'mt-3');
-            actionButton.href = correct ? `/PreguntasYRespuestasPHP/game/playAgain?idMatch=${idMatch}` : `/PreguntasYRespuestasPHP/game/finish?idMatch=${idMatch}`;
-            actionButton.innerText = correct ? 'Continuar' : 'Finalizar partida';
-            actionButton.classList.add(correct ? 'btn-primary' : 'btn-danger');
-
-            document.getElementById('resultado').appendChild(actionButton);
-
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('resultado').innerHTML = '<p class="text-danger">Error al enviar la respuesta.</p>';
-        }
+        form.appendChild(input);
+        form.appendChild(button);
+        document.getElementById('resultado').appendChild(form);
     }
 </script>
-

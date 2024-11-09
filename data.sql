@@ -25,7 +25,7 @@ CREATE TABLE user
 );
 
 INSERT INTO rol (description)
-VALUES ('admin'), ('user');
+VALUES ('admin'), ('user'), ('editor');
 
 INSERT INTO user (username, password, rol_id, email, birthday, name, profile_picture, register_date, hasAccess)
 VALUES

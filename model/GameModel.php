@@ -199,7 +199,9 @@ class GameModel
     LEFT JOIN question_answer qa ON q.id = qa.pregunta_id
     LEFT JOIN answer a ON qa.respuesta_id = a.id
     WHERE q.id = ?
-    ";
+    ORDER BY RAND()
+";
+
 
         $stmt = $this->database->prepare($sql);
 
@@ -339,7 +341,7 @@ class GameModel
         $timeDifference = $now - $lastResponseTime;
 
 
-        if ($timeDifference > 60) {
+        if ($timeDifference > 12) {
             return "timeout";
         }
         return null;
