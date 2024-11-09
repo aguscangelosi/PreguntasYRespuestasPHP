@@ -33,23 +33,14 @@
 
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
-            disableButtons(); // Llamada para deshabilitar los botones cuando el tiempo se acaba
+            disableButtons();
             document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
             createForm('/PreguntasYRespuestasPHP/game/finish', document.getElementById('idMatch').value, 'Finalizar partida', 'btn-danger');
         }
     }, 1000);
 
-    function disableButtons() {
-        let buttons = document.querySelectorAll('.respuesta-btn');
-        buttons.forEach(button => {
-            button.disabled = true;
-            button.classList.remove('btn-outline-dark');
-            button.classList.add('btn-danger');
-        });
-    }
-
     function sendQuestion(selectedAnswerId) {
-        clearInterval(countdownInterval); // Detener el temporizador si el usuario responde
+        clearInterval(countdownInterval);
 
         let idMatch = document.getElementById('idMatch').value;
         let idQuestion = document.getElementById('question_id').value;
@@ -96,6 +87,9 @@
                     } else {
                         createForm('/PreguntasYRespuestasPHP/game/finish', idMatch, 'Finalizar partida', 'btn-danger');
                     }
+
+                    // Agregar el botón de "Reportar pregunta" siempre después de responder
+                    createReportButton(idQuestion);
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -122,4 +116,33 @@
         form.appendChild(button);
         document.getElementById('resultado').appendChild(form);
     }
+
+    function createReportButton(idQuestion) {
+        let reportButton = document.createElement('button');
+        reportButton.classList.add('btn', 'btn-warning', 'mt-3');
+        reportButton.innerText = 'Reportar Pregunta';
+        reportButton.onclick = () => {
+            // Crear una ventana emergente para ingresar una descripción
+            let description = prompt('Describe el problema con la pregunta:');
+            if (!description) return; // Salir si no se da una descripción
+
+            let data = new FormData();
+            data.append('question_id', idQuestion);
+            data.append('description', description); // Agregar descripción
+
+            fetch('/PreguntasYRespuestasPHP/game/reportQuestion', {
+                method: 'POST',
+                body: data
+            })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Error al reportar la pregunta');
+                        document.getElementById('resultado').innerHTML += '<p class="text-success">Pregunta reportada exitosamente.</p>';
+                    })
+                    .catch(error => console.error('Error al reportar la pregunta:', error));
+        };
+
+        document.getElementById('resultado').appendChild(reportButton);
+    }
+
+
 </script>

@@ -113,6 +113,15 @@ CREATE TABLE user_question (
                                FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
 
+CREATE TABLE question_report (
+                                 report_id INT AUTO_INCREMENT PRIMARY KEY,
+                                 question_id INT NOT NULL,
+                                 description TEXT,
+                                 report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                 FOREIGN KEY (question_id) REFERENCES question(id), -- Asumiendo que tienes una tabla `questions` con `id` como PK
+);
+
+
 -- Inserción de categorías de ejemplo
 INSERT INTO category (nombre_categoria) VALUES
                                             ('Deportes'), ('Historia'), ('Ciencia'), ('Anime');

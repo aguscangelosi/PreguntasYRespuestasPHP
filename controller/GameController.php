@@ -121,4 +121,12 @@ class GameController
 
         exit;
     }
+
+    public function reportQuestion()
+    {
+        $questionId = $_POST['question_id'];
+        $description = $_POST['description'];
+
+        $this->model->reportQuestion($questionId, $description);
+    }
 }

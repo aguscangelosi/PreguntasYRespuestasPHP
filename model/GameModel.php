@@ -346,4 +346,17 @@ class GameModel
         }
         return null;
     }
+
+    public function reportQuestion($questionId, $description)
+    {
+        $sql = "INSERT INTO question_report (question_id, description) VALUES (?, ?)";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("is", $questionId, $description);
+
+        if ($stmt->execute()) {
+            echo "Reporte insertado exitosamente.";
+        } else {
+            echo "Error al insertar el reporte: " . $stmt->error;
+        }
+    }
 }
