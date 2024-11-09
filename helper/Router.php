@@ -17,12 +17,12 @@ class Router
 
     public function route($controllerName, $methodName)
     {
-        $publicRoutes = ['auth' => ['login', 'register', "logout"]];
+        $publicRoutes = ['auth' => ["init","initLogin",'login', 'register', "logout","validateEmail"]];
 
         $defaultRoutesByRole = [
-            1 => ['controller' => 'auth', 'method' => 'initLogin'], //admin
-            2 => ['controller' => 'game', 'method' => 'lobby'],
-            3 => ['controller' => 'game', 'method' => 'init'],// editor
+            1 => ['controller' => 'admin', 'method' => 'home'], //admin
+            2 => ['controller' => 'game', 'method' => 'lobby'], // user
+            3 => ['controller' => 'admin', 'method' => 'homeEdit'],// editor
         ];
 
         $isAuthenticated = $this->authHelper->isAuthenticated();
@@ -67,21 +67,28 @@ class Router
     private function redirectUserToDefault($userRole, $defaultRoutesByRole)
     {
         if (isset($defaultRoutesByRole[$userRole])) {
-            $controller = $this->getControllerFrom($defaultRoutesByRole[$userRole]['controller']);
-            $this->executeMethodFromController($controller, $defaultRoutesByRole[$userRole]['method']);
+            $defaultController = $defaultRoutesByRole[$userRole]['controller'];
+            $defaultMethod = $defaultRoutesByRole[$userRole]['method'];
         } else {
-            $controller = $this->getControllerFrom('auth');
-            $this->executeMethodFromController($controller, "initLogin");
+            $defaultController = 'auth';
+            $defaultMethod = 'initLogin';
         }
+
+        $url = "http://localhost/PreguntasYRespuestasPHP/$defaultController/$defaultMethod";
+        header("Location: $url");
+        exit;
     }
 
     private function isAuthorizedForRoute($userRole, $controllerName, $methodName)
     {
         $rolePermissions = [
-            1 => ['game' => ['admin', 'dashboard']],
-            2 => ['game' => ['play', 'lobby']],
-            3 => ['game' => ['mod', 'review']],
+            1 => ['admin' => ['home']],
+            2 => ['game' =>  ['play', "finish","findQuestions","sendQuestion",'lobby'],
+                  'ranking' => ['rankingPosition','profile']
+            ],
+            3 => ['admin' => ['homeEdit']],
         ];
+
 
         return isset($rolePermissions[$userRole][$controllerName]) &&
             in_array($methodName, $rolePermissions[$userRole][$controllerName]);
