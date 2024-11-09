@@ -9,10 +9,12 @@ include_once("helper/AuthHelper.php");
 include_once("model/AuthModel.php");
 include_once("model/GameModel.php");
 include_once("model/RankingModel.php");
+include_once("model/AdminModel.php");
 
 include_once("controller/AuthController.php");
 include_once("controller/GameController.php");
 include_once("controller/RankingController.php");
+include_once("controller/AdminController.php");
 
 
 
@@ -33,10 +35,6 @@ class Configuration
         return self::$authHelper;
     }
 
-//    public function getLoginController(){
-//        return new PreguntaleController($this->getPokedexModel(), $this->getPresenter());
-//    }
-
     public function getAuthController(){
         return new AuthController($this->getAuthModel(), $this->getPresenter(),$this->getAuthHelper());
     }
@@ -49,6 +47,11 @@ class Configuration
     public function getRankingController()
     {
         return new RankingController($this->getRankingModel(), $this->getPresenter(),$this->getAuthHelper());
+    }
+
+    public function getAdminController()
+    {
+        return new AdminController($this->getAdminModel(), $this->getPresenter(),$this->getAuthHelper());
     }
 
 
@@ -64,6 +67,12 @@ class Configuration
     {
         return new RankingModel($this->getDatabase());
     }
+
+    public function getAdminModel()
+    {
+        return new AdminModel($this->getDatabase());
+    }
+
 
     private function getPresenter()
     {

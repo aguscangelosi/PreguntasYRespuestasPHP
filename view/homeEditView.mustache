@@ -1,0 +1,56 @@
+<div class="container">
+    <section class="question-management">
+        <h2>Gestión de Preguntas</h2>
+        <button onclick="addQuestion()">Agregar Nueva Pregunta</button>
+
+        <div class="question-list">
+            {{#questions}}
+                <div class="question-item">
+                    <p><strong>Pregunta:</strong> {{text}}</p>
+                    <p><strong>Categoría:</strong> {{category}}</p>
+                    <button onclick="editQuestion({{id}})">Modificar</button>
+                    <button onclick="deleteQuestion({{id}})">Eliminar</button>
+                </div>
+            {{/questions}}
+        </div>
+    </section>
+
+    <section class="reported-questions">
+        <h2>Preguntas Reportadas</h2>
+
+        {{#reportedQuestions}}
+            <div class="reported-question-item">
+                <p><strong>ID Pregunta:</strong> {{question_id}}</p>
+                <p><strong>Enunciado:</strong> {{enunciado}}</p>
+                <p><strong>Razón de reporte:</strong> {{nombre_estado}}</p>
+                <p><strong>Categoría:</strong> {{nombre_categoria}}</p>
+                <button onclick="approveReportedQuestion({{question_id}})">Aprobar</button>
+                <button onclick="rejectReportedQuestion({{question_id}})">Rechazar</button>
+            </div>
+        {{/reportedQuestions}}
+
+
+        {{^reportedQuestions}}
+            <p>No hay preguntas reportadas pendientes de revisión.</p>
+        {{/reportedQuestions}}
+    </section>
+
+    <section class="suggested-questions">
+        <h2>Preguntas Sugeridas por Usuarios</h2>
+
+        {{#suggestedQuestions}}
+            <div class="suggested-question-item">
+                <p><strong>Pregunta:</strong> {{text}}</p>
+                <p><strong>Categoría Sugerida:</strong> {{category}}</p>
+                <p><strong>Usuario:</strong> {{username}}</p>
+                <button onclick="approveSuggestedQuestion({{id}})">Aprobar</button>
+                <button onclick="rejectSuggestedQuestion({{id}})">Rechazar</button>
+            </div>
+        {{/suggestedQuestions}}
+
+        {{^suggestedQuestions}}
+            <p>No hay preguntas sugeridas pendientes de aprobación.</p>
+        {{/suggestedQuestions}}
+    </section>
+
+</div>
