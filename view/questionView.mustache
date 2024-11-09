@@ -33,11 +33,20 @@
 
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
-            disableButtons();
+            disableButtons(); // Desactiva y pinta de rojo los botones al expirar el tiempo
             document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
             createForm('/PreguntasYRespuestasPHP/game/finish', document.getElementById('idMatch').value, 'Finalizar partida', 'btn-danger');
         }
     }, 1000);
+
+    function disableButtons() {
+        let buttons = document.querySelectorAll('.respuesta-btn');
+        buttons.forEach(button => {
+            button.disabled = true;
+            button.classList.remove('btn-outline-dark');
+            button.classList.add('btn-danger');
+        });
+    }
 
     function sendQuestion(selectedAnswerId) {
         clearInterval(countdownInterval);
@@ -134,15 +143,17 @@
                 method: 'POST',
                 body: data
             })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Error al reportar la pregunta');
-                        document.getElementById('resultado').innerHTML += '<p class="text-success">Pregunta reportada exitosamente.</p>';
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status === 'success') {
+                            document.getElementById('resultado').innerHTML += '<p class="text-success">Pregunta reportada exitosamente.</p>';
+                        } else {
+                            document.getElementById('resultado').innerHTML += `<p class="text-danger">Error: ${result.message}</p>`;
+                        }
                     })
                     .catch(error => console.error('Error al reportar la pregunta:', error));
         };
 
         document.getElementById('resultado').appendChild(reportButton);
     }
-
-
 </script>

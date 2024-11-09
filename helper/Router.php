@@ -83,7 +83,7 @@ class Router
     {
         $rolePermissions = [
             1 => ['admin' => ['home']],
-            2 => ['game' =>  ['play', "finish","findQuestions","sendQuestion",'lobby'],
+            2 => ['game' =>  ['play', "finish","findQuestions","sendQuestion",'lobby', "reportQuestion"],
                   'ranking' => ['rankingPosition','profile']
             ],
             3 => ['admin' => ['homeEdit']],

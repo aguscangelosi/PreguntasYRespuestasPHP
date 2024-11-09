@@ -124,9 +124,28 @@ class GameController
 
     public function reportQuestion()
     {
-        $questionId = $_POST['question_id'];
-        $description = $_POST['description'];
+        $questionId = isset($_POST['question_id']) ? (int) $_POST['question_id'] : null;
+        $description = isset($_POST['description']) ? $_POST['description'] : '';
 
-        $this->model->reportQuestion($questionId, $description);
+
+        if (!$questionId || empty($description)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Datos inválidos'
+            ]);
+            return;
+        }
+
+        if ($this->model->reportQuestion($questionId, $description)) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Reporte insertado exitosamente.'
+            ]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Error al insertar el reporte']);
+        }
+
+        exit;
     }
+
 }
