@@ -1,8 +1,47 @@
-{{#dataProfile}}
-    <h2>ID: {{id}}</h2>
-    <h2>Nombre de usuario {{username}}</h2>
-{{/dataProfile}}
-{{#position}}
-    <h2>Puntaje: {{puntaje}}</h2>
-    <h2>Posición en ranking: {{posicion}}</h2>
-{{/position}}
+<div class="row mt-3">
+    <div class="col-1"></div>
+    <div class="col">
+        <div class="row g-0 bg-body-secondary position-relative rounded">
+            <div class="col-md-6 mb-md-0 p-md-4">
+                <img src="..." class="w-100" alt="...">
+            </div>
+            <div class="col-md-6 p-4 ps-md-0">
+                {{#dataProfile}}
+                <p class="fs-1 fw-semibold">¡Bienvenido a su perfil, {{username}}!</p>
+                <p class="fs-4">ID usuario: {{id}}</p>
+                {{/dataProfile}}
+                {{#position}}
+                <p class="fs-4">Mejor puntaje: {{puntaje}}</p>
+                <p class="fs-4">Ranking: {{posicion}}</p>
+                <p class="fs-4"><a href="/PreguntasYRespuestasPHP/ranking/rankingPosition">ver ranking global</a></p>
+                {{/position}}
+            </div>
+        </div>
+    </div>
+    <div class="col-1"></div>
+</div>
+<div class="container">
+    <div class="row m-3" style="height: 200px;">
+        <div class="col m-1 bg-light text-dark text-center border border-secondary rounded border-2">
+        {{#dataProfile}}
+            <h1>ID</h1>
+            <p class="fs-1 fw-bold m-auto">{{id}}</p>
+        {{/dataProfile}}
+        </div>
+        {{#position}}
+        <div class="col m-1 bg-light text-dark text-center border border-secondary rounded border-2">
+            <h1>Mejor puntaje</h1>
+            <p class="fs-1 fw-bold">{{puntaje}}</p>
+        </div>
+        <div class="col m-1 bg-light text-dark text-center border border-secondary rounded border-2">
+            <h1>Ranking</h1>
+            <p class="fs-1 fw-bold">{{posicion}}</p>
+        </div>
+        {{/position}}
+        <div class="col m-1 bg-light text-dark text-center border border-secondary rounded border-2">
+            <h1>QR</h1>
+        </div>
+    </div>
+</div>
+
+
