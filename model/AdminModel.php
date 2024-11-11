@@ -37,4 +37,51 @@ class AdminModel
         return $questions;
     }
 
+    public function findCategories(){
+        $sql = "SELECT * FROM category c";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $categories = $stmt->get_result();
+
+        return $categories;
+    }
+
+    public function insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category) {
+        $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, 2, 1)";
+        $stmt = $this->database->prepare($sql);
+        $dificultad = "Media";
+        $stmt->bind_param("ssi", $question, $dificultad, $category);
+        $stmt->execute();
+
+        $questionId = $stmt->insert_id;
+        $stmt->close();
+
+        $sql = "INSERT INTO answer (texto_respuesta, categoria_id) VALUES (?, ?)";
+        $stmt = $this->database->prepare($sql);
+
+        $respuestas = [$correctAnswer, $answer2, $answer3, $answer4];
+        $categoria = $category;
+        $respuestaIds = [];
+
+        foreach ($respuestas as $index => $respuesta) {
+            $stmt->bind_param("si", $respuesta, $categoria);
+            $stmt->execute();
+
+            $respuestaIds[] = $stmt->insert_id;
+        }
+        $stmt->close();
+
+        $sql = "INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES (?, ?, ?)";
+        $stmt = $this->database->prepare($sql);
+
+        foreach ($respuestaIds as $index => $respuestaId) {
+            $esCorrecta = ($index === 0);
+
+            $stmt->bind_param("iii", $questionId, $respuestaId, $esCorrecta);
+            $stmt->execute();
+        }
+        $stmt->close();
+    }
+
+
 }

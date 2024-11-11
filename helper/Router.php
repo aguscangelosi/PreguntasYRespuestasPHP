@@ -17,7 +17,7 @@ class Router
 
     public function route($controllerName, $methodName)
     {
-        $publicRoutes = ['auth' => ["init","initLogin",'login', 'register', "logout","validateEmail"]];
+        $publicRoutes = ['auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"]];
 
         $defaultRoutesByRole = [
             1 => ['controller' => 'admin', 'method' => 'home'], //admin
@@ -83,10 +83,14 @@ class Router
     {
         $rolePermissions = [
             1 => ['admin' => ['home']],
-            2 => ['game' =>  ['play', "finish","findQuestions","sendQuestion",'lobby', "reportQuestion"],
-                  'ranking' => ['rankingPosition','profile']
+            2 => ['game' => [
+                'play', "finish", "findQuestions",
+                "sendQuestion", 'lobby',
+                "reportQuestion",
             ],
-            3 => ['admin' => ['homeEdit']],
+                'ranking' => ['rankingPosition', 'profile']
+            ],
+            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost"]],
         ];
 
 

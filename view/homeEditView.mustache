@@ -1,20 +1,5 @@
 <div class="container">
-    <section class="question-management">
-        <h2>Gestión de Preguntas</h2>
-        <button onclick="addQuestion()">Agregar Nueva Pregunta</button>
-
-        <div class="question-list">
-            {{#questions}}
-                <div class="question-item">
-                    <p><strong>Pregunta:</strong> {{text}}</p>
-                    <p><strong>Categoría:</strong> {{category}}</p>
-                    <button onclick="editQuestion({{id}})">Modificar</button>
-                    <button onclick="deleteQuestion({{id}})">Eliminar</button>
-                </div>
-            {{/questions}}
-        </div>
-    </section>
-
+    <div class="text-success text-center">{{success}}</div>
     <section class="reported-questions">
         <h2>Preguntas Reportadas</h2>
 
@@ -28,7 +13,6 @@
                 <button onclick="rejectReportedQuestion({{question_id}})">Rechazar</button>
             </div>
         {{/reportedQuestions}}
-
 
         {{^reportedQuestions}}
             <p>No hay preguntas reportadas pendientes de revisión.</p>
@@ -52,5 +36,6 @@
             <p>No hay preguntas sugeridas pendientes de aprobación.</p>
         {{/suggestedQuestions}}
     </section>
-
 </div>
+
+
