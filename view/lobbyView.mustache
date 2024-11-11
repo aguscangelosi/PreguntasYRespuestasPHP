@@ -1,14 +1,12 @@
-<!-- bienvenida.mustache -->
-<!-- lobby.mustache -->
-<div class="lobby">
-    <h1>Perfil de {{username}}</h1>
-    <!-- Rellenar con información para que sea un lobby -->
-    <a href="/PreguntasYRespuestasPHP/ranking/profile">Ver perfil</a>
-    <div class="boton-juego">
+<div class="m-5">
+
+    <h1 class="text-center fw-bold text-uppercase">¡{{username}} responde algunas preguntas!</h1>
+    <!--<a href="/PreguntasYRespuestasPHP/ranking/profile">Ver perfil</a>
+    <a href="/PreguntasYRespuestasPHP/ranking/rankingPosition">Ver Ranking</a> -->
+    <div class="text-center p-5">
         <form action="/PreguntasYRespuestasPHP/game/play" method="POST">
-            <button type="submit" name="click" class="w3-button w3-block w3-blue">Jugar</button>
+            <button type="submit" name="click" class="btn btn-primary btn-lg p-5 rounded-pill">Jugar</button>
         </form>
-        <a href="/PreguntasYRespuestasPHP/ranking/rankingPosition">Ver Ranking</a>
     </div>
 
 </div>
