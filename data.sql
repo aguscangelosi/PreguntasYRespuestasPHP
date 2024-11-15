@@ -118,9 +118,17 @@ CREATE TABLE question_report (
                                  question_id INT NOT NULL,
                                  description TEXT,
                                  report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                 FOREIGN KEY (question_id) REFERENCES question(id), -- Asumiendo que tienes una tabla `questions` con `id` como PK
+                                 FOREIGN KEY (question_id) REFERENCES question(id)
 );
 
+CREATE TABLE question_suggest (enunciado, dificultad, categoria_id, estado_id, activo
+                                 enunciado INT AUTO_INCREMENT PRIMARY KEY,
+                                 dificultad VARCHAR(10),
+                                 question_id INT NOT NULL,
+                                 description TEXT,
+
+                                 FOREIGN KEY (question_id) REFERENCES question(id)
+);
 
 -- Inserción de categorías de ejemplo
 INSERT INTO category (nombre_categoria) VALUES

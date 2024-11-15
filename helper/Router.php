@@ -86,7 +86,7 @@ class Router
             2 => ['game' => [
                 'play', "finish", "findQuestions",
                 "sendQuestion", 'lobby',
-                "reportQuestion",
+                "reportQuestion", 'suggestQuestion',
             ],
                 'ranking' => ['rankingPosition', 'profile']
             ],

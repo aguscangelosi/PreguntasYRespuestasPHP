@@ -357,4 +357,56 @@ class GameModel
             return true;
         }
     }
+
+    function suggestQuestion()
+    {
+        $question = isset($_POST['question-text']) ? $_POST['question-text'] : '';
+
+        $correctAnswer = isset($_POST['answer1']);
+        $answer2 = isset($_POST['answer2']);
+        $answer3 = isset($_POST['answer3']);
+        $answer4 = isset($_POST['answer4']);
+
+        $category = isset($_POST['category']) ? $_POST['category'] : '';
+
+        $this->model->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
+    }
+
+    public function findCategories(){
+        $sql = "SELECT * FROM category c";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $categories = $stmt->get_result();
+
+        return $categories;
+    }
+
+    function suggestedQuestion()
+    {
+        $sql = "SELECT q.id AS question_id, q.enunciado, q.dificultad, c.nombre_categoria, s.nombre_estado
+            FROM question q 
+            INNER JOIN status s ON q.estado_id = s.id 
+            INNER JOIN category c ON q.categoria_id = c.id
+            WHERE s.nombre_estado = 'sugerida'";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $questions = ['suggestQuestions' => []]; // Inicializar con array vacío
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $questions['suggestQuestions'][] = [
+                    'question_id' => $row['question_id'],
+                    'enunciado' => $row['enunciado'],
+                    'dificultad' => $row['dificultad'],
+                    'nombre_categoria' => $row['nombre_categoria'],
+                    'nombre_estado' => $row['nombre_estado']
+                ];
+            }
+        }
+
+        return $questions;
+    }
 }
