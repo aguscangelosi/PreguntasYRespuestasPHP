@@ -8,7 +8,7 @@
                 <p><strong>ID Pregunta:</strong> {{question_id}}</p>
                 <p><strong>Enunciado:</strong> {{enunciado}}</p>
                 <p><strong>Razón de reporte:</strong> {{nombre_estado}}</p>
-                <p><strong>Categoría:</strong> {{nombre_categoria}}</p>
+                <p><strong>RespuestaCorrecta:</strong> {{nombre_categoria}}</p>
                 <button onclick="approveReportedQuestion({{question_id}})">Aprobar</button>
                 <button onclick="rejectReportedQuestion({{question_id}})">Rechazar</button>
             </div>
@@ -24,10 +24,12 @@
 
         {{#suggestedQuestions}}
             <div class="suggested-question-item">
+                <p><strong>ID Pregunta:</strong> {{id}}</p>
                 <p><strong>Pregunta: </strong> {{enunciado}}</p>
                 <p><strong>Dificultad: </strong> {{dificultad}}</p>
                 <p><strong>Categoría Sugerida: </strong> {{nombre_categoria}}</p>
                 <p><strong>Estado: </strong> {{nombre_estado}}</p>
+                <p><strong>RespuestaCorrecta:</strong> {{texto_respuesta}}</p>
 
                 <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})">Aprobar</a>
                 <a href="/PreguntasYRespuestasPHP/admin/deleteQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})" >Rechazar</a>

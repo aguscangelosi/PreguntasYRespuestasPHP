@@ -354,8 +354,18 @@ class GameModel
         $stmt->bind_param("is", $questionId, $description);
 
         if ($stmt->execute()) {
+            $sql = "UPDATE question
+            SET estado_id = 4
+            WHERE id = $questionId";
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute();
             return true;
         }
+    }
+    public function reporterQuestion($questionId){
+        $sql = "UPDATE question
+    SET estado_id = 4
+    WHERE id=$questionId";
     }
 
     function suggestQuestion()
@@ -384,7 +394,7 @@ class GameModel
 
     function suggestedQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category)
     {
-        $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, 3, 0)";
+        $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, 1, 0)";
         $stmt = $this->database->prepare($sql);
         $dificultad = "Facil";
         $stmt->bind_param("ssi", $question, $dificultad, $category);
