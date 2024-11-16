@@ -18,8 +18,9 @@ class AdminController
     }
 
     public function homeEdit(){
+        $suggestions = $this->model->filterSuggestedQuestion();
         $reportedQuestions = $this->model->obtainReportedQuestions();
-        $this->presenter->show('homeEdit', $reportedQuestions);
+        $this->presenter->show('homeEdit', ['suggestedQuestions' => $suggestions, $reportedQuestions]);
     }
 
     public function createQuestion(){
@@ -51,7 +52,18 @@ class AdminController
         header('location: /PreguntasYRespuestasPHP/homeEdit');
     }
 
+    function deleteQuestion()
+    {
+        $idQuestion = isset($_GET['id']) ? $id = $_GET['id'] : '';
+        $this->model->deleteQuestion($idQuestion);
+        $this->presenter->show('deleteQuestion');
+    }
 
-
+    function approveQuestion()
+    {
+        $idQuestion = isset($_GET['id']) ? $id = $_GET['id'] : '';
+        $this->model->approveQuestion($idQuestion);
+        $this->presenter->show('approveQuestion');
+    }
 
 }

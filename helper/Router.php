@@ -87,10 +87,11 @@ class Router
                 'play', "finish", "findQuestions",
                 "sendQuestion", 'lobby',
                 "reportQuestion", 'suggestQuestion',
+                'suggestQuestionPost',
             ],
                 'ranking' => ['rankingPosition', 'profile']
             ],
-            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost"]],
+            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost", "deleteQuestion", "approveQuestion"]],
         ];
 
 

@@ -1,8 +1,8 @@
 <div class="container">
     <div class="text-success text-center">{{success}}</div>
     <section class="reported-questions">
+        <a href="/PreguntasYRespuestasPHP/admin/createQuestion" class="w3-button w3-teal w3-margin-top w3-round-large">Crear una dudosa</a>
         <h2>Preguntas Reportadas</h2>
-
         {{#reportedQuestions}}
             <div class="reported-question-item">
                 <p><strong>ID Pregunta:</strong> {{question_id}}</p>
@@ -24,11 +24,13 @@
 
         {{#suggestedQuestions}}
             <div class="suggested-question-item">
-                <p><strong>Pregunta:</strong> {{text}}</p>
-                <p><strong>Categoría Sugerida:</strong> {{category}}</p>
-                <p><strong>Usuario:</strong> {{username}}</p>
-                <button onclick="approveSuggestedQuestion({{id}})">Aprobar</button>
-                <button onclick="rejectSuggestedQuestion({{id}})">Rechazar</button>
+                <p><strong>Pregunta: </strong> {{enunciado}}</p>
+                <p><strong>Dificultad: </strong> {{dificultad}}</p>
+                <p><strong>Categoría Sugerida: </strong> {{nombre_categoria}}</p>
+                <p><strong>Estado: </strong> {{nombre_estado}}</p>
+
+                <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})">Aprobar</a>
+                <a href="/PreguntasYRespuestasPHP/admin/deleteQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})" >Rechazar</a>
             </div>
         {{/suggestedQuestions}}
 

@@ -372,7 +372,8 @@ class GameModel
         $this->model->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
 
-    public function findCategories(){
+    public function findCategories()
+    {
         $sql = "SELECT * FROM category c";
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
@@ -381,32 +382,41 @@ class GameModel
         return $categories;
     }
 
-    function suggestedQuestion()
+    function suggestedQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category)
     {
-        $sql = "SELECT q.id AS question_id, q.enunciado, q.dificultad, c.nombre_categoria, s.nombre_estado
-            FROM question q 
-            INNER JOIN status s ON q.estado_id = s.id 
-            INNER JOIN category c ON q.categoria_id = c.id
-            WHERE s.nombre_estado = 'sugerida'";
-
+        $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, 3, 0)";
         $stmt = $this->database->prepare($sql);
+        $dificultad = "Facil";
+        $stmt->bind_param("ssi", $question, $dificultad, $category);
         $stmt->execute();
-        $result = $stmt->get_result();
 
-        $questions = ['suggestQuestions' => []]; // Inicializar con array vacío
+        $questionId = $stmt->insert_id;
+        $stmt->close();
 
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $questions['suggestQuestions'][] = [
-                    'question_id' => $row['question_id'],
-                    'enunciado' => $row['enunciado'],
-                    'dificultad' => $row['dificultad'],
-                    'nombre_categoria' => $row['nombre_categoria'],
-                    'nombre_estado' => $row['nombre_estado']
-                ];
-            }
+        $sql = "INSERT INTO answer (texto_respuesta, categoria_id) VALUES (?, ?)";
+        $stmt = $this->database->prepare($sql);
+
+        $respuestas = [$correctAnswer, $answer2, $answer3, $answer4];
+        $categoria = $category;
+        $respuestaIds = [];
+
+        foreach ($respuestas as $index => $respuesta) {
+            $stmt->bind_param("si", $respuesta, $categoria);
+            $stmt->execute();
+
+            $respuestaIds[] = $stmt->insert_id;
         }
+        $stmt->close();
 
-        return $questions;
+        $sql = "INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES (?, ?, ?)";
+        $stmt = $this->database->prepare($sql);
+
+        foreach ($respuestaIds as $index => $respuestaId) {
+            $esCorrecta = ($index === 0);
+
+            $stmt->bind_param("iii", $questionId, $respuestaId, $esCorrecta);
+            $stmt->execute();
+        }
+        $stmt->close();
     }
 }

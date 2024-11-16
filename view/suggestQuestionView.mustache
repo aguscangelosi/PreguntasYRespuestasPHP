@@ -4,7 +4,7 @@
     <h2 class="w3-center w3-text-teal">Sugerir Preguntas</h2>
     <button onclick="showAddQuestionForm()" class="w3-button w3-teal w3-margin-top w3-round-large">Sugerir una nueva dudosa</button>
 
-    <form action="/PreguntasYRespuestasPHP/game/lobby" method="post"
+    <form action="/PreguntasYRespuestasPHP/game/suggestQuestionPost" method="POST"
           id="add-question-form" style="display:none; margin-top: 20px;" class="w3-container w3-card-4 w3-padding w3-light-grey">
         <label for="question-text" class="w3-text-teal"><b>Enunciado de la Pregunta:</b></label>
         <input type="text" id="question-text" name="question-text" class="w3-input w3-border w3-round-large" required>

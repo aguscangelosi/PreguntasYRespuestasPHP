@@ -83,5 +83,46 @@ class AdminModel
         $stmt->close();
     }
 
+    function filterSuggestedQuestion()
+    {
+        $sql = "SELECT * FROM question q
+                WHERE q.activo = 0";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $suggestedQuestion = $stmt->get_result();
 
+        return $suggestedQuestion;
+    }
+
+    function deleteQuestion($idQuestion)
+    {
+    $sql ="UPDATE question
+        SET estado_id = 3, activo = 0  
+        WHERE id = ?";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $idQuestion);
+        $stmt->execute();
+
+        $questionDelete = $stmt->get_result();
+        $stmt->close();
+
+        return $questionDelete;
+    }
+
+    function approveQuestion($idQuestion)
+    {
+        $sql ="UPDATE question
+        SET estado_id = 2, activo = 1  
+        WHERE id = ?";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $idQuestion);
+        $stmt->execute();
+
+        $questionApprove = $stmt->get_result();
+        $stmt->close();
+
+        return $questionApprove;
+    }
 }

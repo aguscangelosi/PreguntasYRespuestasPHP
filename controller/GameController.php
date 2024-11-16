@@ -152,6 +152,10 @@ class GameController
     {
         $categories = $this->model->findCategories();
         $this->presenter->show('suggestQuestion', ['categories' => $categories]);
+    }
+
+    function suggestQuestionPost()
+    {
         $question = isset($_POST['question-text']) ? $_POST['question-text'] : '';
 
         $correctAnswer = isset($_POST['answer1']);
@@ -160,9 +164,10 @@ class GameController
         $answer4 = isset($_POST['answer4']);
 
         $category = isset($_POST['category']) ? $_POST['category'] : '';
-
         $this->model->suggestedQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
-
+        $this->redirectHome();
+        $this->presenter->show('lobby', ['success' => "Pregunta agregada exitosamente"]);
+        exit();
     }
 
 }
