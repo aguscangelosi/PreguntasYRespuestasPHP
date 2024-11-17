@@ -91,7 +91,7 @@ class Router
             ],
                 'ranking' => ['rankingPosition', 'profile']
             ],
-            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost", "deleteQuestion", "approveQuestion"]],
+            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost", "deleteQuestion", "approveQuestion", "approveReport", "declineReport"]],
         ];
 
 

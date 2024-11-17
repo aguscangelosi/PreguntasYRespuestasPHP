@@ -9,8 +9,8 @@
                 <p><strong>Enunciado:</strong> {{enunciado}}</p>
                 <p><strong>Reporte:</strong> {{descripcion}}</p>
                 <p><strong>RespuestaCorrecta:</strong> {{nombre_categoria}}</p>
-                <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})">Aprobar</a>
-                <a href="/PreguntasYRespuestasPHP/admin/deleteQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})" >Rechazar</a>
+                <a href="/PreguntasYRespuestasPHP/admin/approveReport?id={{question_id}}">Eliminar pregunta</a>
+                <a href="/PreguntasYRespuestasPHP/admin/declineReport?id={{question_id}}">Conservar pregunta</a>
             </div>
         {{/reportedQuestions}}
 
@@ -31,7 +31,7 @@
                 <p><strong>Estado: </strong> {{nombre_estado}}</p>
                 <p><strong>RespuestaCorrecta:</strong> {{texto_respuesta}}</p>
 
-                <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})">Aprobar</a>
+                <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveQuestion({{id}})">Aprobar</a>
                 <a href="/PreguntasYRespuestasPHP/admin/deleteQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})" >Rechazar</a>
             </div>
         {{/suggestedQuestions}}

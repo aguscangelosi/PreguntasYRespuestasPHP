@@ -81,7 +81,7 @@ class GameModel
     JOIN question q ON gq.pregunta_id = q.id
     LEFT JOIN question_answer qa ON q.id = qa.pregunta_id
     LEFT JOIN answer a ON qa.respuesta_id = a.id
-    WHERE ug.partida_id = ? AND ug.user_id = ? AND ug.estado_pregunta = 'pendiente'
+    WHERE ug.partida_id = ? AND ug.user_id = ? AND ug.estado_pregunta = 'pendiente' AND q.activo = 1;
     ";
 
         $stmt = $this->database->prepare($sql);

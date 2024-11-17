@@ -104,4 +104,46 @@ class AdminModel
 
         return $questionApprove;
     }
+
+    function approveReport($idQuestion)
+    {
+        // Elimina primero los registros relacionados
+        $stmt = $this->database->prepare("DELETE FROM question_report WHERE question_id = ?");
+        $stmt->bind_param("i", $idQuestion);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt1 = $this->database->prepare("DELETE FROM question_answer WHERE pregunta_id = ?");
+        $stmt1->bind_param("i", $idQuestion);
+        $stmt1->execute();
+        $stmt1->close();
+
+        $stmt2 = $this->database->prepare("DELETE FROM user_game WHERE ultima_pregunta_id  = ?");
+        $stmt2->bind_param("i", $idQuestion);
+        $stmt2->execute();
+        $stmt2->close();
+
+        $stmt3 = $this->database->prepare("DELETE FROM game_question WHERE pregunta_id = ?");
+        $stmt3->bind_param("i", $idQuestion);
+        $stmt3->execute();
+        $stmt3->close();
+
+        $stmt4 = $this->database->prepare("DELETE FROM question WHERE id = ?");
+        $stmt4->bind_param("i", $idQuestion);
+        $stmt4->execute();
+        $stmt4->close();
+        return true;
+    }
+
+    public function declinerReport($idQuestion)
+    {
+        $this->approveQuestion($idQuestion);
+        $stmt = $this->database->prepare("DELETE FROM question_report WHERE question_id = ?");
+        $stmt->bind_param("i", $idQuestion);
+        $stmt->execute();
+        $stmt->close();
+
+        return true;
+    }
+
 }

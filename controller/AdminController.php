@@ -67,5 +67,17 @@ class AdminController
         $this->model->approveQuestion($idQuestion);
         $this->presenter->show('approveQuestion');
     }
+    function approveReport()
+    {
+        $idQuestion = isset($_GET['id']) ? $id = $_GET['id'] : '';
+        $this->model->approveReport($idQuestion);
+        $this->presenter->show('approveReport');
+    }
 
+    function declineReport()
+    {
+        $idQuestion = isset($_GET['id']) ? $id = $_GET['id'] : '';
+        $this->model->declinerReport($idQuestion);
+        $this->presenter->show('declineReport');
+    }
 }
