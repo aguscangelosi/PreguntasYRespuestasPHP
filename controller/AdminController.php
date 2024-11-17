@@ -20,8 +20,10 @@ class AdminController
     public function homeEdit(){
         $suggestions = $this->model->filterSuggestedQuestion();
         $reportedQuestions = $this->model->obtainReportedQuestions();
-        var_dump($reportedQuestions);
-        $this->presenter->show('homeEdit', ['suggestedQuestions' => $suggestions, 'reportedQuestions' => $reportedQuestions]);
+        $this->presenter->show('homeEdit', [
+            'suggestedQuestions' => $suggestions,
+            'reportedQuestions' => $reportedQuestions['reportedQuestions']
+        ]);
     }
 
     public function createQuestion(){

@@ -7,10 +7,10 @@
             <div class="reported-question-item">
                 <p><strong>ID Pregunta:</strong> {{question_id}}</p>
                 <p><strong>Enunciado:</strong> {{enunciado}}</p>
-                <p><strong>Razón de reporte:</strong> {{nombre_estado}}</p>
+                <p><strong>Reporte:</strong> {{descripcion}}</p>
                 <p><strong>RespuestaCorrecta:</strong> {{nombre_categoria}}</p>
-                <button onclick="approveReportedQuestion({{question_id}})">Aprobar</button>
-                <button onclick="rejectReportedQuestion({{question_id}})">Rechazar</button>
+                <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})">Aprobar</a>
+                <a href="/PreguntasYRespuestasPHP/admin/deleteQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})" >Rechazar</a>
             </div>
         {{/reportedQuestions}}
 

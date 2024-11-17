@@ -1,4 +1,6 @@
 <?php
+
+
 include_once("helper/MysqlObjectDatabase.php");
 include_once("helper/IncludeFilePresenter.php");
 include_once("helper/Router.php");
@@ -16,8 +18,7 @@ include_once("controller/GameController.php");
 include_once("controller/RankingController.php");
 include_once("controller/AdminController.php");
 
-
-
+include_once("services/QuestionService.php");
 
 include_once('vendor/mustache/src/Mustache/Autoloader.php');
 
@@ -60,7 +61,7 @@ class Configuration
     }
 
     private function getGameModel(){
-        return new GameModel($this->getDatabase());
+        return new GameModel($this->getDatabase(), $this->getService());
     }
 
     public function getRankingModel()
@@ -70,7 +71,7 @@ class Configuration
 
     public function getAdminModel()
     {
-        return new AdminModel($this->getDatabase());
+        return new AdminModel($this->getDatabase(), $this->getService());
     }
 
 
@@ -94,6 +95,11 @@ class Configuration
     public function getRouter()
     {
         return new Router($this, "getAuthController", "init", Configuration::$authHelper);
+    }
+
+    public function getService()
+    {
+        return new QuestionService($this->getDatabase(), $this->getAuthHelper());
     }
 
 

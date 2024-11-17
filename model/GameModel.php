@@ -4,9 +4,12 @@ class GameModel
 {
     private $database;
 
-    public function __construct($database)
+    private $questionService;
+
+    public function __construct($database, $questionService)
     {
         $this->database = $database;
+        $this->questionService = $questionService;
     }
 
     public function getMatch($idMatch, $idUser)
@@ -394,39 +397,6 @@ class GameModel
 
     function suggestedQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category)
     {
-        $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, 1, 0)";
-        $stmt = $this->database->prepare($sql);
-        $dificultad = "Facil";
-        $stmt->bind_param("ssi", $question, $dificultad, $category);
-        $stmt->execute();
-
-        $questionId = $stmt->insert_id;
-        $stmt->close();
-
-        $sql = "INSERT INTO answer (texto_respuesta, categoria_id) VALUES (?, ?)";
-        $stmt = $this->database->prepare($sql);
-
-        $respuestas = [$correctAnswer, $answer2, $answer3, $answer4];
-        $categoria = $category;
-        $respuestaIds = [];
-
-        foreach ($respuestas as $index => $respuesta) {
-            $stmt->bind_param("si", $respuesta, $categoria);
-            $stmt->execute();
-
-            $respuestaIds[] = $stmt->insert_id;
-        }
-        $stmt->close();
-
-        $sql = "INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES (?, ?, ?)";
-        $stmt = $this->database->prepare($sql);
-
-        foreach ($respuestaIds as $index => $respuestaId) {
-            $esCorrecta = ($index === 0);
-
-            $stmt->bind_param("iii", $questionId, $respuestaId, $esCorrecta);
-            $stmt->execute();
-        }
-        $stmt->close();
+        return $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
 }

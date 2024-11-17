@@ -3,38 +3,38 @@
 class AdminModel
 {
     private $database;
+    private $questionService;
 
-    public function __construct($database)
+    public function __construct($database, $questionService)
     {
         $this->database = $database;
+        $this->questionService = $questionService;
     }
 
     public function obtainReportedQuestions() {
-        $sql = "SELECT q.id AS question_id, q.enunciado, q.dificultad, c.nombre_categoria, s.nombre_estado
-            FROM question q 
-            JOIN status s ON q.estado_id = s.id 
-            JOIN category c ON q.categoria_id = c.id
-            WHERE s.id = 4";
+        $sql = "SELECT qr.question_id AS question_id, qr.description, q.enunciado, q.dificultad, c.nombre_categoria
+        FROM question_report qr 
+        JOIN question q ON q.id = qr.question_id
+        JOIN category c ON q.categoria_id = c.id";
 
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
         $result = $stmt->get_result();
-        $result = $result->fetch_assoc();
-//        $questions = ['reportedQuestions' => []]; // Inicializar con array vacío
-//
-//        if ($result) {
-//            while ($row = $result->fetch_assoc()) {
-//                $questions['reportedQuestions'][] = [
-//                    'question_id' => $row['question_id'],
-//                    'enunciado' => $row['enunciado'],
-//                    'dificultad' => $row['dificultad'],
-//                    'nombre_categoria' => $row['nombre_categoria'],
-//                    'nombre_estado' => $row['nombre_estado']
-//                ];
-//            }
-//        }
+        $questions = ['reportedQuestions' => []];
 
-        return $result;
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $questions['reportedQuestions'][] = [
+                    'question_id' => $row['question_id'],
+                    'enunciado' => $row['enunciado'],
+                    'dificultad' => $row['dificultad'],
+                    'nombre_categoria' => $row['nombre_categoria'],
+                    'descripcion' => $row['description'],
+                ];
+            }
+        }
+
+        return $questions;
     }
 
     public function findCategories(){
@@ -47,40 +47,7 @@ class AdminModel
     }
 
     public function insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category) {
-        $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, 2, 1)";
-        $stmt = $this->database->prepare($sql);
-        $dificultad = "Media";
-        $stmt->bind_param("ssi", $question, $dificultad, $category);
-        $stmt->execute();
-
-        $questionId = $stmt->insert_id;
-        $stmt->close();
-
-        $sql = "INSERT INTO answer (texto_respuesta, categoria_id) VALUES (?, ?)";
-        $stmt = $this->database->prepare($sql);
-
-        $respuestas = [$correctAnswer, $answer2, $answer3, $answer4];
-        $categoria = $category;
-        $respuestaIds = [];
-
-        foreach ($respuestas as $index => $respuesta) {
-            $stmt->bind_param("si", $respuesta, $categoria);
-            $stmt->execute();
-
-            $respuestaIds[] = $stmt->insert_id;
-        }
-        $stmt->close();
-
-        $sql = "INSERT INTO question_answer (pregunta_id, respuesta_id, es_correcta) VALUES (?, ?, ?)";
-        $stmt = $this->database->prepare($sql);
-
-        foreach ($respuestaIds as $index => $respuestaId) {
-            $esCorrecta = ($index === 0);
-
-            $stmt->bind_param("iii", $questionId, $respuestaId, $esCorrecta);
-            $stmt->execute();
-        }
-        $stmt->close();
+        return $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
 
     function filterSuggestedQuestion()
@@ -90,30 +57,14 @@ class AdminModel
 //        $stmt = $this->database->prepare($sql);
 //        $stmt->execute();
 //        $suggestedQuestion = $stmt->get_result();
-        $sql = "SELECT 
-    
-    q.id,
-    ca.nombre_categoria,
-    s.nombre_estado,
-    q.enunciado, 
-    q.dificultad, 
-    q.categoria_id, 
-    q.estado_id, 
-    q.activo,
-    a.texto_respuesta
-FROM 
-    question q
-JOIN 
-    category ca ON ca.id = q.categoria_id
-JOIN 
-    status s ON s.id = q.estado_id
-JOIN 
-    question_answer qa ON q.id = qa.pregunta_id
-JOIN 
-    answer a ON qa.respuesta_id = a.id
-WHERE 
-    q.activo = 0 AND q.estado_id = 1;
-";
+        $sql = "SELECT q.id, ca.nombre_categoria, s.nombre_estado, q.enunciado, q.dificultad, q.categoria_id, 
+                q.estado_id, q.activo, a.texto_respuesta FROM question q
+                JOIN category ca ON ca.id = q.categoria_id
+                JOIN status s ON s.id = q.estado_id
+                JOIN question_answer qa ON q.id = qa.pregunta_id
+                JOIN answer a ON qa.respuesta_id = a.id
+                WHERE q.activo = 0 AND q.estado_id = 1;";
+
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
         $suggestedQuestion = $stmt->get_result();
