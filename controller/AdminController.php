@@ -31,13 +31,12 @@ class AdminController
 
     public function createQuestionPost()
     {
-
         $question = isset($_POST['question-text']) ? $_POST['question-text'] : '';
 
-        $correctAnswer = isset($_POST['answer1']);
-        $answer2 = isset($_POST['answer2']);
-        $answer3 = isset($_POST['answer3']);
-        $answer4 = isset($_POST['answer4']);
+        $correctAnswer = isset($_POST['answer1']) ? $_POST['answer1'] : '';
+        $answer2 = isset($_POST['answer2']) ? $_POST['answer2'] : '';
+        $answer3 = isset($_POST['answer3']) ? $_POST['answer3'] : '';
+        $answer4 = isset($_POST['answer4']) ? $_POST['answer4'] : '';
 
         $category = isset($_POST['category']) ? $_POST['category'] : '';
 
@@ -45,8 +44,8 @@ class AdminController
         $this->redirectHome();
         $this->presenter->show('createQuestion', ['success' => "Pregunta agregada exitosamente"]);
         exit();
-
     }
+
 
     public function redirectHome()
     {

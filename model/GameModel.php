@@ -364,8 +364,8 @@ class GameModel
     }
     public function reporterQuestion($questionId){
         $sql = "UPDATE question
-    SET estado_id = 4
-    WHERE id=$questionId";
+        SET estado_id = 4
+        WHERE id=$questionId";
     }
 
     function suggestQuestion()
