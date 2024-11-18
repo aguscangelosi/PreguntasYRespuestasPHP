@@ -77,7 +77,7 @@ class AdminController
     function declineReport()
     {
         $idQuestion = isset($_GET['id']) ? $id = $_GET['id'] : '';
-        $this->model->declinerReport($idQuestion);
+        $this->model->declineReport($idQuestion);
         $this->presenter->show('declineReport');
     }
 }

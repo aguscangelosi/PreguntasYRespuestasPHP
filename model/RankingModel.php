@@ -63,6 +63,13 @@ class RankingModel
         return $result->fetch_assoc();
     }
 
+    public function getQrCode($idUser){
+        $basePath = 'localhost' . '/PreguntasYRespuestasPHP/img/profile/';
+        $userImagePath = $basePath . 'usuario_' . $idUser . '.png';
+
+        return $userImagePath;
+    }
+
     public function getProfile($idUser){
         //foto perfil
         //Nombre de usuario
@@ -74,8 +81,10 @@ class RankingModel
 
         $position = $this->getPosition($idUser);
         $dataProfile = $this->getDataProfile($idUser);
+//        $dataProfile['img'] = $this->getQrCode($idUser);
 
         return ['position'=>$position, 'dataProfile'=>$dataProfile];
     }
+
 
 }

@@ -17,7 +17,10 @@ class Router
 
     public function route($controllerName, $methodName)
     {
-        $publicRoutes = ['auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"]];
+
+        $publicRoutes = ['auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"],
+            'img' => ['profile']
+        ];
 
         $defaultRoutesByRole = [
             1 => ['controller' => 'admin', 'method' => 'home'], //admin

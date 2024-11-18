@@ -135,7 +135,7 @@ class AdminModel
         return true;
     }
 
-    public function declinerReport($idQuestion)
+    public function declineReport($idQuestion)
     {
         $this->approveQuestion($idQuestion);
         $stmt = $this->database->prepare("DELETE FROM question_report WHERE question_id = ?");
@@ -144,6 +144,19 @@ class AdminModel
         $stmt->close();
 
         return true;
+    }
+
+    public function findPlayers()
+    {
+        $sql = "SELECT COUNT FROM user";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $players = $stmt->get_result();
+    }
+
+    public function findMatchesPlayed()
+    {
+        $sql = "SELECT COUNT FROM game";
     }
 
 }
