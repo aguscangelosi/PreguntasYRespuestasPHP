@@ -6,6 +6,7 @@ include_once("helper/IncludeFilePresenter.php");
 include_once("helper/Router.php");
 include_once("helper/MustachePresenter.php");
 include_once("helper/AuthHelper.php");
+include_once("helper/QrHelper.php");
 
 
 include_once("model/AuthModel.php");
@@ -26,9 +27,11 @@ class Configuration
 {
 
     private static $authHelper;
+    private static $QrHelper;
     public function __construct()
     {
         self::$authHelper = new AuthHelper();
+        self::$QrHelper = new QRHelper();
     }
 
     public static function getAuthHelper()
@@ -36,8 +39,13 @@ class Configuration
         return self::$authHelper;
     }
 
+    public static function getQrHelper()
+    {
+        return self::$QrHelper;
+    }
+
     public function getAuthController(){
-        return new AuthController($this->getAuthModel(), $this->getPresenter(),$this->getAuthHelper());
+        return new AuthController($this->getAuthModel(), $this->getPresenter(),$this->getAuthHelper(), $this->getQrHelper());
     }
 
     public function getGameController()

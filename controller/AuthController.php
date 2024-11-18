@@ -7,15 +7,16 @@ class AuthController
     private $model;
     private $presenter;
     private $mail;
-
     private $authHelper;
+    private $qrHelper;
 
-    public function __construct($model, $presenter, $authHelper)
+    public function __construct($model, $presenter, $authHelper,$qrHelper)
     {
         $this->mail = new MailService(true);
         $this->model = $model;
         $this->presenter = $presenter;
         $this->authHelper = $authHelper;
+        $this->qrHelper = $qrHelper;
     }
 
     public function init()
@@ -45,9 +46,12 @@ class AuthController
 
         $result = $this->model->register($name, $email, $password, $birthday, $username);
 
+
         if (is_string($result)) {
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
+            $algo = $this->qrHelper->generarQrParaUsuario($result);
+            var_dump($algo);
             $this->mail->sendMail($email, "Validación de correo", "<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
             $this->redirectHome();
         }
@@ -62,6 +66,7 @@ class AuthController
 
             if ($user) {
                 if ($this->authHelper->loginUser($user)) {
+                    $this->qrHelper->generarQrParaUsuario($user["id"]);
                     header('location: /PreguntasYRespuestasPHP/game/lobby');
                     exit;
                 }

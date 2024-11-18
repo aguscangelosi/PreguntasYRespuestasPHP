@@ -82,6 +82,8 @@ class AuthModel
             }
 
             $lastId = $this->database->insert_id();
+
+
             return $lastId;
         } catch (Exception $e) {
             return $e->getMessage();
