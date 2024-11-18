@@ -18,10 +18,15 @@ class Router
     public function route($controllerName, $methodName)
     {
 
-        $publicRoutes = ['auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"],
+        $publicRoutes = [
+            'auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"],
             'img' => ['profile']
         ];
 
+        if (preg_match('#^/PreguntasYRespuestasPHP/img/profile/usuario_\d+\.png$#', $_SERVER['REQUEST_URI'])) {
+            $this->serveImage($_SERVER['REQUEST_URI']);
+            return;
+        }
         $defaultRoutesByRole = [
             1 => ['controller' => 'admin', 'method' => 'home'], //admin
             2 => ['controller' => 'game', 'method' => 'lobby'], // user
@@ -115,4 +120,24 @@ class Router
         $validMethod = method_exists($controller, $method) ? $method : $this->defaultMethod;
         call_user_func(array($controller, $validMethod));
     }
+
+    private function serveImage($path)
+    {
+        error_log("Requested image path: " . $path);
+
+        $filePath = $_SERVER['DOCUMENT_ROOT'] . $path;
+        error_log("Full file path: " . $filePath);
+
+        if (file_exists($filePath)) {
+            $imageInfo = getimagesize($filePath);
+            header('Content-Type: ' . $imageInfo['mime']);
+            readfile($filePath);
+            exit;
+        } else {
+            header("HTTP/1.1 404 Not Found");
+            echo "Imagen no encontrada";
+            exit;
+        }
+    }
+
 }

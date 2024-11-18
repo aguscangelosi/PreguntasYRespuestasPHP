@@ -15,7 +15,7 @@ class QRHelper
     {
         $url = $this->baseUrl . "?id=" . urlencode($userId);
 
-        $filePath = "./img/profile/qr/usuario_" . $userId . ".png";
+        $filePath = "./img/profile/usuario_" . $userId . ".png";
 
         PhpQRcode::png($url, $filePath, QR_ECLEVEL_L, 10, 2);
 
