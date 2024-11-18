@@ -23,7 +23,7 @@ class Router
             'img' => ['profile']
         ];
 
-        if (preg_match('#^/PreguntasYRespuestasPHP/img/profile/usuario_\d+\.png$#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#^/PreguntasYRespuestasPHP/img/.*$#', $_SERVER['REQUEST_URI'])) {
             $this->serveImage($_SERVER['REQUEST_URI']);
             return;
         }
@@ -123,21 +123,20 @@ class Router
 
     private function serveImage($path)
     {
-        error_log("Requested image path: " . $path);
-
         $filePath = $_SERVER['DOCUMENT_ROOT'] . $path;
-        error_log("Full file path: " . $filePath);
 
         if (file_exists($filePath)) {
             $imageInfo = getimagesize($filePath);
-            header('Content-Type: ' . $imageInfo['mime']);
-            readfile($filePath);
-            exit;
-        } else {
-            header("HTTP/1.1 404 Not Found");
-            echo "Imagen no encontrada";
-            exit;
+
+            if ($imageInfo) {
+                header('Content-Type: ' . $imageInfo['mime']);
+                readfile($filePath);
+                exit;
+            }
         }
+        header("HTTP/1.1 404 Not Found");
+        echo "Imagen no encontrada";
+        exit;
     }
 
 }
