@@ -148,15 +148,43 @@ class AdminModel
 
     public function findPlayers()
     {
-        $sql = "SELECT COUNT FROM user";
+        $sql = "SELECT COUNT(*) as total_users FROM user";
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
-        $players = $stmt->get_result();
+        return $stmt->get_result()->fetch_assoc();
     }
 
     public function findMatchesPlayed()
     {
-        $sql = "SELECT COUNT FROM game";
+        $sql = "SELECT COUNT(*) as total_games FROM game g WHERE g.estado = ?";
+        $stmt = $this->database->prepare($sql);
+        $estado = "finalizada";
+        $stmt->bind_param("s", $estado);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
     }
+
+    public function findAllQuestions(){
+        $sql = "SELECT COUNT(*) as total_questions FROM question";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function findAllData()
+    {
+        $totalQuestions = $this->findAllQuestions()['total_questions'];
+        $matchesPlayed = $this->findMatchesPlayed()['total_games'];
+        $players = $this->findPlayers()['total_users'];
+
+        $data = [
+            'total_users' => $players,
+            'total_questions' => $totalQuestions,
+            'total_games' => $matchesPlayed,
+        ];
+
+        return $data;
+    }
+
 
 }

@@ -14,7 +14,8 @@ class AdminController
     }
 
     public function home(){
-        $this->presenter->show('homeAdmin');
+        $data = $this->model->findAllData();
+        $this->presenter->show('homeAdmin', $data);
     }
 
     public function homeEdit(){
@@ -79,5 +80,10 @@ class AdminController
         $idQuestion = isset($_GET['id']) ? $id = $_GET['id'] : '';
         $this->model->declineReport($idQuestion);
         $this->presenter->show('declineReport');
+    }
+
+    public function showStatistics()
+    {
+        $this->presenter->show('');
     }
 }
