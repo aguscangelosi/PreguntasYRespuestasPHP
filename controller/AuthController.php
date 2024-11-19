@@ -96,7 +96,7 @@ class AuthController
 
     public function redirectHome()
     {
-        header('location: /PreguntasYRespuestasPHP/index.php/initLogin');
+        header('location: /PreguntasYRespuestasPHP/initLogin');
         exit();
     }
 
