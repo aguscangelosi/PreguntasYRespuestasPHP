@@ -144,7 +144,6 @@ class AuthModel
 
     function counterUsers()
     {
-
         $sql = "SELECT id 
         FROM user 
         ORDER BY id DESC 
@@ -160,8 +159,6 @@ class AuthModel
         $stmt2->bind_param("i", $lastID);
         $stmt2->execute();
         $stmt2->close();
-
-
     }
    
 

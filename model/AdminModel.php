@@ -148,8 +148,11 @@ class AdminModel
 
     public function findPlayers()
     {
-        $sql = "SELECT COUNT(*) as total_users FROM user";
+        $sql = "SELECT COUNT(*) as total_users FROM user
+        WHERE rol_id = ?";
         $stmt = $this->database->prepare($sql);
+        $rolID = 2;
+        $stmt->bind_param("i", $rolID);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }

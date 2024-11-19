@@ -13,7 +13,6 @@ class QuestionService
 
     public function insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category)
     {
-
         $rolId = $this->authHelper->getRolId();
         $estadoActivo = ($rolId == 3) ? 1 : 0;
         $status = ($rolId == 3) ? 2 : 1;
@@ -21,7 +20,7 @@ class QuestionService
         $sql = "INSERT INTO question (enunciado, dificultad, categoria_id, estado_id, activo) VALUES (?, ?, ?, ?, ?)";
 
         $stmt = $this->database->prepare($sql);
-        $dificultad = "Media";
+        $dificultad = "Facil";
         $stmt->bind_param("ssiii", $question, $dificultad, $category, $status, $estadoActivo);
         $stmt->execute();
 
