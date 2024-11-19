@@ -373,18 +373,9 @@ LIMIT 1;
         WHERE id=$questionId";
     }
 
-    function suggestQuestion()
+    function suggestQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category)
     {
-        $question = isset($_POST['question-text']) ? $_POST['question-text'] : '';
-
-        $correctAnswer = isset($_POST['answer1']);
-        $answer2 = isset($_POST['answer2']);
-        $answer3 = isset($_POST['answer3']);
-        $answer4 = isset($_POST['answer4']);
-
-        $category = isset($_POST['category']) ? $_POST['category'] : '';
-
-        $this->model->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
+        $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
 
     public function findCategories()
