@@ -49,6 +49,12 @@ class QuestionService
         }
         $stmt->close();
 
+        $sql2 = "INSERT INTO statistics_admin (question_id) VALUES (?)";
+        $stmt2 = $this->database->prepare($sql2);
+        $stmt2->bind_param("i", $questionId);
+        $stmt2->execute();
+        $stmt2->close();
+
         return $questionId;
     }
 }

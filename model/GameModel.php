@@ -118,6 +118,7 @@ class GameModel
 
     public function findMatch($idUser, $idMatch)
     {
+
         $sql = "SELECT * FROM game g
         JOIN user_game ug ON g.id = ug.partida_id
         WHERE g.id = ? AND ug.user_id = ?";
@@ -163,15 +164,16 @@ class GameModel
     {
         $sql = "
     SELECT q.id 
-    FROM question q
-    WHERE q.categoria_id = ? 
-      AND q.id NOT IN (
-          SELECT pregunta_id 
-          FROM game_question 
-          WHERE partida_id = ?
-      )
-    ORDER BY RAND()
-    LIMIT 1
+FROM question q
+WHERE q.categoria_id = ? 
+  AND q.activo = 1 
+  AND q.id NOT IN (
+      SELECT pregunta_id 
+      FROM game_question 
+      WHERE partida_id = ?
+  )
+ORDER BY RAND()
+LIMIT 1;
     ";
 
         $stmt = $this->database->prepare($sql);
@@ -399,4 +401,6 @@ class GameModel
     {
         return $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
+
+
 }

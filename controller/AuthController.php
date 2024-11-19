@@ -75,7 +75,6 @@ class AuthController
                 $data["error_message"] = "Usuario o contraseña incorrectos";
             }
         }
-
         $this->presenter->show('login', $data);
     }
 

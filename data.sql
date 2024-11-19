@@ -33,8 +33,10 @@ VALUES
     ('asmith', '12345', 2, 'asmith@example.com', '1985-07-22', 'Alice Smith', 'profile2.jpg', '2024-02-18', false),
     ('bwilliams', '12345', 2, 'bwilliams@example.com', '1992-11-10', 'Bob Williams', 'profile3.jpg', '2024-03-12', false),
     ('cmiller', '12345', 2, 'cmiller@example.com', '2000-03-30', 'Charlie Miller', 'profile4.jpg', '2024-04-05', false),
-    ('djohnson', '12345', 2, 'djohnson@example.com', '1998-09-12', 'Diana Johnson', 'profile5.jpg', '2024-05-20', false);
-
+    ('djohnson', '12345', 2, 'djohnson@example.com', '1998-09-12', 'Diana Johnson', 'profile5.jpg', '2024-05-20', false),
+    ('Usuario100.', '$2y$10$SLGa9bq7dEWBpRViic0Zc.AhBpyRv9kIb1NVgQCWJL.moBMbmUZM6', 2, 'mm25AA@example.com', '1998-09-12', 'Facu1', 'profile5.jpg', '2024-05-20', true),
+    ('Editor100.', '$2y$10$mc83bpYFDPIy0AQtMHgsyuO.y1WyZ1ku5V7Y20X9j/W06dODW1Bjm', 3, 'mmm25AA@example.com', '1998-09-12', 'Facu2', 'profile6.jpg', '2024-06-20', true),
+    ('Admin100.', '$2y$10$ksupjXLXDjkuev9o8GypfOhYZ06BWh5UM/I6p/5d.6OZ3MqiWV76u', 1, 'mmmm25AA@example.com', '1998-09-12', 'Facu3', 'profile7.jpg', '2024-07-20', true);
 CREATE TABLE category (
                           id INT AUTO_INCREMENT PRIMARY KEY,
                           nombre_categoria VARCHAR(50) NOT NULL UNIQUE
@@ -119,6 +121,14 @@ CREATE TABLE question_report (
                                  description TEXT,
                                  report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                  FOREIGN KEY (question_id) REFERENCES question(id)
+);
+CREATE TABLE statistics_admin (
+                                      id INT AUTO_INCREMENT PRIMARY KEY,
+                                      question_id INT,
+                                      user_id INT,
+                                      FOREIGN KEY (question_id) REFERENCES question(id),
+                                      FOREIGN KEY (user_id) REFERENCES user(id)
+
 );
 
 -- Inserción de categorías de ejemplo

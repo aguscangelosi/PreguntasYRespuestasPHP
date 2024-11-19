@@ -171,16 +171,36 @@ class AdminModel
         return $stmt->get_result()->fetch_assoc();
     }
 
+    public function findAllQuestionsCreated(){
+        $sql = "SELECT COUNT(question_id) as total_questions_created FROM statistics_admin";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function findAllUsersCreated(){
+        $sql = "SELECT COUNT(user_id) as total_users_created FROM statistics_admin";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function findAllData()
     {
         $totalQuestions = $this->findAllQuestions()['total_questions'];
         $matchesPlayed = $this->findMatchesPlayed()['total_games'];
         $players = $this->findPlayers()['total_users'];
+        $questionsCreated = $this->findAllQuestionsCreated()['total_questions_created'];
+        $usersCreated = $this->findAllUsersCreated()['total_users_created'];
 
         $data = [
             'total_users' => $players,
             'total_questions' => $totalQuestions,
             'total_games' => $matchesPlayed,
+            'total_questions_created' =>$questionsCreated,
+            'total_users_created' =>$usersCreated,
         ];
 
         return $data;

@@ -82,8 +82,4 @@ class AdminController
         $this->presenter->show('declineReport');
     }
 
-    public function showStatistics()
-    {
-        $this->presenter->show('');
-    }
 }
