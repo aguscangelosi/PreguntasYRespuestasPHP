@@ -1,43 +1,53 @@
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<h2 class="text-center fw-bold m-3">Crear una pregunta</h2>
+<!--
+<button onclick="showAddQuestionForm()" class="btn btn-primary">Sugerir una nueva dudosa</button>
+-->
 
-<section class="question-management w3-container">
-    <h2 class="w3-center w3-text-teal">Gestión de Preguntas</h2>
-    <button onclick="showAddQuestionForm()" class="w3-button w3-teal w3-margin-top w3-round-large">Agregar Nueva Pregunta</button>
+<form action="/PreguntasYRespuestasPHP/game/suggestQuestionPost" method="POST" id="add-question-form">
 
-    <form action="/PreguntasYRespuestasPHP/admin/createQuestionPost" method="post"
-          id="add-question-form" style="display:none; margin-top: 20px;" class="w3-container w3-card-4 w3-padding w3-light-grey">
-        <label for="question-text" class="w3-text-teal"><b>Enunciado de la Pregunta:</b></label>
-        <input type="text" id="question-text" name="question-text" class="w3-input w3-border w3-round-large" required>
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-8 mx-auto p-2">
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="question-text" name="question-text" placeholder="Enunciado de la Pregunta" required>
+                    <label for="floatingInput">Enunciado de la Pregunta</label>
+                </div>
+                <select class="form-select" aria-label="Default select example">
+                    <option value="" disabled selected>Selecciona una categoría</option>
+                    {{#categories}}
+                        <option value="{{id}}">{{nombre_categoria}}</option>
+                    {{/categories}}
+                </select>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer1" name="answer1" placeholder="Respuesta Correcta" required>
+                    <label for="floatingInput">Respuesta correcta</label>
+                </div>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer2" name="answer2" placeholder="Respuesta incorrecta" required>
+                    <label for="floatingInput">Incorrecta 1</label>
+                </div>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer3" name="answer3" placeholder="Respuesta incorrecta" required>
+                    <label for="floatingInput">Incorrecta 2</label>
+                </div>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer4" name="answer4" placeholder="Respuesta incorrecta" required>
+                    <label for="floatingInput">Incorrecta 3</label>
+                </div>
 
-        <label for="category-select" class="w3-text-teal"><b>Categoría:</b></label>
-        <select id="category-select" name="category" class="w3-select w3-border w3-round-large" required>
-            <option value="" disabled selected>Selecciona una categoría</option>
-            {{#categories}}
-                <option value="{{id}}">{{nombre_categoria}}</option>
-            {{/categories}}
-        </select>
-
-        <label for="answer1" class="w3-text-teal"><b>Respuesta correcta:</b></label>
-        <input type="text" id="answer1" name="answer1" class="w3-input w3-border w3-round-large" required>
-
-        <label for="answer2" class="w3-text-teal"><b>Respuesta 2:</b></label>
-        <input type="text" id="answer2" name="answer2" class="w3-input w3-border w3-round-large" required>
-
-        <label for="answer3" class="w3-text-teal"><b>Respuesta 3:</b></label>
-        <input type="text" id="answer3" name="answer3" class="w3-input w3-border w3-round-large" required>
-
-        <label for="answer4" class="w3-text-teal"><b>Respuesta 4:</b></label>
-        <input type="text" id="answer4" name="answer4" class="w3-input w3-border w3-round-large" required>
-
-        <button type="submit" class="w3-button w3-teal w3-margin-top w3-round-large">Guardar Pregunta</button>
-    </form>
-
-    {{#success}}
-        <div class="w3-panel w3-green w3-margin-top">
-            <p>{{success}}</p>
+            </div>
         </div>
-    {{/success}}
-</section>
+    </div>
+    <div class="d-grid gap-2 col-3 mx-auto m-3">
+        <button type="submit" class="btn btn-dark p-3">Confirmar pregunta</button>
+    </div>
+</form>
+
+{{#success}}
+    <div class="w3-panel w3-green w3-margin-top">
+        <p>{{success}}</p>
+    </div>
+{{/success}}
 
 <script>
     function showAddQuestionForm() {
