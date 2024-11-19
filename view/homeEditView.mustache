@@ -1,0 +1,54 @@
+<div class="container">
+    <div class="text-success text-center">{{success}}</div>
+    <section class="reported-questions">
+        <div class="text-center m-3">
+            <a href="/PreguntasYRespuestasPHP/admin/createQuestion" class="btn btn-secondary btn-lg p-4 rounded-pill">Crear una dudosa</a>
+        </div>
+        <h2 class="text-center fw-bold">Preguntas Reportadas</h2>
+        {{#reportedQuestions}}
+        <div class="card m-3" style="width: 18rem;">
+            <div class="card-body">
+                <p>ID Pregunta: {{question_id}}</p>
+                <p>Enunciado: {{enunciado}}</p>
+                <p>Reporte: {{descripcion}}</p>
+                <p>Respuesta correcta: {{nombre_categoria}}</p>
+                <a href="/PreguntasYRespuestasPHP/admin/approveReport?id={{question_id}}" class="btn btn-danger m-1">Eliminar pregunta</a>
+                <a href="/PreguntasYRespuestasPHP/admin/declineReport?id={{question_id}}" class="btn btn-success m-1">Conservar pregunta</a>
+            </div>
+        </div>
+        {{/reportedQuestions}}
+
+        {{^reportedQuestions}}
+            <div class="text-center m-3">
+                <p>No hay preguntas reportadas pendientes de revisión.</p>
+            </div>
+        {{/reportedQuestions}}
+    </section>
+
+    <section class="suggested-questions">
+        <h2 class="text-center fw-bold">Preguntas sugeridas por usuarios</h2>
+
+        {{#suggestedQuestions}}
+        <div class="card m-3" style="width: 18rem;">
+            <div class="card-body">
+                <p>ID Pregunta: {{id}}</p>
+                <p>Pregunta: {{enunciado}}</p>
+                <p>Dificultad: {{dificultad}}</p>
+                <p>Categoria sugerida: {{nombre_categoria}}</p>
+                <p>Estado: {{nombre_estado}}</p>
+                <p>Respuesta correcta: {{texto_respuesta}}</p>
+                <a href="/PreguntasYRespuestasPHP/admin/approveQuestion?id={{id}}" onclick="approveQuestion({{id}})" class="btn btn-success m-1">Aprobar</a>
+                <a href="/PreguntasYRespuestasPHP/admin/deleteQuestion?id={{id}}" onclick="approveSuggestedQuestion({{id}})" class="btn btn-danger m-1">Rechazar</a>
+            </div>
+        </div>
+        {{/suggestedQuestions}}
+
+        {{^suggestedQuestions}}
+            <div class="text-center m-3">
+                <p>No hay preguntas sugeridas pendientes de aprobación.</p>
+            </div>
+        {{/suggestedQuestions}}
+    </section>
+</div>
+
+

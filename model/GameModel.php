@@ -4,9 +4,12 @@ class GameModel
 {
     private $database;
 
-    public function __construct($database)
+    private $questionService;
+
+    public function __construct($database, $questionService)
     {
         $this->database = $database;
+        $this->questionService = $questionService;
     }
 
     public function getMatch($idMatch, $idUser)
@@ -78,7 +81,7 @@ class GameModel
     JOIN question q ON gq.pregunta_id = q.id
     LEFT JOIN question_answer qa ON q.id = qa.pregunta_id
     LEFT JOIN answer a ON qa.respuesta_id = a.id
-    WHERE ug.partida_id = ? AND ug.user_id = ? AND ug.estado_pregunta = 'pendiente'
+    WHERE ug.partida_id = ? AND ug.user_id = ? AND ug.estado_pregunta = 'pendiente' AND q.activo = 1;
     ";
 
         $stmt = $this->database->prepare($sql);
@@ -115,6 +118,7 @@ class GameModel
 
     public function findMatch($idUser, $idMatch)
     {
+
         $sql = "SELECT * FROM game g
         JOIN user_game ug ON g.id = ug.partida_id
         WHERE g.id = ? AND ug.user_id = ?";
@@ -160,15 +164,16 @@ class GameModel
     {
         $sql = "
     SELECT q.id 
-    FROM question q
-    WHERE q.categoria_id = ? 
-      AND q.id NOT IN (
-          SELECT pregunta_id 
-          FROM game_question 
-          WHERE partida_id = ?
-      )
-    ORDER BY RAND()
-    LIMIT 1
+FROM question q
+WHERE q.categoria_id = ? 
+  AND q.activo = 1 
+  AND q.id NOT IN (
+      SELECT pregunta_id 
+      FROM game_question 
+      WHERE partida_id = ?
+  )
+ORDER BY RAND()
+LIMIT 1;
     ";
 
         $stmt = $this->database->prepare($sql);
@@ -199,7 +204,9 @@ class GameModel
     LEFT JOIN question_answer qa ON q.id = qa.pregunta_id
     LEFT JOIN answer a ON qa.respuesta_id = a.id
     WHERE q.id = ?
-    ";
+    ORDER BY RAND()
+";
+
 
         $stmt = $this->database->prepare($sql);
 
@@ -339,9 +346,61 @@ class GameModel
         $timeDifference = $now - $lastResponseTime;
 
 
-        if ($timeDifference > 60) {
+        if ($timeDifference > 12) {
             return "timeout";
         }
         return null;
     }
+
+    public function reportQuestion($questionId, $description)
+    {
+        $sql = "INSERT INTO question_report (question_id, description, report_date) VALUES (?, ?, NOW())";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("is", $questionId, $description);
+
+        if ($stmt->execute()) {
+            $sql = "UPDATE question
+            SET estado_id = 4
+            WHERE id = $questionId";
+            $stmt = $this->database->prepare($sql);
+            $stmt->execute();
+            return true;
+        }
+    }
+    public function reporterQuestion($questionId){
+        $sql = "UPDATE question
+        SET estado_id = 4
+        WHERE id=$questionId";
+    }
+
+    function suggestQuestion()
+    {
+        $question = isset($_POST['question-text']) ? $_POST['question-text'] : '';
+
+        $correctAnswer = isset($_POST['answer1']);
+        $answer2 = isset($_POST['answer2']);
+        $answer3 = isset($_POST['answer3']);
+        $answer4 = isset($_POST['answer4']);
+
+        $category = isset($_POST['category']) ? $_POST['category'] : '';
+
+        $this->model->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
+    }
+
+    public function findCategories()
+    {
+        $sql = "SELECT * FROM category c";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $categories = $stmt->get_result();
+
+        return $categories;
+    }
+
+    function suggestedQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category)
+    {
+        return $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
+    }
+
+
 }

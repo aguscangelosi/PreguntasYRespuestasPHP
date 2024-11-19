@@ -1,20 +1,24 @@
-<table>
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Usuario</th>
-        <th>Puntaje</th>
-    </tr>
-    </thead>
-    <tbody>
-    {{#rankingList}}
+<div class="container p-5 m-auto">
+    <table class="table">
+        <thead>
         <tr>
-            <td>{{id}}</td>
-            <td><a href="/PreguntasYRespuestasPHP/ranking/profile&id={{id}}">{{username}}</a></td>
-            <td>{{puntaje}}</td>
+            <th scope="col">Ranking</th>
+            <th scope="col">ID</th>
+            <th scope="col">Usuario</th>
+            <th scope="col">Puntaje</th>
         </tr>
-    {{/rankingList}}
-    </tbody>
-</table>
+        </thead>
+        <tbody class="table-group-divider">
+        {{#rankingList}}
+            <tr>
+                <th scope="row">1</th>
+                <td>{{id}}</td>
+                <td><a href="/PreguntasYRespuestasPHP/ranking/profile&id={{id}}">{{username}}</a></td>
+                <td>{{puntaje}}</td>
+            </tr>
+        {{/rankingList}}
+        </tbody>
+    </table>
 
-<input type="hidden" value="{{id}}" id="id">
+    <input type="hidden" value="{{id}}" id="id">
+</div>

@@ -1,0 +1,48 @@
+<div class="container">
+    <section class="statistics-overview">
+        <h2>Resumen de Estadísticas</h2>
+        <ul>
+            <li><strong>Cantidad Total de Jugadores:</strong> {{total_users}}</li>
+            <li><strong>Cantidad Total de Partidas Jugadas:</strong> {{total_games}}</li>
+            <li><strong>Cantidad Total de Preguntas en el Juego:</strong> {{total_questions}}</li>
+            <li><strong>Cantidad Total de Preguntas Creadas:</strong> {{total_questions_created}}</li>
+            <li><strong>Cantidad de Usuarios Nuevos:</strong> {{total_users_created}}</li>
+        </ul>
+    </section>
+
+    <section class="question-stats">
+        <h2>Estadísticas de Preguntas y Respuestas</h2>
+        <p><strong>% de Preguntas Respondidas Correctamente:</strong></p>
+        <div class="chart">
+            <img src="{{correctAnswersChart}}" alt="Gráfico de respuestas correctas por usuario">
+        </div>
+    </section>
+
+    <section class="user-demographics">
+        <h2>Estadísticas Demográficas de Usuarios</h2>
+
+        <div>
+            <p><strong>Cantidad de Usuarios por País:</strong></p>
+            <div class="country-chart">
+                <img src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+            </div>
+        </div>
+
+        <div>
+            <p><strong>Cantidad de Usuarios por Sexo:</strong></p>
+            <ul>
+                <li>Masculino: {{maleUsers}}</li>
+                <li>Femenino: {{femaleUsers}}</li>
+            </ul>
+        </div>
+
+        <div>
+            <p><strong>Cantidad de Usuarios por Grupo de Edad:</strong></p>
+            <ul>
+                <li>Menores: {{youngUsers}}</li>
+                <li>Edad Media: {{middleAgedUsers}}</li>
+                <li>Jubilados: {{seniorUsers}}</li>
+            </ul>
+        </div>
+    </section>
+</div>

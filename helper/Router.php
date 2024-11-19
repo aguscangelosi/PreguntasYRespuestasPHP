@@ -17,34 +17,96 @@ class Router
 
     public function route($controllerName, $methodName)
     {
-        $publicRoutes = ['auth' => ['login', 'register']];
-        if(!($controllerName && $methodName)&& $this->authHelper->isAuthenticated()){
-            $controller = $this->getControllerFrom('game');
-            $this->executeMethodFromController($controller, "lobby");
+
+        $publicRoutes = [
+            'auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"],
+            'img' => ['profile']
+        ];
+
+        if (preg_match('#^/PreguntasYRespuestasPHP/img/.*$#', $_SERVER['REQUEST_URI'])) {
+            $this->serveImage($_SERVER['REQUEST_URI']);
+            return;
+        }
+        $defaultRoutesByRole = [
+            1 => ['controller' => 'admin', 'method' => 'home'], //admin
+            2 => ['controller' => 'game', 'method' => 'lobby'], // user
+            3 => ['controller' => 'admin', 'method' => 'homeEdit'],// editor
+        ];
+
+        $isAuthenticated = $this->authHelper->isAuthenticated();
+        $userRole = $isAuthenticated ? $this->authHelper->getRolId() : null;
+
+        if (!$controllerName || !$methodName) {
+            $this->redirectUserToDefault($userRole, $defaultRoutesByRole);
             return;
         }
 
-        if(!($controllerName && $methodName)&& !$this->authHelper->isAuthenticated()){
+        if ($controllerName === 'auth' && $methodName === 'logout') {
+            $controller = $this->getControllerFrom($controllerName);
+            $this->executeMethodFromController($controller, $methodName);
+            return;
+        }
+
+        if (isset($publicRoutes[$controllerName]) && in_array($methodName, $publicRoutes[$controllerName])) {
+            if (!$isAuthenticated) {
+                $controller = $this->getControllerFrom($controllerName);
+                $this->executeMethodFromController($controller, $methodName);
+                return;
+            }
+            $this->redirectUserToDefault($userRole, $defaultRoutesByRole);
+            return;
+        }
+
+        if (!isset($publicRoutes[$controllerName]) && !$isAuthenticated) {
             $controller = $this->getControllerFrom('auth');
             $this->executeMethodFromController($controller, "initLogin");
             return;
         }
 
-        if (isset($publicRoutes[$controllerName]) && $this->authHelper->isAuthenticated()) {
-            $controller = $this->getControllerFrom('game');
-            $this->executeMethodFromController($controller, "lobby");
-            return;
-        }
-
-        if (!isset($publicRoutes[$controllerName]) && !$this->authHelper->isAuthenticated()) {
-            $controller = $this->getControllerFrom('auth');
-            $this->executeMethodFromController($controller, $methodName);
+        if (!$this->isAuthorizedForRoute($userRole, $controllerName, $methodName)) {
+            $this->redirectUserToDefault($userRole, $defaultRoutesByRole);
             return;
         }
 
         $controller = $this->getControllerFrom($controllerName);
         $this->executeMethodFromController($controller, $methodName);
     }
+
+    private function redirectUserToDefault($userRole, $defaultRoutesByRole)
+    {
+        if (isset($defaultRoutesByRole[$userRole])) {
+            $defaultController = $defaultRoutesByRole[$userRole]['controller'];
+            $defaultMethod = $defaultRoutesByRole[$userRole]['method'];
+        } else {
+            $defaultController = 'auth';
+            $defaultMethod = 'initLogin';
+        }
+
+        $url = "http://localhost/PreguntasYRespuestasPHP/$defaultController/$defaultMethod";
+        header("Location: $url");
+        exit;
+    }
+
+    private function isAuthorizedForRoute($userRole, $controllerName, $methodName)
+    {
+        $rolePermissions = [
+            1 => ['admin' => ['home']],
+            2 => ['game' => [
+                'play', "finish", "findQuestions",
+                "sendQuestion", 'lobby',
+                "reportQuestion", 'suggestQuestion',
+                'suggestQuestionPost',
+            ],
+                'ranking' => ['rankingPosition', 'profile']
+            ],
+            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost", "deleteQuestion", "approveQuestion", "approveReport", "declineReport"]],
+        ];
+
+
+        return isset($rolePermissions[$userRole][$controllerName]) &&
+            in_array($methodName, $rolePermissions[$userRole][$controllerName]);
+    }
+
 
     private function getControllerFrom($module)
     {
@@ -58,4 +120,23 @@ class Router
         $validMethod = method_exists($controller, $method) ? $method : $this->defaultMethod;
         call_user_func(array($controller, $validMethod));
     }
+
+    private function serveImage($path)
+    {
+        $filePath = $_SERVER['DOCUMENT_ROOT'] . $path;
+
+        if (file_exists($filePath)) {
+            $imageInfo = getimagesize($filePath);
+
+            if ($imageInfo) {
+                header('Content-Type: ' . $imageInfo['mime']);
+                readfile($filePath);
+                exit;
+            }
+        }
+        header("HTTP/1.1 404 Not Found");
+        echo "Imagen no encontrada";
+        exit;
+    }
+
 }

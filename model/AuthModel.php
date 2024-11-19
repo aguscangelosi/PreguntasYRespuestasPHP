@@ -76,12 +76,14 @@ class AuthModel
             $profilePicture = "default.png";
 
             $stmt->bind_param('ssissss', $username, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture);
-
+            $this->counterUsers();
             if (!$stmt->execute()) {
                 throw new Exception("Error al crear el usuario");
             }
 
             $lastId = $this->database->insert_id();
+
+
             return $lastId;
         } catch (Exception $e) {
             return $e->getMessage();
@@ -140,7 +142,24 @@ class AuthModel
 
     }
 
+    function counterUsers()
+    {
+        $sql = "SELECT id 
+        FROM user 
+        ORDER BY id DESC 
+        LIMIT 1"; // Asegúrate de limitar la consulta a un solo resultado
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $stmt->bind_result($lastID); // Vincula la variable para capturar el resultado
+        $stmt->fetch(); // Obtén el valor del último ID
+        $stmt->close();
 
+        $sql2 = "INSERT INTO statistics_admin (user_id) VALUES (?)";
+        $stmt2 = $this->database->prepare($sql2);
+        $stmt2->bind_param("i", $lastID);
+        $stmt2->execute();
+        $stmt2->close();
+    }
    
 
 }

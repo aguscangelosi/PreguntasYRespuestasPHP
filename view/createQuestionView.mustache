@@ -1,0 +1,63 @@
+<h2 class="text-center fw-bold m-3">Crear una pregunta</h2>
+<!--
+<button onclick="showAddQuestionForm()" class="btn btn-primary">Sugerir una nueva dudosa</button>
+-->
+
+<form action="/PreguntasYRespuestasPHP/game/suggestQuestionPost" method="POST" id="add-question-form">
+
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-8 mx-auto p-2">
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="question-text" name="question-text" placeholder="Enunciado de la Pregunta" required>
+                    <label for="floatingInput">Enunciado de la Pregunta</label>
+                </div>
+                <select class="form-select" aria-label="Default select example">
+                    <option value="" disabled selected>Selecciona una categoría</option>
+                    {{#categories}}
+                        <option value="{{id}}">{{nombre_categoria}}</option>
+                    {{/categories}}
+                </select>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer1" name="answer1" placeholder="Respuesta Correcta" required>
+                    <label for="floatingInput">Respuesta correcta</label>
+                </div>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer2" name="answer2" placeholder="Respuesta incorrecta" required>
+                    <label for="floatingInput">Incorrecta 1</label>
+                </div>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer3" name="answer3" placeholder="Respuesta incorrecta" required>
+                    <label for="floatingInput">Incorrecta 2</label>
+                </div>
+                <div class="form-floating m-2">
+                    <input type="text" class="form-control" id="answer4" name="answer4" placeholder="Respuesta incorrecta" required>
+                    <label for="floatingInput">Incorrecta 3</label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="d-grid gap-2 col-3 mx-auto m-3">
+        <button type="submit" class="btn btn-dark p-3">Confirmar pregunta</button>
+    </div>
+</form>
+
+{{#success}}
+    <div class="w3-panel w3-green w3-margin-top">
+        <p>{{success}}</p>
+    </div>
+{{/success}}
+
+<script>
+    function showAddQuestionForm() {
+        document.getElementById('add-question-form').style.display = 'block';
+    }
+
+    window.onload = function() {
+        {{#success}}
+            document.getElementById('add-question-form').reset();
+            document.getElementById('add-question-form').style.display = 'none';
+        {{/success}}
+    };
+</script>

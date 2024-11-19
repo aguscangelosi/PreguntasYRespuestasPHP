@@ -19,33 +19,33 @@ class GameController
     {
         $user = $this->authHelper->getUser();
         $userId = $user["user_id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+        $idMatch = isset($_POST['idMatch']) ? $_POST['idMatch'] : null;
         $data = $this->model->getMatch($idMatch, $userId);
 
         $this->presenter->show('roulette', ['idMatch' => $data['id']]);
     }
 
-    public function playAgain()
-    {
-        $user = $this->authHelper->getUser();
-        $userId = $user["user_id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
-
-        if (!$userId || !$idMatch) {
-            $this->presenter->show('notFound');
-            return;
-        }
-
-        $data['id'] = $userId;
-        $data['idMatch'] = $idMatch;
-        $this->presenter->show('roulette', $data);
-    }
+//    public function playAgain()
+//    {
+//        $user = $this->authHelper->getUser();
+//        $userId = $user["user_id"];
+//        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+//
+//        if (!$userId || !$idMatch) {
+//            $this->presenter->show('notFound');
+//            return;
+//        }
+//
+//        $data['id'] = $userId;
+//        $data['idMatch'] = $idMatch;
+//        $this->presenter->show('roulette', $data);
+//    }
 
     public function finish()
     {
         $user = $this->authHelper->getUser();
         $userId = $user["user_id"];
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+        $idMatch = isset($_POST['idMatch']) ? $_POST['idMatch'] : null;
 
         if (!$userId || !$idMatch) {
             $this->presenter->show('notFound');
@@ -121,4 +121,53 @@ class GameController
 
         exit;
     }
+
+    public function reportQuestion()
+    {
+        $questionId = isset($_POST['question_id']) ? (int) $_POST['question_id'] : null;
+        $description = isset($_POST['description']) ? $_POST['description'] : '';
+
+
+        if (!$questionId || empty($description)) {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Datos inválidos'
+            ]);
+            return;
+        }
+
+        if ($this->model->reportQuestion($questionId, $description)) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Reporte insertado exitosamente.'
+            ]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Error al insertar el reporte']);
+        }
+
+        exit;
+    }
+
+    function suggestQuestion()
+    {
+        $categories = $this->model->findCategories();
+        $this->presenter->show('suggestQuestion', ['categories' => $categories]);
+    }
+
+    function suggestQuestionPost()
+    {
+        $question = isset($_POST['question-text']) ? $_POST['question-text'] : '';
+
+        $correctAnswer = isset($_POST['answer1']) ? $_POST['answer1'] : '';
+        $answer2 = isset($_POST['answer2']) ? $_POST['answer2'] : '';
+        $answer3 = isset($_POST['answer3']) ? $_POST['answer3'] : '';
+        $answer4 = isset($_POST['answer4']) ? $_POST['answer4'] : '';
+
+        $category = isset($_POST['category']) ? $_POST['category'] : '';
+        $this->model->suggestedQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
+        $this->redirectHome();
+        $this->presenter->show('lobby', ['success' => "Pregunta agregada exitosamente"]);
+        exit();
+    }
+
 }
