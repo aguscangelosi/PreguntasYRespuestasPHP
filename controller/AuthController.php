@@ -54,7 +54,6 @@ class AuthController
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
             $algo = $this->qrHelper->generarQrParaUsuario($result);
-            var_dump($algo);
             $this->mail->sendMail($email, "Validación de correo", "<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
             $this->redirectHome();
         }
@@ -99,7 +98,7 @@ class AuthController
 
     public function redirectHome()
     {
-        header('location: /PreguntasYRespuestasPHP/initLogin');
+        header('location: /PreguntasYRespuestasPHP/auth/initLogin');
         exit();
     }
 

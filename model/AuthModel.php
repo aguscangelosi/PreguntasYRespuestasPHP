@@ -66,7 +66,7 @@ class AuthModel
 
         try {
             $stmt = $this->database->prepare("INSERT INTO user (username, sex, password, rol_id, email, birthday, name, profile_picture, register_date, pais, ciudad)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)");
 
             if ($stmt === false) {
                 throw new Exception("Error al preparar la consulta");
