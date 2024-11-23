@@ -51,7 +51,7 @@ class RankingModel
         //Mejor partidas (historico)
         //trampitas - agregar bdd
     {
-        $sql = "SELECT DISTINCT u.id, u.username, MAX(ug.puntaje)
+        $sql = "SELECT DISTINCT MAX(ug.puntaje)
                FROM user_game ug JOIN user u ON ug.user_id = u.id
                WHERE u.id = ?";
 
@@ -60,7 +60,9 @@ class RankingModel
         $stmt->execute();
         $result = $stmt->get_result();
 
-        return $result->fetch_assoc();
+        $data = $result->fetch_assoc();
+        $data['id'] = $idUser;
+        return $data;
     }
 
     public function getQrCode($idUser){

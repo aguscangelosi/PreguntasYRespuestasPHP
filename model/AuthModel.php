@@ -46,7 +46,7 @@ class AuthModel
 
         return $age >= 13;
     }
-    public function register($name, $email, $password, $birthday, $username)
+    public function register($name, $sex, $email, $password, $birthday, $username, $pais, $ciudad)
     {
         if ($this->validateEmail($email)) {
             return "Usuario ya registrado";
@@ -65,7 +65,7 @@ class AuthModel
         $stmt = null;
 
         try {
-            $stmt = $this->database->prepare("INSERT INTO user (username, password, rol_id, email, birthday, name, profile_picture, register_date)
+            $stmt = $this->database->prepare("INSERT INTO user (username, sex, password, rol_id, email, birthday, name, profile_picture, register_date, pais, ciudad)
         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
 
             if ($stmt === false) {
@@ -75,7 +75,7 @@ class AuthModel
             $rolId = 2;
             $profilePicture = "default.png";
 
-            $stmt->bind_param('ssissss', $username, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture);
+            $stmt->bind_param('sssissssss', $username, $sex, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture, $pais, $ciudad);
             $this->counterUsers();
             if (!$stmt->execute()) {
                 throw new Exception("Error al crear el usuario");

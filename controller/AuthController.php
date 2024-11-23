@@ -10,7 +10,7 @@ class AuthController
     private $authHelper;
     private $qrHelper;
 
-    public function __construct($model, $presenter, $authHelper,$qrHelper)
+    public function __construct($model, $presenter, $authHelper, $qrHelper)
     {
         $this->mail = new MailService(true);
         $this->model = $model;
@@ -32,11 +32,14 @@ class AuthController
     public function register()
     {
         $name = $_POST['name'];
+        $sex = $_POST['sex'];
         $email = $_POST['email'];
         $password = $_POST['password'];
         $repeatPassword = $_POST['repeat_password'];
         $birthday = $_POST['birthday'];
         $username = $_POST['username'];
+        $pais = $_POST['pais'];
+        $ciudad = $_POST['ciudad'];
 
         if ($repeatPassword !== $password) {
             $errorMessage = "Las contraseñas no coinciden";
@@ -44,7 +47,7 @@ class AuthController
             return;
         }
 
-        $result = $this->model->register($name, $email, $password, $birthday, $username);
+        $result = $this->model->register($name, $sex, $email, $password, $birthday, $username, $pais, $ciudad);
 
 
         if (is_string($result)) {

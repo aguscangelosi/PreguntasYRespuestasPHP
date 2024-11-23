@@ -1,49 +1,110 @@
-<div class="w3-display-container" style="height:100vh;">
-    <div class="w3-display-middle" style="width:50%;">
-        <div class="w3-card-4">
-            <div class="w3-container w3-center w3-blue">
-                <h2 class=p-3>Registro</h2>
-            </div>
-            <div class="w3-container">
-                <form action="/PreguntasYRespuestasPHP/auth/register" method="POST">
+    <div class="w3-display-container" style="height:90vh;">
+        <div class="w3-display-middle" style="width:50%;">
+            <div class="w3-card-4">
+                <div class="w3-container w3-center text-bg-primary">
+                    <h2 class=p-3>Registro</h2>
+                </div>
+                <div class="w3-container">
+                    <form action="/PreguntasYRespuestasPHP/auth/register" method="POST">
 
-                    <div class="container text-center">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8 mx-auto p-2">
-                                <div class="form-floating m-2">
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre completo" required>
-                                    <label for="floatingInput">Nombre completo</label>
-                                </div>
-                                <div class="form-floating m-2">
-                                    <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
-                                    <label for="floatingInput">Usuario</label>
-                                </div>
-                                <div class="form-floating m-2">
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-                                    <label for="floatingInput">Email</label>
-                                </div>
-                                <div class="form-floating m-2">
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
-                                    <label for="floatingInput">Contraseña</label>
-                                </div>
-                                <div class="form-floating m-2">
-                                    <input type="password" class="form-control" id="repeat_password" name="repeat_password" placeholder="Repetir contraseña" required>
-                                    <label for="floatingInput">Repetir contraseña</label>
-                                </div>
-                                <div class="form-floating m-2">
-                                    <input type="date" class="form-control" id="birthday" name="birthday" placeholder="Fecha de nacimiento" required>
-                                    <label for="floatingInput">Fecha de nacimiento</label>
-                                </div>
+                        <div class="container text-center">
+                            <div class="row justify-content-center">
+                                <div class="col-md-8 mx-auto p-2">
+                                    <div class="form-floating m-2">
+                                        <input type="text" class="form-control" id="name" name="name"
+                                               placeholder="Nombre completo" required>
+                                        <label for="floatingInput">Nombre completo</label>
+                                    </div>
+                                    <div class="form-floating m-2">
+                                        <select class="form-control" id="sex" name="sex" required>
+                                            <option value="" disabled selected>Seleccionar género</option>
+                                            <option value="M">Masculino</option>
+                                            <option value="F">Femenino</option>
+                                            <option value="X">Prefiero no decirlo</option>
+                                        </select>
+                                        <label for="sex">Género</label>
+                                    </div>
+                                    <div class="form-floating m-2">
+                                        <input type="text" class="form-control" id="username" name="username"
+                                               placeholder="Usuario" required>
+                                        <label for="floatingInput">Usuario</label>
+                                    </div>
+                                    <div class="form-floating m-2">
+                                        <input type="email" class="form-control" id="email" name="email"
+                                               placeholder="Email"
+                                               required>
+                                        <label for="floatingInput">Email</label>
+                                    </div>
+                                    <div class="form-floating m-2">
+                                        <input type="password" class="form-control" id="password" name="password"
+                                               placeholder="Contraseña" required>
+                                        <label for="floatingInput">Contraseña</label>
+                                    </div>
+                                    <div class="form-floating m-2">
+                                        <input type="password" class="form-control" id="repeat_password"
+                                               name="repeat_password" placeholder="Repetir contraseña" required>
+                                        <label for="floatingInput">Repetir contraseña</label>
+                                    </div>
+                                    <div class="form-floating m-2">
+                                        <input type="date" class="form-control" id="birthday" name="birthday"
+                                               placeholder="Fecha de nacimiento" required>
+                                        <label for="floatingInput">Fecha de nacimiento</label>
+                                    </div>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-grid gap-2 col-3 mx-auto m-2">
-                        <button type="submit" class="btn btn-dark p-3">Registrarse</button>
-                    </div>
-                </form>
-                <div class="w3-text-red" style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
+                        <div class="d-grid gap-2 col-3 mx-auto m-2">
+                            <button type="submit" class="btn btn-dark p-3">Registrarse</button>
+                        </div>
+                        <div class="form-floating m-2">
+                            <input type="hidden" id="pais" name="pais">
+                            <input type="hidden" id="ciudad" name="ciudad">
+                        </div>
+                    </form>
+                    <div class="w3-text-red"
+                         style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <div>
+        <div class="form-floating m-2">
+            <div id="mapid" style="height: 100px; width: 50%;"></div>
+        </div>
+    </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Coordenadas iniciales (puedes ajustarlas a una ubicación predeterminada)
+        var lat = -34.6037; // Ejemplo: Buenos Aires
+        var lon = -58.3816;
+
+        // Inicializar el mapa
+        var mymap = L.map('mapid').setView([lat, lon], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
+
+        // Agregar marcador draggable
+        var marker = L.marker([lat, lon], {draggable: true}).addTo(mymap);
+
+        // Evento para actualizar campos ocultos al mover el marcador
+        marker.on('dragend', function (event) {
+            var position = marker.getLatLng();
+            document.getElementById('latitud').value = position.lat;
+            document.getElementById('longitud').value = position.lng;
+
+            // Llamar a la API de Nominatim para obtener país y ciudad
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var address = data.address;
+                        document.getElementById('pais').value = address.country || '';
+                        document.getElementById('ciudad').value = address.city || address.town || address.village || '';
+                    })
+                    .catch(error => console.error('Error al obtener la ubicación:', error));
+        });
+    });
+</script>

@@ -1,13 +1,41 @@
 <div class="container">
-    <section class="statistics-overview">
-        <h2>Resumen de Estadísticas</h2>
-        <ul>
-            <li><strong>Cantidad Total de Jugadores:</strong> {{total_users}}</li>
-            <li><strong>Cantidad Total de Partidas Jugadas:</strong> {{total_games}}</li>
-            <li><strong>Cantidad Total de Preguntas en el Juego:</strong> {{total_questions}}</li>
-            <li><strong>Cantidad Total de Preguntas Creadas:</strong> {{total_questions_created}}</li>
-            <li><strong>Cantidad de Usuarios Nuevos:</strong> {{total_users_created}}</li>
-        </ul>
+    <section class="statistics-overview p-3">
+        <h2 class="text-center pb-3">Resumen de Estadísticas</h2>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <div class="shadow p-3 mb-5 bg-body-tertiary rounded p-4">
+                        <ul>
+                            <li><strong>Cantidad Total de Jugadores:</strong> {{total_users}}</li>
+                            <li><strong>Cantidad Total de Partidas Jugadas:</strong> {{total_games}}</li>
+                            <li><strong>Cantidad Total de Preguntas en el Juego:</strong> {{total_questions}}</li>
+                            <li><strong>Cantidad Total de Preguntas Creadas:</strong> {{createdQuestions}}</li>
+                            <li><strong>Cantidad de Usuarios Nuevos:</strong> {{newUsers}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="shadow p-3 mb-5 bg-body-tertiary rounded p-4">
+                        <div>
+                            <p><strong>Cantidad de Usuarios por Sexo:</strong></p>
+                            <ul>
+                                <li><strong>Masculino:</strong> {{maleUsers}}</li>
+                                <li><strong>Femenino:</strong> {{femaleUsers}}</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p><strong>Cantidad de Usuarios por Grupo de Edad:</strong></p>
+                            <ul>
+                                <li><strong>Menores:</strong> {{youngUsers}}</li>
+                                <li><strong>Edad Media:</strong> {{middleAgedUsers}}</li>
+                                <li><strong>Jubilados:</strong> {{seniorUsers}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
 
     <section class="question-stats">
@@ -28,21 +56,6 @@
             </div>
         </div>
 
-        <div>
-            <p><strong>Cantidad de Usuarios por Sexo:</strong></p>
-            <ul>
-                <li>Masculino: {{maleUsers}}</li>
-                <li>Femenino: {{femaleUsers}}</li>
-            </ul>
-        </div>
 
-        <div>
-            <p><strong>Cantidad de Usuarios por Grupo de Edad:</strong></p>
-            <ul>
-                <li>Menores: {{youngUsers}}</li>
-                <li>Edad Media: {{middleAgedUsers}}</li>
-                <li>Jubilados: {{seniorUsers}}</li>
-            </ul>
-        </div>
     </section>
 </div>
