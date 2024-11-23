@@ -40,6 +40,7 @@ class AuthController
         $username = $_POST['username'];
         $pais = $_POST['pais'];
         $ciudad = $_POST['ciudad'];
+        $picture = $_FILES['profile_picture'];
 
         if ($repeatPassword !== $password) {
             $errorMessage = "Las contraseñas no coinciden";
@@ -47,17 +48,16 @@ class AuthController
             return;
         }
 
-        $result = $this->model->register($name, $sex, $email, $password, $birthday, $username, $pais, $ciudad);
-
+        $result = $this->model->register($name, $sex, $email, $password, $birthday, $username, $pais, $ciudad, $picture);
 
         if (is_string($result)) {
             $this->presenter->show('register', ['error_message' => $result]);
         } else {
-            $algo = $this->qrHelper->generarQrParaUsuario($result);
             $this->mail->sendMail($email, "Validación de correo", "<a href='localhost/PreguntasYRespuestasPHP/auth/validateEmail?id=$result'>Validar correo</a>");
             $this->redirectHome();
         }
     }
+
 
     public function login()
     {

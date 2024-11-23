@@ -46,7 +46,7 @@ class AuthModel
 
         return $age >= 13;
     }
-    public function register($name, $sex, $email, $password, $birthday, $username, $pais, $ciudad)
+    public function register($name, $sex, $email, $password, $birthday, $username, $pais, $ciudad, $picture)
     {
         if ($this->validateEmail($email)) {
             return "Usuario ya registrado";
@@ -82,6 +82,8 @@ class AuthModel
             }
 
             $lastId = $this->database->insert_id();
+
+            $this->savePicture($lastId, $picture);
 
 
             return $lastId;
@@ -141,6 +143,29 @@ class AuthModel
         }
 
     }
+
+    public function savePicture($userId, $picture)
+    {
+        if ($picture && isset($picture['tmp_name']) && $picture['error'] === UPLOAD_ERR_OK) {
+            $fileExtension = pathinfo($picture['name'], PATHINFO_EXTENSION);
+
+            $validExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+            if (!in_array(strtolower($fileExtension), $validExtensions)) {
+                return "/PreguntasYRespuestasPHP/img/profile/default.png";
+            }
+
+            $filePath = "/PreguntasYRespuestasPHP/img/profile/profile_" . $userId . "." . $fileExtension;
+
+            $fileTmpPath = $picture['tmp_name'];
+
+            if (move_uploaded_file($fileTmpPath, $filePath)) {
+                return $filePath;
+            }
+        }
+
+        return "/PreguntasYRespuestasPHP/img/profile/default.png";
+    }
+
 
     function counterUsers()
     {
