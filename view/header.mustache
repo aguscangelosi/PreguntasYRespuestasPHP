@@ -9,19 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-<body>
-
 <!-- Header -->
-<header class="w3-container w3-teal w3-padding">
-    <!-- <div class="container-fluid text-center">
-        <a href="#" class="text-center"><img src="./img/logo.png" alt="logo" height="100"></a>
-    </div> -->
+<header class="text-white p-2" style="background-color: #dc6226;">
     <div class="container-fluid">
         <div class="row">
-            <div class="col">
-                <h1 class="p-3">Preguntale</h1>
-            </div>
-            <div class="col">
+            <div class="container-fluid">
+                <img src="../img/logo.png" style="height:90px" class="pb-2" alt="profile-image">
                 {{#token}}
                     <form class="w3-right w3-margin-top" action="/PreguntasYRespuestasPHP/auth/logout" method="POST">
                         <button type="submit" class="btn btn-dark p-3">Cerrar sesión</button>
@@ -33,7 +26,7 @@
                     </form>
                 {{/token}}
             </div>
+            </div>
         </div>
     </div>
-
 </header>

@@ -1,12 +1,14 @@
-<div class="text-center mt-3">
-    <button type="button" class="btn btn-dark p-3 fs-5" id='spin'>¡A rodar mi vida!</button>
+<div style="height:75vh;">
+    <div class="text-center pt-2">
+        <button type="button" class="btn btn-dark p-3 fs-5" id='spin'>¡A rodar mi vida!</button>
+    </div>
+    <div class="text-center">
+        <canvas id="canvas" width="500" height="500" class="text-center"></canvas>
+    </div>
+    <input type="hidden" value="{{idMatch}}" id="idMatch">
 </div>
-<div class="text-center">
-    <canvas id="canvas" width="500" height="500" class="text-center"></canvas>
-</div>
-<input type="hidden" value="{{idMatch}}" id="idMatch">
 
-    <script>
+<script>
 
         var options = [
             {id: 1, nombre: "Deportes"},
@@ -58,7 +60,7 @@
                 var insideRadius = 100;
 
                 ctx = canvas.getContext("2d");
-                ctx.clearRect(0, 0, 500, 500);
+                ctx.clearRect(0, 0, 300, 300);
 
                 ctx.strokeStyle = "black";
                 ctx.lineWidth = 1;
