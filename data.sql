@@ -24,7 +24,9 @@ CREATE TABLE user
     pais            VARCHAR(100),
     ciudad          VARCHAR(100),
     FOREIGN KEY (rol_id) REFERENCES rol (id),
-    hasAccess       BOOLEAN NOT NULL
+    hasAccess       BOOLEAN NOT NULL,
+    preguntas_respondidas INT DEFAULT 0,
+    preguntas_correctas INT DEFAULT 0
 );
 
 INSERT INTO rol (description)
@@ -57,6 +59,8 @@ CREATE TABLE question (
                           categoria_id INT,
                           estado_id INT,
                           activo BOOLEAN DEFAULT TRUE,
+                          veces_presentada INT DEFAULT 0,
+                          veces_correctas INT DEFAULT 0,
                           FOREIGN KEY (categoria_id) REFERENCES category(id),
                           FOREIGN KEY (estado_id) REFERENCES status(id)
 );

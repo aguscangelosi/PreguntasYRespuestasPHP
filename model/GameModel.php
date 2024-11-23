@@ -62,7 +62,7 @@ class GameModel
             return $pendingQuestion;
         }
 
-        $questionId = $this->addQuestionToMatch($idMatch, $category);
+        $questionId = $this->addQuestionToMatch($idMatch, $category, $idUser);
 
         $this->updateUserGameQuestion($idMatch, $idUser, $questionId, "pendiente");
 
@@ -159,8 +159,111 @@ class GameModel
         }
     }
 
+    public function addQuestionToMatch($matchId, $category, $idUser)
+    {
+        // Verificar cuántas preguntas ha respondido el usuario
+        $sqlUserStats = "SELECT preguntas_respondidas FROM user WHERE id = ?";
+        $stmt = $this->database->prepare($sqlUserStats);
+        $stmt->bind_param('i', $idUser);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userStats = $result->fetch_assoc();
+        $questionsAnswered = $userStats['preguntas_respondidas'] ?? 0;
 
-    public function addQuestionToMatch($matchId, $category)
+        // Si respondió menos de 10 preguntas, seleccionar aleatoriamente
+        if ($questionsAnswered < 10) {
+            $sqlRandom = "
+        SELECT q.id 
+        FROM question q
+        WHERE q.categoria_id = ? 
+          AND q.id NOT IN (
+              SELECT pregunta_id 
+              FROM game_question 
+              WHERE partida_id = ?
+          )
+        ORDER BY RAND()
+        LIMIT 1";
+
+            $stmt = $this->database->prepare($sqlRandom);
+            $stmt->bind_param('ii', $category, $matchId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $questionId = $result->fetch_row()[0] ?? null;
+        } else {
+            // Después de 10 preguntas, aplicar lógica de dificultad
+
+            // Obtener el nivel del usuario (fácil, normal o difícil)
+            $sqlUserLevel = "
+        SELECT CASE 
+            WHEN preguntas_correctas / GREATEST(preguntas_respondidas, 1) < 0.33 THEN 'facil'
+            WHEN preguntas_correctas / GREATEST(preguntas_respondidas, 1) BETWEEN 0.33 AND 0.66 THEN 'normal'
+            ELSE 'dificil'
+        END AS nivel
+        FROM user
+        WHERE id = ?";
+            $stmt = $this->database->prepare($sqlUserLevel);
+            $stmt->bind_param('i', $idUser);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $userLevel = $result->fetch_assoc()['nivel'];
+
+            // Filtrar preguntas basadas en la dificultad del usuario
+            $sqlDifficulty = "
+        SELECT q.id 
+        FROM question q
+        WHERE q.categoria_id = ? 
+          AND q.id NOT IN (
+              SELECT pregunta_id 
+              FROM game_question 
+              WHERE partida_id = ?
+          )
+          AND (
+              (q.veces_correctas / GREATEST(q.veces_presentada, 1) < 0.33 AND ? = 'facil') OR
+              (q.veces_correctas / GREATEST(q.veces_presentada, 1) BETWEEN 0.33 AND 0.66 AND ? = 'normal') OR
+              (q.veces_correctas / GREATEST(q.veces_presentada, 1) > 0.66 AND ? = 'dificil')
+          )
+        ORDER BY RAND()
+        LIMIT 1";
+
+            $stmt = $this->database->prepare($sqlDifficulty);
+            $stmt->bind_param('iiiii', $category, $matchId, $userLevel, $userLevel, $userLevel);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $questionId = $result->fetch_row()[0] ?? null;
+        }
+
+        // Si no se encuentra una pregunta, devolver cualquier otra (fallback)
+        if (!$questionId) {
+            $sqlFallback = "
+        SELECT q.id 
+        FROM question q
+        WHERE q.categoria_id = ? 
+          AND q.id NOT IN (
+              SELECT pregunta_id 
+              FROM game_question 
+              WHERE partida_id = ?
+          )
+        ORDER BY RAND()
+        LIMIT 1";
+            $stmt = $this->database->prepare($sqlFallback);
+            $stmt->bind_param('ii', $category, $matchId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $questionId = $result->fetch_row()[0];
+        }
+
+        // Registrar la pregunta en la partida
+        if ($questionId) {
+            $sqlInsert = "INSERT INTO game_question (partida_id, pregunta_id) VALUES (?, ?)";
+            $stmt = $this->database->prepare($sqlInsert);
+            $stmt->bind_param('ii', $matchId, $questionId);
+            $stmt->execute();
+        }
+
+        return $questionId;
+    }
+
+    public function addQuestionToMatch2($matchId, $category)
     {
         $sql = "
     SELECT q.id 
@@ -271,6 +374,7 @@ LIMIT 1;
         $stmt->close();
 
         if ($idResponse == $correctAnswerId) {
+            $this->updateMetrics($idUser, $idQuestion, true);
             $this->updateScore($idUser, $idMatch, $idQuestion);
             return [
                 'correctAnswerId' => $correctAnswerId,
@@ -278,6 +382,7 @@ LIMIT 1;
             ];
         } else {
             $this->endGame($idMatch);
+            $this->updateMetrics($idUser, $idQuestion, false);
             $score = $this->getScore($idUser, $idMatch);
             return [
                 'correctAnswerId' => $correctAnswerId,
@@ -392,6 +497,32 @@ LIMIT 1;
     {
         return $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
+
+    private function updateMetrics($idUser, $idQuestion, $isCorrect)
+    {
+        $sqlUpdateQuestion = "UPDATE question SET veces_presentada = veces_presentada + 1 WHERE id = ?";
+        $stmt = $this->database->prepare($sqlUpdateQuestion);
+        $stmt->bind_param('i', $idQuestion);
+        $stmt->execute();
+
+        if ($isCorrect) {
+            $sqlUpdateCorrect = "UPDATE question SET veces_correctas = veces_correctas + 1 WHERE id = ?";
+            $stmt = $this->database->prepare($sqlUpdateCorrect);
+            $stmt->bind_param('i', $idQuestion);
+            $stmt->execute();
+
+            $sqlUpdateUser = "UPDATE user SET preguntas_correctas = preguntas_correctas + 1, preguntas_respondidas = preguntas_respondidas + 1 WHERE id = ?";
+            $stmt = $this->database->prepare($sqlUpdateUser);
+            $stmt->bind_param('i', $idUser);
+            $stmt->execute();
+        } else {
+            $sqlUpdateUser = "UPDATE user SET preguntas_respondidas = preguntas_respondidas + 1 WHERE id = ?";
+            $stmt = $this->database->prepare($sqlUpdateUser);
+            $stmt->bind_param('i', $idUser);
+            $stmt->execute();
+        }
+    }
+
 
 
 }
