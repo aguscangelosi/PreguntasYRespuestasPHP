@@ -27,8 +27,11 @@ class RankingController
 
     public function profile()
     {
-        $userId = $_GET['id'] ?? $this->authHelper->getUser()["user_id"];
+        $tokenInfo =  $this->authHelper->getUser();
+        $userId = $_GET['id'] ?? $tokenInfo["user_id"];
         $data = $this->model->getProfile($userId);
+
+        $data['dataProfile']['picture'] = $tokenInfo['profile_picture'];
 
         $this->presenter->show($data ? 'profile' : 'notFound', $data);
     }

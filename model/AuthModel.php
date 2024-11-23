@@ -64,7 +64,9 @@ class AuthModel
 
         $stmt = null;
 
+
         try {
+            $url = $this->savePicture( $picture);
             $stmt = $this->database->prepare("INSERT INTO user (username, sex, password, rol_id, email, birthday, name, profile_picture, register_date, pais, ciudad)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)");
 
@@ -73,18 +75,14 @@ class AuthModel
             }
 
             $rolId = 2;
-            $profilePicture = "default.png";
 
-            $stmt->bind_param('sssissssss', $username, $sex, $hashedPassword, $rolId, $email, $birthday, $name, $profilePicture, $pais, $ciudad);
+            $stmt->bind_param('sssissssss', $username, $sex, $hashedPassword, $rolId, $email, $birthday, $name, $url, $pais, $ciudad);
             $this->counterUsers();
             if (!$stmt->execute()) {
                 throw new Exception("Error al crear el usuario");
             }
 
             $lastId = $this->database->insert_id();
-
-            $this->savePicture($lastId, $picture);
-
 
             return $lastId;
         } catch (Exception $e) {
@@ -144,28 +142,41 @@ class AuthModel
 
     }
 
-    public function savePicture($userId, $picture)
+    public function savePicture($picture)
     {
-        if ($picture && isset($picture['tmp_name']) && $picture['error'] === UPLOAD_ERR_OK) {
-            $fileExtension = pathinfo($picture['name'], PATHINFO_EXTENSION);
-
-            $validExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-            if (!in_array(strtolower($fileExtension), $validExtensions)) {
-                return "/PreguntasYRespuestasPHP/img/profile/default.png";
-            }
-
-            $filePath = "/PreguntasYRespuestasPHP/img/profile/profile_" . $userId . "." . $fileExtension;
-
-            $fileTmpPath = $picture['tmp_name'];
-
-            if (move_uploaded_file($fileTmpPath, $filePath)) {
-                return $filePath;
-            }
+        if (!$picture) {
+            throw new Exception("No se recibió ningún archivo.");
         }
 
-        return "/PreguntasYRespuestasPHP/img/profile/default.png";
+        $fileExtension = strtolower(pathinfo($picture['name'], PATHINFO_EXTENSION));
+        $validExtensions = ['png', 'jpg', 'jpeg', 'gif'];
+        if (!in_array($fileExtension, $validExtensions)) {
+            throw new Exception("Extensión de archivo no válida: " . $fileExtension);
+        }
+
+        $id = $this->uuid();
+        $base = "/PreguntasYRespuestasPHP";
+        $url = "/img/profile/profile_" . $id . "." . $fileExtension;
+        $filePath = "." . $url ;
+
+        $directory = dirname($filePath);
+        if (!is_writable($directory)) {
+            throw new Exception("El directorio no es escribible: " . $directory);
+        }
+
+        if (!move_uploaded_file($picture['tmp_name'], $filePath)) {
+            throw new Exception("Error al mover el archivo desde " . $picture['tmp_name'] . " a " . $filePath);
+        }
+
+        return $base . $url;
     }
 
+    function uuid() {
+        $data = random_bytes(16);
+        $data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
+        $data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+    }
 
     function counterUsers()
     {
