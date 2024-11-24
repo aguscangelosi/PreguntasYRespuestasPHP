@@ -19,7 +19,7 @@ class Router
     {
 
         $publicRoutes = [
-            'auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"],
+            'auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail", "renderChart"],
             'img' => ['profile']
         ];
 
