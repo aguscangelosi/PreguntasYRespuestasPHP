@@ -18,7 +18,6 @@ include_once("controller/AuthController.php");
 include_once("controller/GameController.php");
 include_once("controller/RankingController.php");
 include_once("controller/AdminController.php");
-include_once("controller/PdfController.php");
 
 include_once("services/QuestionService.php");
 
