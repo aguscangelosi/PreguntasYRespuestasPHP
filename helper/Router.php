@@ -91,7 +91,7 @@ class Router
     private function isAuthorizedForRoute($userRole, $controllerName, $methodName)
     {
         $rolePermissions = [
-            1 => ['admin' => ['home', "renderChart", 'generatePdf'],
+            1 => ['admin' => ['home', "renderChart", 'generatePdf', 'filterStats'],
             ] ,
             2 => ['game' => [
                 'play', "finish", "findQuestions",

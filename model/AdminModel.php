@@ -50,28 +50,38 @@ class AdminModel
         return $this->questionService->insertNewQuestion($question, $correctAnswer, $answer2, $answer3, $answer4, $category);
     }
 
-    function filterSuggestedQuestion()
-    {
-//        $sql = "SELECT * FROM question q JOIN question_answer
-//                WHERE q.activo = 0 AND q.estado_id = 1";
-//        $stmt = $this->database->prepare($sql);
-//        $stmt->execute();
-//        $suggestedQuestion = $stmt->get_result();
+    public function filterSuggestedQuestions() {
         $sql = "SELECT q.id, ca.nombre_categoria, s.nombre_estado, q.enunciado, q.dificultad, q.categoria_id, 
-                q.estado_id, q.activo, a.texto_respuesta FROM question q
-                JOIN category ca ON ca.id = q.categoria_id
-                JOIN status s ON s.id = q.estado_id
-                JOIN question_answer qa ON q.id = qa.pregunta_id
-                JOIN answer a ON qa.respuesta_id = a.id
-                WHERE q.activo = 0 AND q.estado_id = 1;";
+            q.estado_id, q.activo
+            FROM question q
+            JOIN category ca ON ca.id = q.categoria_id
+            JOIN status s ON s.id = q.estado_id
+            WHERE q.activo = 0 AND q.estado_id = 1;";
 
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
-        $suggestedQuestion = $stmt->get_result();
-        $suggestedQuestion = $suggestedQuestion->fetch_assoc();
+        $result = $stmt->get_result();
 
-        return $suggestedQuestion;
+        $suggestedQuestions = [];
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $suggestedQuestions[] = [
+                    'id' => $row['id'],
+                    'nombre_categoria' => $row['nombre_categoria'],
+                    'nombre_estado' => $row['nombre_estado'],
+                    'enunciado' => $row['enunciado'],
+                    'dificultad' => $row['dificultad'],
+                    'categoria_id' => $row['categoria_id'],
+                    'estado_id' => $row['estado_id'],
+                    'activo' => $row['activo'],
+                ];
+            }
+        }
+
+        return $suggestedQuestions;
     }
+
 
     function deleteQuestion($idQuestion)
     {

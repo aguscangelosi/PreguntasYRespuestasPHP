@@ -24,7 +24,7 @@ class AdminController
     }
 
     public function homeEdit(){
-        $suggestions = $this->model->filterSuggestedQuestion();
+        $suggestions = $this->model->filterSuggestedQuestions();
         $reportedQuestions = $this->model->obtainReportedQuestions();
         $this->presenter->show('homeEdit', [
             'suggestedQuestions' => $suggestions,
@@ -78,6 +78,20 @@ class AdminController
 
         return $chartBase64;
     }
+
+    public function filterStats()
+    {
+        // Obtener la fecha desde GET o usar el mes actual como predeterminado
+        $date = $_GET['date'] ?? date('Y-m-01'); // Primer día del mes actual
+
+        // Preparar el gráfico (lógica de SQL puede añadirse aquí más adelante)
+        $chart = $this->renderChart(true);
+
+        // Configurar los encabezados para devolver una imagen
+        header("Content-Type: image/png");
+        echo $chart;
+    }
+
     public function createQuestion(){
         $categories = $this->model->findCategories();
         $this->presenter->show('createQuestion', ['categories' => $categories]);

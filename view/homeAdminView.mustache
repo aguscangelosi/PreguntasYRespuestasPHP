@@ -38,26 +38,110 @@
 
     </section>
 
-    <section class="question-stats">
-        <h2>Estadísticas de Preguntas y Respuestas</h2>
-        <p><strong>% de Preguntas Respondidas Correctamente:</strong></p>
-        <div class="container">
-            <div>
-                <img src="/PreguntasYRespuestasPHP/admin/renderChart" alt="Gráfico">
-            </div>
-        </div>
-    </section>
+    <!--    <section class="question-stats">-->
+    <!--        <h2>Estadísticas de Preguntas y Respuestas</h2>-->
+    <!--        <p><strong>% de Preguntas Respondidas Correctamente:</strong></p>-->
+    <!--        <div class="container">-->
+    <!--            <div>-->
+    <!--                <img src="/PreguntasYRespuestasPHP/admin/renderChart" alt="Gráfico">-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="text-center">-->
+    <!--            <button class="btn btn-primary" id="generar_pdf_user" onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">-->
+    <!--                Imprimir PDF-->
+    <!--            </button>-->
+    <!--            <form action="/PreguntasYRespuestasPHP/admin/filterStats" method="GET" class="d-inline">-->
+    <!--                <input type="date" name="filterDate" required>-->
+    <!--                <button type="submit" class="btn btn-secondary">Filtrar</button>-->
+    <!--            </form>-->
+    <!--        </div>-->
+    <!--    </section>-->
+
+    <button class="btn btn-primary" id="generar_pdf_user"
+            onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">
+        Imprimir PDF
+    </button>
+
+    <!-- Formulario para filtrar usuarios -->
+    <form id="filterUserForm" class="d-inline">
+        <input type="date" id="userFilterDate" name="userFilterDate">
+        <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
+    </form>
 
     <section class="user-demographics">
         <h2>Estadísticas Demográficas de Usuarios</h2>
-
         <div>
             <p><strong>Cantidad de Usuarios por País:</strong></p>
             <div class="country-chart">
-                <img src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+                <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
             </div>
         </div>
+    </section>
 
+    <!-- Formulario para filtrar preguntas -->
+    <form id="filterQuestionForm" class="d-inline">
+        <input type="date" id="questionFilterDate" name="questionFilterDate">
+        <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
+    </form>
 
+    <section class="question-demographics">
+        <h2>Estadísticas de Preguntas Respondidas</h2>
+        <div>
+            <p><strong>Cantidad de Preguntas Respondidas:</strong></p>
+            <div class="question-chart">
+                <img id="questionChart" src="{{questionChart}}" alt="Gráfico de preguntas respondidas">
+            </div>
+        </div>
     </section>
 </div>
+
+
+    <script>
+        function fetchChart(type) {
+            // Obtener el valor de la fecha según el tipo de gráfico
+            const filterDate =
+                    type === "user"
+                            ? document.getElementById("userFilterDate").value
+                            : document.getElementById("questionFilterDate").value;
+
+            // Obtener el mes actual y establecer la fecha por defecto si no se selecciona
+            const now = new Date();
+            const defaultDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+
+            const dateToSend = filterDate || defaultDate;
+
+            // Realizar la solicitud POST para obtener el gráfico
+            fetch('/PreguntasYRespuestasPHP/admin/filterStats', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    date: dateToSend,
+                    type: type,
+                }),
+            })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Error al obtener los datos");
+                        }
+                        return response.text();
+                    })
+                    .then((data) => {
+                        const targetImg = type === "user" ? "countryChart" : "questionChart";
+                        document.getElementById(targetImg).src = data;
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+        }
+
+        // Event listeners para cada botón de filtrado
+        document.getElementById("filterUserChart").addEventListener("click", function () {
+            fetchChart("user");
+        });
+
+        document.getElementById("filterQuestionChart").addEventListener("click", function () {
+            fetchChart("question");
+        });
+    </script>
