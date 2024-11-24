@@ -1,17 +1,17 @@
-<div class="text-center bg-light-subtle">
-    <h1 class="p-3">Pregunta</h1>
+<div class="text-center bg-transparent">
+    <h1 class="p-3 f2-bold">Pregunta</h1>
 
     <p class="fs-3 fw-semibold">{{enunciado}}</p>
     <p class="fw-bold">Dificultad: {{dificultad}}</p>
 
-    <p class="fs-6 fw-medium">Selecciona la respuesta</p>
+    <p class="fs-6 fw-bold">Selecciona la respuesta</p>
     <p id="timer" class="text-danger fs-5 fw-bold">Tiempo: 10 segundos</p> <!-- Temporizador visible -->
 
     <ul id="respuestas" class="list-group">
         {{#respuestas}}
             <li>
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button id="answer-{{answer_id}}" class="btn btn-outline-dark p-3 m-1 respuesta-btn" onclick="sendQuestion({{answer_id}})">
+                    <button id="answer-{{answer_id}}" class="btn btn-outline-dark p-3 m-1 fw-bold fs-4" onclick="sendQuestion({{answer_id}})">
                         {{texto_respuesta}}
                     </button>
                 </div>
