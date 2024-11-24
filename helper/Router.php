@@ -19,8 +19,9 @@ class Router
     {
 
         $publicRoutes = [
-            'auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail", "renderChart"],
+            'auth' => ["init", "initLogin", 'login', 'register', "logout", "validateEmail"],
             'img' => ['profile']
+
         ];
 
         if (preg_match('#^/PreguntasYRespuestasPHP/img/.*$#', $_SERVER['REQUEST_URI'])) {
@@ -90,7 +91,8 @@ class Router
     private function isAuthorizedForRoute($userRole, $controllerName, $methodName)
     {
         $rolePermissions = [
-            1 => ['admin' => ['home']],
+            1 => ['admin' => ['home', "renderChart", 'generatePdf'],
+            ] ,
             2 => ['game' => [
                 'play', "finish", "findQuestions",
                 "sendQuestion", 'lobby',
@@ -99,7 +101,13 @@ class Router
             ],
                 'ranking' => ['rankingPosition', 'profile']
             ],
-            3 => ['admin' => ['homeEdit', "createQuestion", "createQuestionPost", "deleteQuestion", "approveQuestion", "approveReport", "declineReport"]],
+            3 => ['admin' => [
+                                'homeEdit', "createQuestion",
+                                "createQuestionPost", "deleteQuestion",
+                                "approveQuestion", "approveReport",
+                                "declineReport"
+                            ]
+                ],
         ];
 
 

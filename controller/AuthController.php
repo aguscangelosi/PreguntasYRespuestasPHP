@@ -1,7 +1,5 @@
 <?php
 include_once("./helper/EmailSender.php");
-include_once "./vendor/jpgraph-4.4.2/src/jpgraph.php";
-include_once "./vendor/jpgraph-4.4.2/src/jpgraph_line.php";
 
 class AuthController
 {
@@ -11,8 +9,6 @@ class AuthController
     private $mail;
     private $authHelper;
     private $qrHelper;
-
-    private $grafico;
 
 
     public function __construct($model, $presenter, $authHelper, $qrHelper)
@@ -33,21 +29,6 @@ class AuthController
     {
         $this->presenter->show('login');
     }
-
-    public function renderChart()
-    {
-        // Crear el gráfico
-        $this->grafico = new Graph(400, 300, "auto");
-        $this->grafico->SetScale("textlin");
-        $datos = array(10, 20, 5, 15, 20);
-        $linea = new LinePlot($datos);
-        $this->grafico->Add($linea);
-
-        // Enviar el gráfico directamente al navegador
-        return $this->grafico->Stroke();
-    }
-
-
 
     public function register()
     {
