@@ -62,7 +62,13 @@ class AdminController
     {
         $this->grafico = new Graph(400, 300, "auto");
         $this->grafico->SetScale("textlin");
-        $datos = array(10, 20, 5, 15, 20);
+        $datos = $this->model->getSexTotal();
+        $labels = [];
+        $values = [];
+        foreach ($datos as $dato) {
+            $labels[] = $dato['sex'];
+            $values[] = $dato['sex_total'];
+        }
         $linea = new LinePlot($datos);
         $this->grafico->Add($linea);
 
@@ -78,19 +84,37 @@ class AdminController
 
         return $chartBase64;
     }
-
+////SIRVEEEEEEEEEEEEEEEEEEEEEE
+//    public function filterStats()
+//    {
+//        // Obtener la fecha desde GET o usar el mes actual como predeterminado
+//        $date = $_GET['date'] ?? date('Y-m-01'); // Primer día del mes actual
+//
+//        // Preparar el gráfico (lógica de SQL puede añadirse aquí más adelante)
+//        $chart = $this->renderChart(true);
+//
+//        // Configurar los encabezados para devolver una imagen
+//        header("Content-Type: image/png");
+//        echo $chart;
+//    }
     public function filterStats()
     {
         // Obtener la fecha desde GET o usar el mes actual como predeterminado
         $date = $_GET['date'] ?? date('Y-m-01'); // Primer día del mes actual
 
-        // Preparar el gráfico (lógica de SQL puede añadirse aquí más adelante)
-        $chart = $this->renderChart(true);
+        $resultados = $this->model->ratioForAccierts();
+
+        // Preparar los datos para el gráfico
+        $datos = $resultados;
+
+        // Generar el gráfico con los datos extraídos
+        $chart = $this->renderChart($datos, true);
 
         // Configurar los encabezados para devolver una imagen
         header("Content-Type: image/png");
         echo $chart;
     }
+
 
     public function createQuestion(){
         $categories = $this->model->findCategories();
@@ -147,4 +171,9 @@ class AdminController
         $this->presenter->show('declineReport');
     }
 
+//    function creationGraphics()
+//    {
+//        $results = $this->model->ratioAge();
+//        $this->renderChartTincho($results);
+//    }
 }
