@@ -4,7 +4,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-6">
-                    <div class="shadow p-3 mb-5 bg-body-tertiary rounded p-4">
+                    <div class="shadow p-3 bg-body-tertiary rounded p-4">
                         <ul>
                             <li><strong>Cantidad Total de Jugadores:</strong> {{total_users}}</li>
                             <li><strong>Cantidad Total de Partidas Jugadas:</strong> {{total_games}}</li>
@@ -15,16 +15,16 @@
                     </div>
                 </div>
                 <div class="col-6">
-                    <div class="shadow p-3 mb-5 bg-body-tertiary rounded p-4">
-                        <div>
+                    <div class="row shadow p-3 bg-body-tertiary rounded p-4">
+                        <div class="col-6">
                             <p><strong>Cantidad de Usuarios por Sexo:</strong></p>
                             <ul>
                                 <li><strong>Masculino:</strong> {{maleUsers}}</li>
                                 <li><strong>Femenino:</strong> {{femaleUsers}}</li>
                             </ul>
                         </div>
-                        <div>
-                            <p><strong>Cantidad de Usuarios por Grupo de Edad:</strong></p>
+                        <div class="col-6">
+                            <p><strong>Cantidad de Usuarios por Edad:</strong></p>
                             <ul>
                                 <li><strong>Menores:</strong> {{youngUsers}}</li>
                                 <li><strong>Edad Media:</strong> {{middleAgedUsers}}</li>
@@ -57,42 +57,60 @@
     <!--        </div>-->
     <!--    </section>-->
 
-    <button class="btn btn-primary" id="generar_pdf_user"
-            onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">
-        Imprimir PDF
-    </button>
-
-    <!-- Formulario para filtrar usuarios -->
-    <form id="filterUserForm" class="d-inline">
-        <input type="date" id="userFilterDate" name="userFilterDate">
-        <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
-    </form>
-
-    <section class="user-demographics">
-        <h2>Estadísticas Demográficas de Usuarios</h2>
-        <div>
-            <p><strong>Cantidad de Usuarios por País:</strong></p>
-            <div class="country-chart">
-                <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <div class="shadow p-3 mb-2 bg-body-tertiary rounded p-4">
+                    <form id="filterUserForm">
+                        <div class="row">
+                            <div class="input-group mb-3 col">
+                                <input type="date" class="form-control" id="userFilterDate" name="userFilterDate" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="col">
+                                <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
+                            </div>
+                        </div>
+                    </form>
+                        <h2>Estadísticas Demográficas de Usuarios</h2>
+                        <div>
+                            <p><strong>Cantidad de Usuarios por País:</strong></p>
+                            <div class="country-chart">
+                                <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row shadow p-3 mb-2 bg-body-tertiary rounded p-4">
+                    <form id="filterQuestionForm">
+                        <div class="row">
+                            <div class="input-group mb-3 col">
+                                <input type="date" class="form-control" id="questionFilterDate" name="questionFilterDate" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                            <div class="col">
+                                <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Usuarios</button>
+                            </div>
+                        </div>
+                    </form>
+                        <h2>Estadísticas de Preguntas Respondidas</h2>
+                        <div>
+                            <p><strong>Cantidad de Preguntas Respondidas:</strong></p>
+                            <div class="question-chart">
+                                <img id="questionChart" src="{{questionChart}}" alt="Gráfico de preguntas respondidas">
+                            </div>
+                        </div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Formulario para filtrar preguntas -->
-    <form id="filterQuestionForm" class="d-inline">
-        <input type="date" id="questionFilterDate" name="questionFilterDate">
-        <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
-    </form>
+    <div class="text-center m-3">
+        <button class="btn btn-primary" id="generar_pdf_user"
+                onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">
+            Imprimir PDF
+        </button>
+    </div>
 
-    <section class="question-demographics">
-        <h2>Estadísticas de Preguntas Respondidas</h2>
-        <div>
-            <p><strong>Cantidad de Preguntas Respondidas:</strong></p>
-            <div class="question-chart">
-                <img id="questionChart" src="{{questionChart}}" alt="Gráfico de preguntas respondidas">
-            </div>
-        </div>
-    </section>
 </div>
 
 
