@@ -293,31 +293,29 @@ class AdminModel
 
     public function getSexTotal($date)
     {
-        $sql = "SELECT sex, COUNT(*) AS sex_total
+        $sql = "SELECT sex AS keyValue, COUNT(*) AS total
             FROM user
             WHERE register_date < ?
-            GROUP BY sex";
+            GROUP BY keyValue";
 
-        // Preparar y ejecutar la consulta
         $stmt = $this->database->prepare($sql);
         $stmt->bind_param('s', $date); // 's' indica que es un string
         $stmt->execute();
 
-        // Retornar los resultados como un array asociativo
         $result = $stmt->get_result();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getCountry($date)
     {
-        $sql = "SELECT pais, COUNT(*) AS usuarios_por_pais
-    FROM user
-    WHERE register_date < ?
-    GROUP BY pais
-    ORDER BY usuarios_por_pais DESC";
+        $sql = "SELECT pais AS keyValue, COUNT(*) AS total
+            FROM user
+            WHERE register_date < ?
+            GROUP BY pais
+            ORDER BY total DESC";
 
         $stmt = $this->database->prepare($sql);
-        $stmt->bind_param('s', $date); // 's' indica que es un string
+        $stmt->bind_param("s", $date);
         $stmt->execute();
 
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -360,7 +358,69 @@ class AdminModel
         return $data;
     }
 
+   public function getDataCharts($type,$date)
+   {
+       if ($type === 'genre') {
+           return $this->getSexTotal($date);
 
+       }
+       if ($type === 'country')  {
+           return $this->getCountry($date);
+       }
+
+   }
+
+    public function renderChart($datos, $tipoGrafico, $isPDF = false)
+    {
+        switch ($tipoGrafico) {
+            case 'Pie':
+                $this->grafico = new PieGraph(400, 300, "auto");
+                break;
+            case 'Bar':
+                $this->grafico = new Graph(400, 300, "auto");
+                $this->grafico->SetScale("textlin");
+                break;
+            default:
+                throw new Exception("Tipo de gráfico no soportado: $tipoGrafico");
+        }
+
+        $this->grafico->SetShadow();
+
+        $labels = [];
+        $values = [];
+        foreach ($datos as $dato) {
+            $labels[] = $dato["keyValue"];
+            $values[] = $dato["total"];
+        }
+
+        switch ($tipoGrafico) {
+            case 'Pie':
+                $plot = new PiePlot($values);
+                $plot->SetLegends($labels);
+                $plot->SetLabelType(PIE_VALUE_PER);
+                $plot->value->SetFormat('%2.1f%%');
+                break;
+
+            case 'Bar':
+                $plot = new BarPlot($values);
+                $plot->SetLegend(implode(", ", $labels));
+                break;
+        }
+
+        $this->grafico->Add($plot);
+
+        ob_start();
+
+        if (!$isPDF) {
+            return $this->grafico->Stroke();
+        }
+        $this->grafico->Stroke();
+        $chartContent = ob_get_clean();
+
+        $chartBase64 = 'data:image/png;base64,' . base64_encode($chartContent);
+
+        return $chartBase64;
+    }
 
 
 }

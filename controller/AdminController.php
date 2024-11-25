@@ -36,25 +36,25 @@ class AdminController
 
     public function generatePdf()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
+
         $date = $input['date'] ?? date('Y-m-01');
-        $type = 'genre';
-        if ($type === 'genre') {
-            $datos = $this->model->getSexTotal($date);
-            $label = "sex";
-            $key = "sex_total";
-        }
+        $type = $input['type'] ?? null;
+
+        $datos = $this->model->getDataCharts($type, $date);
+
         try {
             $dompdf = new Dompdf();
 
-            $chartBase64 = $this->renderChart($datos, 'Pie', 'sex', 'sex_total', $isPDF = true);
+            $chartBase64 = $this->model->renderChart($datos, 'Pie', true);
 
             $html = '
-            <h1>Reporte de Gráficos</h1>
-            <p>Este documento incluye los gráficos generados en el sistema.</p>
-            <br>
-            <img src="' . $chartBase64 . '" style="width:100%; max-width:500px;">
-            <br>
-            <p>Información adicional sobre los datos representados.</p>';
+        <h1>Reporte de Gráficos</h1>
+        <p>Este documento incluye los gráficos generados en el sistema.</p>
+        <br>
+        <img src="' . $chartBase64 . '" style="width:100%; max-width:500px;">
+        <br>
+        <p>Información adicional sobre los datos representados.</p>';
 
             $dompdf->loadHtml($html);
 
@@ -62,64 +62,14 @@ class AdminController
 
             $dompdf->render();
 
-            $dompdf->stream("reporte_graficos.pdf", ["Attachment" => true]);
+            header("Content-Type: application/pdf");
+            header("Content-Disposition: attachment; filename=reporte_graficos.pdf");
+            echo $dompdf->output();
         } catch (Exception $e) {
+            http_response_code(500);
             echo "Error al generar el PDF: " . $e->getMessage();
         }
     }
-
-    public function renderChart($datos, $tipoGrafico, $labelKey, $valueKey, $isPDF = false)
-    {
-        switch ($tipoGrafico) {
-            case 'Pie':
-                $this->grafico = new PieGraph(400, 300, "auto");
-                break;
-            case 'Bar':
-                $this->grafico = new Graph(400, 300, "auto");
-                $this->grafico->SetScale("textlin");
-                break;
-            default:
-                throw new Exception("Tipo de gráfico no soportado: $tipoGrafico");
-        }
-
-        $this->grafico->SetShadow();
-
-        $labels = [];
-        $values = [];
-        foreach ($datos as $dato) {
-            $labels[] = $dato[$labelKey];
-            $values[] = $dato[$valueKey];
-        }
-
-        switch ($tipoGrafico) {
-            case 'Pie':
-                $plot = new PiePlot($values);
-                $plot->SetLegends($labels);
-                $plot->SetLabelType(PIE_VALUE_PER);
-                $plot->value->SetFormat('%2.1f%%');
-                break;
-
-            case 'Bar':
-                $plot = new BarPlot($values);
-                $plot->SetLegend(implode(", ", $labels));
-                break;
-        }
-
-        $this->grafico->Add($plot);
-
-        ob_start();
-
-        if (!$isPDF) {
-            return $this->grafico->Stroke();
-        }
-        $this->grafico->Stroke();
-        $chartContent = ob_get_clean();
-
-        $chartBase64 = 'data:image/png;base64,' . base64_encode($chartContent);
-
-        return $chartBase64;
-    }
-
 
     public function filterStats()
     {
@@ -128,18 +78,14 @@ class AdminController
         $date = $input['date'] ?? date('Y-m-01');
         $type = $input['type'] ?? null;
 
-        if ($type === 'genre') {
-            $datos = $this->model->getSexTotal($date);
-            $label = "sex";
-            $key = "sex_total";
-        }
-        if ($type === 'country')  {
-            $datos = $this->model->getCountry($date);
-            $label = "pais";
-            $key = "usuarios_por_pais";
-        }
+        $datos = $this->model->getDataCharts($type,$date);
+
         try {
-            $chart = $this->renderChart($datos, 'Pie', $label, $key, true);
+            if (!empty($datos)){
+            $chart = $this->model->renderChart($datos, 'Pie', true);
+            }else{
+                $chart = "";
+            }
         } catch (Exception $e) {
             echo $e->getMessage();
             exit;
@@ -203,9 +149,4 @@ class AdminController
         $this->presenter->show('declineReport');
     }
 
-//    function creationGraphics()
-//    {
-//        $results = $this->model->ratioAge();
-//        $this->renderChartTincho($results);
-//    }
 }

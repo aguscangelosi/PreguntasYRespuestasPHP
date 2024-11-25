@@ -43,17 +43,16 @@
     </section>
 
 
-    <button class="btn btn-primary" id="generar_pdf_user"
-            onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">
-        Imprimir PDF
-    </button>
+
 
     <div class="filter">
 
         <section class="user-demographics">
             <h2>Estadísticas de Género de Usuarios</h2>
             <form id="filterUserForm" class="d-inline">
-
+                <button class="btn btn-primary" id="generatePdfGenre">
+                    Imprimir PDF Género
+                </button>
                 <input type="date" id="questionFilterDate" name="questionFilterDate">
                 <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
             </form>
@@ -70,6 +69,9 @@
         <section class="user-demographics">
             <h2>Estadísticas Demograficas de Usuarios</h2>
             <form id="filterQuestionForm" class="d-inline">
+                <button class="btn btn-primary" id="generatePdfCountry">
+                    Imprimir PDF País
+                </button>
                 <input type="date" id="userFilterDate" name="questionFilterDate">
                 <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
             </form>
@@ -80,44 +82,22 @@
                 </div>
             </div>
         </section>
-
     </div>
-
-
-    <div class="filter_answers">
-        <section class="question-demographics">
-            <h2>Estadísticas de Preguntas Respondidas</h2>
-            <form id="ww" class="d-inline">
-                <input type="date" id="www" name="www">
-                <button type="button" id="www" class="btn btn-secondary">Filtrar Preguntas</button>
-            </form>
-            <div>
-                <p><strong>Cantidad de Preguntas Respondidas:</strong></p>
-                <div class="w-ww">
-                    <img id="w" src="{{www}}" alt="Gráfico de preguntas respondidas">
-                </div>
-            </div>
-        </section>
-
-    </div>
-
 </div>
 
 
     <script>
         function fetchChart(type) {
-            // Obtener el valor de la fecha según el tipo de gráfico
             const filterDate =
-                    type === "user"
-                            ? document.getElementById("userFilterDate").value
-                            : document.getElementById("questionFilterDate").value;
+                    type === "genre"
+                            ? document.getElementById("questionFilterDate").value
+                            : document.getElementById("userFilterDate").value;
 
-            // Obtener el mes actual y establecer la fecha por defecto si no se selecciona
             const now = new Date();
             const defaultDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
 
             const dateToSend = filterDate || defaultDate;
-            // Realizar la solicitud POST para obtener el gráfico
+
             fetch('/PreguntasYRespuestasPHP/admin/filterStats', {
                 method: "POST",
                 headers: {
@@ -136,14 +116,31 @@
                     })
                     .then((data) => {
                         const targetImg = type === "genre" ? "userChart" : "questionChart";
-                        document.getElementById(targetImg).src = data;
+                        const targetContainer = document.getElementById(targetImg).parentElement;
+
+                        if (data.startsWith("data:image")) {
+                            document.getElementById(targetImg).src = data;
+                            document.getElementById(targetImg).style.display = "block";
+                            if (targetContainer.querySelector('.no-data-message')) {
+                                targetContainer.querySelector('.no-data-message').remove();
+                            }
+                        } else {
+                            document.getElementById(targetImg).style.display = "none";
+                            if (!targetContainer.querySelector('.no-data-message')) {
+                                const noDataMessage = document.createElement("p");
+                                noDataMessage.textContent = "No hay datos disponibles para generar el gráfico.";
+                                noDataMessage.classList.add("no-data-message");
+                                noDataMessage.style.color = "red";
+                                noDataMessage.style.fontStyle = "italic";
+                                targetContainer.appendChild(noDataMessage);
+                            }
+                        }
                     })
                     .catch((error) => {
                         console.error("Error:", error);
                     });
         }
 
-        // Event listeners para cada botón de filtrado
         document.getElementById("filterUserChart").addEventListener("click", function () {
             fetchChart("genre");
         });
@@ -151,5 +148,55 @@
         document.getElementById("filterQuestionChart").addEventListener("click", function () {
             fetchChart("country");
         });
+
+        function generatePdf(type) {
+            const filterDate =
+                    type === "genre"
+                            ? document.getElementById("questionFilterDate").value
+                            : document.getElementById("userFilterDate").value;
+
+            const now = new Date();
+            const defaultDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+
+            const dateToSend = filterDate || defaultDate;
+
+            fetch('/PreguntasYRespuestasPHP/admin/generatePdf', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    date: dateToSend,
+                    type: type,
+                }),
+            })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Error al generar el PDF");
+                        }
+                        return response.blob();
+                    })
+                    .then((blob) => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "reporte_graficos.pdf";
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+        }
+
+
+        document.getElementById("generatePdfGenre").addEventListener("click", function () {
+            generatePdf("genre");
+        });
+
+        document.getElementById("generatePdfCountry").addEventListener("click", function () {
+            generatePdf("country");
+        });
+
     </script>
 
