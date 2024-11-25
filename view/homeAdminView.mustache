@@ -73,7 +73,17 @@
     </form>
 
     <section class="user-demographics">
-        <h2>Estadísticas Demográficas de Usuarios</h2>
+        <h2>Estadísticas de Género de Usuarios</h2>
+        <div>
+            <p><strong>Cantidad de Usuarios por Género:</strong></p>
+            <div class="genre">
+                <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+            </div>
+        </div>
+    </section>
+
+    <section class="user-demographics">
+        <h2>Estadísticas Demograficas de Usuarios</h2>
         <div>
             <p><strong>Cantidad de Usuarios por País:</strong></p>
             <div class="country-chart">
@@ -81,11 +91,10 @@
             </div>
         </div>
     </section>
-
     <!-- Formulario para filtrar preguntas -->
     <form id="filterQuestionForm" class="d-inline">
         <input type="date" id="questionFilterDate" name="questionFilterDate">
-        <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
+        <button type="button" id="filterQuestionChart" value="" class="btn btn-secondary">Filtrar Preguntas</button>
     </form>
 
     <section class="question-demographics">
@@ -113,7 +122,6 @@
             const defaultDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
 
             const dateToSend = filterDate || defaultDate;
-
             // Realizar la solicitud POST para obtener el gráfico
             fetch('/PreguntasYRespuestasPHP/admin/filterStats', {
                 method: "POST",
@@ -142,10 +150,10 @@
 
         // Event listeners para cada botón de filtrado
         document.getElementById("filterUserChart").addEventListener("click", function () {
-            fetchChart("user");
+            fetchChart("genre");
         });
 
         document.getElementById("filterQuestionChart").addEventListener("click", function () {
-            fetchChart("question");
+            fetchChart("country");
         });
     </script>

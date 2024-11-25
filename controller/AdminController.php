@@ -3,6 +3,8 @@ require_once './vendor/dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 include_once "./vendor/jpgraph-4.4.2/src/jpgraph.php";
 include_once "./vendor/jpgraph-4.4.2/src/jpgraph_line.php";
+include_once "./vendor/jpgraph-4.4.2/src/jpgraph_pie.php";
+
 
 class AdminController
 {
@@ -58,24 +60,54 @@ class AdminController
             echo "Error al generar el PDF: " . $e->getMessage();
         }
     }
-    public function renderChart($isPDF = false)
+
+    public function renderChart($datos, $tipoGrafico, $isPDF = false)
     {
-        $this->grafico = new Graph(400, 300, "auto");
-        $this->grafico->SetScale("textlin");
-        $datos = $this->model->getSexTotal();
+        // Crear el objeto del gráfico según el tipo
+        switch ($tipoGrafico) {
+            case 'Pie':
+                $this->grafico = new PieGraph(400, 300, "auto");
+                break;
+            case 'Bar':
+                $this->grafico = new Graph(400, 300, "auto");
+                $this->grafico->SetScale("textlin");
+                break;
+            default:
+                throw new Exception("Tipo de gráfico no soportado: $tipoGrafico");
+        }
+
+        $this->grafico->SetShadow(); // Agregar sombra para estética
+
+        // Inicializar arrays para etiquetas y valores
         $labels = [];
         $values = [];
         foreach ($datos as $dato) {
-            $labels[] = $dato['sex'];
-            $values[] = $dato['sex_total'];
+            $labels[] = $dato['sex'];    // Etiquetas dinámicas
+            $values[] = $dato['sex_total'];   // Valores dinámicos
         }
-        $linea = new LinePlot($datos);
-        $this->grafico->Add($linea);
+
+        // Crear el gráfico según el tipo
+        switch ($tipoGrafico) {
+            case 'Pie':
+                $plot = new PiePlot($values);
+                $plot->SetLegends($labels);
+                $plot->SetLabelType(PIE_VALUE_PER); // Mostrar porcentaje
+                $plot->value->SetFormat('%2.1f%%'); // Formato del porcentaje
+                break;
+
+            case 'Bar':
+                $plot = new BarPlot($values);
+                $plot->SetLegend(implode(", ", $labels)); // Agregar leyendas
+                break;
+        }
+
+        // Agregar el gráfico al objeto general
+        $this->grafico->Add($plot);
 
         ob_start();
 
         if (!$isPDF) {
-        return $this->grafico->Stroke();
+            return $this->grafico->Stroke();
         }
         $this->grafico->Stroke();
         $chartContent = ob_get_clean();
@@ -84,31 +116,29 @@ class AdminController
 
         return $chartBase64;
     }
-////SIRVEEEEEEEEEEEEEEEEEEEEEE
-//    public function filterStats()
-//    {
-//        // Obtener la fecha desde GET o usar el mes actual como predeterminado
-//        $date = $_GET['date'] ?? date('Y-m-01'); // Primer día del mes actual
-//
-//        // Preparar el gráfico (lógica de SQL puede añadirse aquí más adelante)
-//        $chart = $this->renderChart(true);
-//
-//        // Configurar los encabezados para devolver una imagen
-//        header("Content-Type: image/png");
-//        echo $chart;
-//    }
+
+
+
     public function filterStats()
     {
         // Obtener la fecha desde GET o usar el mes actual como predeterminado
-        $date = $_GET['date'] ?? date('Y-m-01'); // Primer día del mes actual
+        $date = $_POST['date'] ?? date('Y-m-01'); // Primer día del mes actual
+        $type = $_POST['type'] ?? null; // Primer día del mes actual
 
-        $resultados = $this->model->ratioForAccierts();
-
-        // Preparar los datos para el gráfico
-        $datos = $resultados;
+        if($type == 'genre'){
+            $datos = $this->model->getSexTotal();
+            var_dump($datos);
+        }else{
+            $datos = $this->model->getCountry();
+            var_dump($datos);
+        }
 
         // Generar el gráfico con los datos extraídos
-        $chart = $this->renderChart($datos, true);
+        try {
+            $chart = $this->renderChart($datos, 'Pie', false);
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
 
         // Configurar los encabezados para devolver una imagen
         header("Content-Type: image/png");

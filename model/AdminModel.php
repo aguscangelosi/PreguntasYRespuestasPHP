@@ -271,7 +271,7 @@ class AdminModel
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
 
-        return $stmt->get_result()->fetch_assoc();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function ratioAge(){
@@ -327,7 +327,7 @@ class AdminModel
         $sexWomen = $this->getSexF()['sex_F'];
         $sexMen = $this->getSexM()['sex_M'];
         $sexElle = $this->getSexX()['sex_X'];
-        $sexTotal = $this->getSexTotal()['sex_total'];
+        $sexTotal = $this->getSexTotal();
         $ratioForAccierts = $this->ratioForAccierts()['promedio_aciertos'];
         $data = [
             'total_users' => $players,
