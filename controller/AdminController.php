@@ -3,6 +3,8 @@ require_once './vendor/dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 include_once "./vendor/jpgraph-4.4.2/src/jpgraph.php";
 include_once "./vendor/jpgraph-4.4.2/src/jpgraph_line.php";
+include_once "./vendor/jpgraph-4.4.2/src/jpgraph_pie.php";
+
 
 class AdminController
 {
@@ -34,18 +36,25 @@ class AdminController
 
     public function generatePdf()
     {
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $date = $input['date'] ?? date('Y-m-01');
+        $type = $input['type'] ?? null;
+
+        $datos = $this->model->getDataCharts($type, $date);
+
         try {
             $dompdf = new Dompdf();
 
-            $chartBase64 = $this->renderChart(true);
+            $chartBase64 = $this->model->renderChart($datos, 'Pie', true);
 
             $html = '
-            <h1>Reporte de Gráficos</h1>
-            <p>Este documento incluye los gráficos generados en el sistema.</p>
-            <br>
-            <img src="' . $chartBase64 . '" style="width:100%; max-width:500px;">
-            <br>
-            <p>Información adicional sobre los datos representados.</p>';
+        <h1>Reporte de Gráficos</h1>
+        <p>Este documento incluye los gráficos generados en el sistema.</p>
+        <br>
+        <img src="' . $chartBase64 . '" style="width:100%; max-width:500px;">
+        <br>
+        <p>Información adicional sobre los datos representados.</p>';
 
             $dompdf->loadHtml($html);
 
@@ -53,41 +62,34 @@ class AdminController
 
             $dompdf->render();
 
-            $dompdf->stream("reporte_graficos.pdf", ["Attachment" => true]);
+            header("Content-Type: application/pdf");
+            header("Content-Disposition: attachment; filename=reporte_graficos.pdf");
+            echo $dompdf->output();
         } catch (Exception $e) {
+            http_response_code(500);
             echo "Error al generar el PDF: " . $e->getMessage();
         }
-    }
-    public function renderChart($isPDF = false)
-    {
-        $this->grafico = new Graph(400, 300, "auto");
-        $this->grafico->SetScale("textlin");
-        $datos = array(10, 20, 5, 15, 20);
-        $linea = new LinePlot($datos);
-        $this->grafico->Add($linea);
-
-        ob_start();
-
-        if (!$isPDF) {
-        return $this->grafico->Stroke();
-        }
-        $this->grafico->Stroke();
-        $chartContent = ob_get_clean();
-
-        $chartBase64 = 'data:image/png;base64,' . base64_encode($chartContent);
-
-        return $chartBase64;
     }
 
     public function filterStats()
     {
-        // Obtener la fecha desde GET o usar el mes actual como predeterminado
-        $date = $_GET['date'] ?? date('Y-m-01'); // Primer día del mes actual
+        $input = json_decode(file_get_contents('php://input'), true);
 
-        // Preparar el gráfico (lógica de SQL puede añadirse aquí más adelante)
-        $chart = $this->renderChart(true);
+        $date = $input['date'] ?? date('Y-m-01');
+        $type = $input['type'] ?? null;
 
-        // Configurar los encabezados para devolver una imagen
+        $datos = $this->model->getDataCharts($type,$date);
+
+        try {
+            if (!empty($datos)){
+            $chart = $this->model->renderChart($datos, 'Pie', true);
+            }else{
+                $chart = "";
+            }
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            exit;
+        }
         header("Content-Type: image/png");
         echo $chart;
     }

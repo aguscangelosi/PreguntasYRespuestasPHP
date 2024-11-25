@@ -200,23 +200,226 @@ class AdminModel
         return $stmt->get_result()->fetch_assoc();
     }
 
+
+
+    public function ratioForAccierts()
+    {
+        $sql = "SELECT ROUND((SUM(es_correcta) / COUNT(*) * 100), 2) AS promedio_aciertos
+        FROM game_question;";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getSexF()
+    {
+        $sql = "SELECT sex, COUNT(*) AS sex_F
+        FROM user
+        WHERE sex LIKE 'F'
+        GROUP BY sex";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getSexM()
+    {
+        $sql = "SELECT sex, COUNT(*) AS sex_M
+        FROM user
+        WHERE sex LIKE 'M'
+        GROUP BY sex";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getSexX()
+    {
+        $sql = "SELECT sex, COUNT(*) AS sex_X
+        FROM user
+        WHERE sex LIKE 'X'
+        GROUP BY sex";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+
+    public function ratioAge(){
+        $sql = "SELECT TIMESTAMPDIFF(YEAR, birthday, CURDATE()) AS promedio_edad FROM user";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function ratioAgeChildren(){
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE())), 2) AS promedio_edad_menores
+        FROM user
+        WHERE TIMESTAMPDIFF(year, birthday, CURDATE()) < 18";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+    public function ratioAgeAdults(){
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE())), 2) AS promedio_edad_adultos
+        FROM user
+        WHERE TIMESTAMPDIFF(year, birthday, CURDATE()) >= 18 AND TIMESTAMPDIFF(year, birthday, CURDATE()) < 65";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function ratioAgeMajorAdults(){
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE())), 2) AS promedio_edad_adultosMayores
+        FROM user
+        WHERE TIMESTAMPDIFF(year, birthday, CURDATE()) >= 65";
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+
+    public function getSexTotal($date)
+    {
+        $sql = "SELECT sex AS keyValue, COUNT(*) AS total
+            FROM user
+            WHERE register_date < ?
+            GROUP BY keyValue";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('s', $date); // 's' indica que es un string
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getCountry($date)
+    {
+        $sql = "SELECT pais AS keyValue, COUNT(*) AS total
+            FROM user
+            WHERE register_date < ?
+            GROUP BY pais
+            ORDER BY total DESC";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
     public function findAllData()
     {
+        $date= date('d-m-Y');
         $totalQuestions = $this->findAllQuestions()['total_questions'];
         $matchesPlayed = $this->findMatchesPlayed()['total_games'];
         $players = $this->findPlayers()['total_users'];
         $questionsCreated = $this->findAllQuestionsCreated()['total_questions_created'];
         $usersCreated = $this->findAllUsersCreated()['total_users_created'];
-
+        $ratioForAge = $this->ratioAge()['promedio_edad'];
+        $ratioForAgeChildrens = $this->ratioAgeChildren()['promedio_edad_menores'];
+        $ratioForAgeAdults = $this->ratioAgeAdults()['promedio_edad_adultos'];
+        $ratioAgeMajorAdults = $this->ratioAgeMajorAdults()['promedio_edad_adultosMayores'];
+        $totalContries = $this->getCountry($date);
+        $sexWomen = $this->getSexF()['sex_F'];
+        $sexMen = $this->getSexM()['sex_M'];
+        $sexElle = $this->getSexX()['sex_X'];
+        $sexTotal = $this->getSexTotal($date);
+        $ratioForAccierts = $this->ratioForAccierts()['promedio_aciertos'];
         $data = [
             'total_users' => $players,
             'total_questions' => $totalQuestions,
             'total_games' => $matchesPlayed,
             'total_questions_created' =>$questionsCreated,
             'total_users_created' =>$usersCreated,
+            'promedio_edad' => $ratioForAge,
+            'promedio_edad_menores' => $ratioForAgeChildrens,
+            'promedio_edad_adultos' => $ratioForAgeAdults,
+            'promedio_edad_adultosMayores' => $ratioAgeMajorAdults,
+            'totalDeHombres' => $sexMen,
+            'totalDeMujeres' => $sexWomen,
+            'totalDeElles' => $sexElle,
+            'sex_Total' => $sexTotal,
+            'ratioForAccierts' => $ratioForAccierts,
         ];
 
         return $data;
+    }
+
+   public function getDataCharts($type,$date)
+   {
+       if ($type === 'genre') {
+           return $this->getSexTotal($date);
+
+       }
+       if ($type === 'country')  {
+           return $this->getCountry($date);
+       }
+
+   }
+
+    public function renderChart($datos, $tipoGrafico, $isPDF = false)
+    {
+        switch ($tipoGrafico) {
+            case 'Pie':
+                $this->grafico = new PieGraph(400, 300, "auto");
+                break;
+            case 'Bar':
+                $this->grafico = new Graph(400, 300, "auto");
+                $this->grafico->SetScale("textlin");
+                break;
+            default:
+                throw new Exception("Tipo de gráfico no soportado: $tipoGrafico");
+        }
+
+        $this->grafico->SetShadow();
+
+        $labels = [];
+        $values = [];
+        foreach ($datos as $dato) {
+            $labels[] = $dato["keyValue"];
+            $values[] = $dato["total"];
+        }
+
+        switch ($tipoGrafico) {
+            case 'Pie':
+                $plot = new PiePlot($values);
+                $plot->SetLegends($labels);
+                $plot->SetLabelType(PIE_VALUE_PER);
+                $plot->value->SetFormat('%2.1f%%');
+                break;
+
+            case 'Bar':
+                $plot = new BarPlot($values);
+                $plot->SetLegend(implode(", ", $labels));
+                break;
+        }
+
+        $this->grafico->Add($plot);
+
+        ob_start();
+
+        if (!$isPDF) {
+            return $this->grafico->Stroke();
+        }
+        $this->grafico->Stroke();
+        $chartContent = ob_get_clean();
+
+        $chartBase64 = 'data:image/png;base64,' . base64_encode($chartContent);
+
+        return $chartBase64;
     }
 
 
