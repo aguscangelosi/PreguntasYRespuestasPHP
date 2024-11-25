@@ -87,6 +87,12 @@
 
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Cargar gráficos iniciales
+            fetchChart("genre");
+            fetchChart("country");
+        });
+
         function fetchChart(type) {
             const filterDate =
                     type === "genre"
@@ -181,14 +187,15 @@
                         const a = document.createElement("a");
                         a.href = url;
                         a.download = "reporte_graficos.pdf";
+                        document.body.appendChild(a);
                         a.click();
                         URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
                     })
                     .catch((error) => {
                         console.error("Error:", error);
                     });
         }
-
 
         document.getElementById("generatePdfGenre").addEventListener("click", function () {
             generatePdf("genre");
@@ -197,6 +204,7 @@
         document.getElementById("generatePdfCountry").addEventListener("click", function () {
             generatePdf("country");
         });
+
 
     </script>
 
