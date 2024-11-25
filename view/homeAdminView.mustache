@@ -66,36 +66,40 @@
         Imprimir PDF
     </button>
 
-    <!-- Formulario para filtrar usuarios -->
-    <form id="filterUserForm" class="d-inline">
-        <input type="date" id="userFilterDate" name="userFilterDate">
-        <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
-    </form>
+    <div class="filter">
+        <form id="filterUserForm" class="d-inline">
+            <input type="date" id="userFilterDate" name="userFilterDate">
+            <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
+        </form>
 
-    <section class="user-demographics">
-        <h2>Estadísticas de Género de Usuarios</h2>
-        <div>
-            <p><strong>Cantidad de Usuarios por Género:</strong></p>
-            <div class="genre">
-                <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+        <section class="user-demographics">
+            <h2>Estadísticas de Género de Usuarios</h2>
+            <div>
+                <p><strong>Cantidad de Usuarios por Género:</strong></p>
+                <div class="genre">
+                    <img id="userChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <section class="user-demographics">
-        <h2>Estadísticas Demograficas de Usuarios</h2>
-        <div>
-            <p><strong>Cantidad de Usuarios por País:</strong></p>
-            <div class="country-chart">
-                <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+    <div>
+        <section class="user-demographics">
+            <h2>Estadísticas Demograficas de Usuarios</h2>
+            <div>
+                <p><strong>Cantidad de Usuarios por País:</strong></p>
+                <div class="country-chart">
+                    <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+                </div>
             </div>
-        </div>
-    </section>
-    <!-- Formulario para filtrar preguntas -->
-    <form id="filterQuestionForm" class="d-inline">
-        <input type="date" id="questionFilterDate" name="questionFilterDate">
-        <button type="button" id="filterQuestionChart" value="" class="btn btn-secondary">Filtrar Preguntas</button>
-    </form>
+        </section>
+        <form id="filterQuestionForm" class="d-inline">
+            <input type="date" id="questionFilterDate" name="questionFilterDate">
+            <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
+        </form>
+    </div>
+
+
 
     <section class="question-demographics">
         <h2>Estadísticas de Preguntas Respondidas</h2>
@@ -140,7 +144,7 @@
                         return response.text();
                     })
                     .then((data) => {
-                        const targetImg = type === "user" ? "countryChart" : "questionChart";
+                        const targetImg = type === "genre" ? "userChart" : "countryChart";
                         document.getElementById(targetImg).src = data;
                     })
                     .catch((error) => {

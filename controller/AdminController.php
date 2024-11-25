@@ -61,9 +61,8 @@ class AdminController
         }
     }
 
-    public function renderChart($datos, $tipoGrafico, $isPDF = false)
+    public function renderChart($datos, $tipoGrafico, $labelKey, $valueKey, $isPDF = false)
     {
-        // Crear el objeto del gráfico según el tipo
         switch ($tipoGrafico) {
             case 'Pie':
                 $this->grafico = new PieGraph(400, 300, "auto");
@@ -76,32 +75,29 @@ class AdminController
                 throw new Exception("Tipo de gráfico no soportado: $tipoGrafico");
         }
 
-        $this->grafico->SetShadow(); // Agregar sombra para estética
+        $this->grafico->SetShadow();
 
-        // Inicializar arrays para etiquetas y valores
         $labels = [];
         $values = [];
         foreach ($datos as $dato) {
-            $labels[] = $dato['sex'];    // Etiquetas dinámicas
-            $values[] = $dato['sex_total'];   // Valores dinámicos
+            $labels[] = $dato[$labelKey];
+            $values[] = $dato[$valueKey];
         }
 
-        // Crear el gráfico según el tipo
         switch ($tipoGrafico) {
             case 'Pie':
                 $plot = new PiePlot($values);
                 $plot->SetLegends($labels);
-                $plot->SetLabelType(PIE_VALUE_PER); // Mostrar porcentaje
-                $plot->value->SetFormat('%2.1f%%'); // Formato del porcentaje
+                $plot->SetLabelType(PIE_VALUE_PER);
+                $plot->value->SetFormat('%2.1f%%');
                 break;
 
             case 'Bar':
                 $plot = new BarPlot($values);
-                $plot->SetLegend(implode(", ", $labels)); // Agregar leyendas
+                $plot->SetLegend(implode(", ", $labels));
                 break;
         }
 
-        // Agregar el gráfico al objeto general
         $this->grafico->Add($plot);
 
         ob_start();
@@ -118,33 +114,31 @@ class AdminController
     }
 
 
-
     public function filterStats()
     {
-        // Obtener la fecha desde GET o usar el mes actual como predeterminado
-        $date = $_POST['date'] ?? date('Y-m-01'); // Primer día del mes actual
-        $type = $_POST['type'] ?? null; // Primer día del mes actual
+        $input = json_decode(file_get_contents('php://input'), true);
 
-        if($type == 'genre'){
+        $date = $input['date'] ?? date('Y-m-01');
+        $type = $input['type'] ?? null;
+        if ($type === 'genre') {
             $datos = $this->model->getSexTotal();
-            var_dump($datos);
-        }else{
+            $label = "sex";
+            $key = "sex_total";
+        }
+        if ($type === 'country')  {
             $datos = $this->model->getCountry();
-            var_dump($datos);
+            $label = "pais";
+            $key = "usuarios_por_pais";
         }
-
-        // Generar el gráfico con los datos extraídos
         try {
-            $chart = $this->renderChart($datos, 'Pie', false);
+            $chart = $this->renderChart($datos, 'Pie',$label,$key, true);
         } catch (Exception $e) {
-            $e->getMessage();
+            echo $e->getMessage();
+            exit;
         }
-
-        // Configurar los encabezados para devolver una imagen
         header("Content-Type: image/png");
         echo $chart;
     }
-
 
     public function createQuestion(){
         $categories = $this->model->findCategories();

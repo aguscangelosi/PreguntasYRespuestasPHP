@@ -205,12 +205,13 @@ class AdminModel
         $sql = "SELECT pais, COUNT(*) AS usuarios_por_pais
         FROM user
         GROUP BY pais
-        ORDER BY usuarios_por_pais DESC";
+        ORDER BY usuarios_por_pais DESC
+        ";
 
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
 
-        return $stmt->get_result()->fetch_assoc();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function ratioForAccierts()
@@ -323,7 +324,7 @@ class AdminModel
         $ratioForAgeChildrens = $this->ratioAgeChildren()['promedio_edad_menores'];
         $ratioForAgeAdults = $this->ratioAgeAdults()['promedio_edad_adultos'];
         $ratioAgeMajorAdults = $this->ratioAgeMajorAdults()['promedio_edad_adultosMayores'];
-        $totalContries = $this->getCountry()['usuarios_por_pais'];
+        $totalContries = $this->getCountry();
         $sexWomen = $this->getSexF()['sex_F'];
         $sexMen = $this->getSexM()['sex_M'];
         $sexElle = $this->getSexX()['sex_X'];
@@ -339,7 +340,6 @@ class AdminModel
             'promedio_edad_menores' => $ratioForAgeChildrens,
             'promedio_edad_adultos' => $ratioForAgeAdults,
             'promedio_edad_adultosMayores' => $ratioAgeMajorAdults,
-            'totalUserForCountries' => $totalContries,
             'totalDeHombres' => $sexMen,
             'totalDeMujeres' => $sexWomen,
             'totalDeElles' => $sexElle,
