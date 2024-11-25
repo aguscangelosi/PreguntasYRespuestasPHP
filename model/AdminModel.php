@@ -200,19 +200,7 @@ class AdminModel
         return $stmt->get_result()->fetch_assoc();
     }
 
-    public function getCountry()
-    {
-        $sql = "SELECT pais, COUNT(*) AS usuarios_por_pais
-        FROM user
-        GROUP BY pais
-        ORDER BY usuarios_por_pais DESC
-        ";
 
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
 
     public function ratioForAccierts()
     {
@@ -263,17 +251,7 @@ class AdminModel
 
         return $stmt->get_result()->fetch_assoc();
     }
-    public function getSexTotal()
-    {
-        $sql = "SELECT sex, COUNT(*) AS sex_total
-        FROM user
-        GROUP BY sex";
 
-        $stmt = $this->database->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
 
     public function ratioAge(){
         $sql = "SELECT TIMESTAMPDIFF(YEAR, birthday, CURDATE()) AS promedio_edad FROM user";
@@ -313,8 +291,40 @@ class AdminModel
     }
 
 
+    public function getSexTotal($date)
+    {
+        $sql = "SELECT sex, COUNT(*) AS sex_total
+            FROM user
+            WHERE register_date < ?
+            GROUP BY sex";
+
+        // Preparar y ejecutar la consulta
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('s', $date); // 's' indica que es un string
+        $stmt->execute();
+
+        // Retornar los resultados como un array asociativo
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getCountry($date)
+    {
+        $sql = "SELECT pais, COUNT(*) AS usuarios_por_pais
+    FROM user
+    WHERE register_date < ?
+    GROUP BY pais
+    ORDER BY usuarios_por_pais DESC";
+
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param('s', $date); // 's' indica que es un string
+        $stmt->execute();
+
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
     public function findAllData()
     {
+        $date= date('d-m-Y');
         $totalQuestions = $this->findAllQuestions()['total_questions'];
         $matchesPlayed = $this->findMatchesPlayed()['total_games'];
         $players = $this->findPlayers()['total_users'];
@@ -324,11 +334,11 @@ class AdminModel
         $ratioForAgeChildrens = $this->ratioAgeChildren()['promedio_edad_menores'];
         $ratioForAgeAdults = $this->ratioAgeAdults()['promedio_edad_adultos'];
         $ratioAgeMajorAdults = $this->ratioAgeMajorAdults()['promedio_edad_adultosMayores'];
-        $totalContries = $this->getCountry();
+        $totalContries = $this->getCountry($date);
         $sexWomen = $this->getSexF()['sex_F'];
         $sexMen = $this->getSexM()['sex_M'];
         $sexElle = $this->getSexX()['sex_X'];
-        $sexTotal = $this->getSexTotal();
+        $sexTotal = $this->getSexTotal($date);
         $ratioForAccierts = $this->ratioForAccierts()['promedio_aciertos'];
         $data = [
             'total_users' => $players,

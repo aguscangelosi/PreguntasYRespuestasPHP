@@ -42,24 +42,6 @@
 
     </section>
 
-    <!--    <section class="question-stats">-->
-    <!--        <h2>Estadísticas de Preguntas y Respuestas</h2>-->
-    <!--        <p><strong>% de Preguntas Respondidas Correctamente:</strong></p>-->
-    <!--        <div class="container">-->
-    <!--            <div>-->
-    <!--                <img src="/PreguntasYRespuestasPHP/admin/renderChart" alt="Gráfico">-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--        <div class="text-center">-->
-    <!--            <button class="btn btn-primary" id="generar_pdf_user" onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">-->
-    <!--                Imprimir PDF-->
-    <!--            </button>-->
-    <!--            <form action="/PreguntasYRespuestasPHP/admin/filterStats" method="GET" class="d-inline">-->
-    <!--                <input type="date" name="filterDate" required>-->
-    <!--                <button type="submit" class="btn btn-secondary">Filtrar</button>-->
-    <!--            </form>-->
-    <!--        </div>-->
-    <!--    </section>-->
 
     <button class="btn btn-primary" id="generar_pdf_user"
             onclick="window.location.href='/PreguntasYRespuestasPHP/admin/generatePdf'">
@@ -67,49 +49,58 @@
     </button>
 
     <div class="filter">
-        <form id="filterUserForm" class="d-inline">
-            <input type="date" id="userFilterDate" name="userFilterDate">
-            <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
-        </form>
 
         <section class="user-demographics">
             <h2>Estadísticas de Género de Usuarios</h2>
+            <form id="filterUserForm" class="d-inline">
+
+                <input type="date" id="questionFilterDate" name="questionFilterDate">
+                <button type="button" id="filterUserChart" class="btn btn-secondary">Filtrar Usuarios</button>
+            </form>
             <div>
                 <p><strong>Cantidad de Usuarios por Género:</strong></p>
                 <div class="genre">
-                    <img id="userChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+                    <img id="userChart" src="{{userGenre}}" alt="Gráfico de usuarios por país">
                 </div>
             </div>
         </section>
     </div>
 
-    <div>
+    <div class="filter_pais">
         <section class="user-demographics">
             <h2>Estadísticas Demograficas de Usuarios</h2>
+            <form id="filterQuestionForm" class="d-inline">
+                <input type="date" id="userFilterDate" name="questionFilterDate">
+                <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
+            </form>
             <div>
                 <p><strong>Cantidad de Usuarios por País:</strong></p>
-                <div class="country-chart">
-                    <img id="countryChart" src="{{countryUserChart}}" alt="Gráfico de usuarios por país">
+                <div class="country">
+                    <img id="questionChart" src="{{questionChart}}" alt="Gráfico de usuarios por país">
                 </div>
             </div>
         </section>
-        <form id="filterQuestionForm" class="d-inline">
-            <input type="date" id="questionFilterDate" name="questionFilterDate">
-            <button type="button" id="filterQuestionChart" class="btn btn-secondary">Filtrar Preguntas</button>
-        </form>
+
     </div>
 
 
-
-    <section class="question-demographics">
-        <h2>Estadísticas de Preguntas Respondidas</h2>
-        <div>
-            <p><strong>Cantidad de Preguntas Respondidas:</strong></p>
-            <div class="question-chart">
-                <img id="questionChart" src="{{questionChart}}" alt="Gráfico de preguntas respondidas">
+    <div class="filter_answers">
+        <section class="question-demographics">
+            <h2>Estadísticas de Preguntas Respondidas</h2>
+            <form id="ww" class="d-inline">
+                <input type="date" id="www" name="www">
+                <button type="button" id="www" class="btn btn-secondary">Filtrar Preguntas</button>
+            </form>
+            <div>
+                <p><strong>Cantidad de Preguntas Respondidas:</strong></p>
+                <div class="w-ww">
+                    <img id="w" src="{{www}}" alt="Gráfico de preguntas respondidas">
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+    </div>
+
 </div>
 
 
@@ -144,7 +135,7 @@
                         return response.text();
                     })
                     .then((data) => {
-                        const targetImg = type === "genre" ? "userChart" : "countryChart";
+                        const targetImg = type === "genre" ? "userChart" : "questionChart";
                         document.getElementById(targetImg).src = data;
                     })
                     .catch((error) => {
@@ -161,3 +152,4 @@
             fetchChart("country");
         });
     </script>
+

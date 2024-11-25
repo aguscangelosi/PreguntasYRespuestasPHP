@@ -120,18 +120,19 @@ class AdminController
 
         $date = $input['date'] ?? date('Y-m-01');
         $type = $input['type'] ?? null;
+
         if ($type === 'genre') {
-            $datos = $this->model->getSexTotal();
+            $datos = $this->model->getSexTotal($date);
             $label = "sex";
             $key = "sex_total";
         }
         if ($type === 'country')  {
-            $datos = $this->model->getCountry();
+            $datos = $this->model->getCountry($date);
             $label = "pais";
             $key = "usuarios_por_pais";
         }
         try {
-            $chart = $this->renderChart($datos, 'Pie',$label,$key, true);
+            $chart = $this->renderChart($datos, 'Pie', $label, $key, true);
         } catch (Exception $e) {
             echo $e->getMessage();
             exit;
