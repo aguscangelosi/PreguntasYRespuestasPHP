@@ -9,10 +9,9 @@
                             <li><strong>Cantidad Total de Jugadores:</strong> {{total_users}}</li>
                             <li><strong>Cantidad Total de Partidas Jugadas:</strong> {{total_games}}</li>
                             <li><strong>Cantidad Total de Preguntas en el Juego:</strong> {{total_questions}}</li>
-                            <li><strong>Cantidad Total de Preguntas Creadas:</strong> {{createdQuestions}}</li>
-                            <li><strong>Cantidad de Usuarios Nuevos:</strong> {{newUsers}}</li>
+                            <li><strong>Cantidad Total de Preguntas Creadas:</strong> {{total_questions_created}}</li>
+                            <li><strong>Cantidad de Usuarios Nuevos:</strong> {{total_users_created}}</li>
                             <li><strong>Promedio de Edad:</strong> {{promedio_edad}}</li>
-                            <li><strong>Total de usuarios por país:</strong> {{totalUserForCountries}}</li>
                             <li><strong>Promedio de aciertos:</strong> {{ratioForAccierts}}</li>
                         </ul>
                     </div>
@@ -28,11 +27,11 @@
                             </ul>
                         </div>
                         <div class="col-6">
-                            <p><strong>Cantidad de Usuarios por Edad:</strong></p>
+                            <p><strong>Promedio de edad:</strong></p>
                             <ul>
                                 <li><strong>Menores:</strong> {{promedio_edad_menores}}</li>
                                 <li><strong>Edad Media:</strong> {{promedio_edad_adultos}}</li>
-                                <li><strong>Jubilados:</strong> {{promedio_edad_adultosMayores}}</li>
+                                <li><strong>Adultos Mayores:</strong> {{promedio_edad_adultosMayores}}</li>
                             </ul>
                         </div>
                     </div>
@@ -161,7 +160,7 @@
                         a.download = `reporte_${type}.pdf`;
                         a.click();
                     })
-                    .catch(error => console.error("Error:", error));
+                    .catch(error => alert("No hay datos para mostrar"));
         }
 
         // Asignar eventos

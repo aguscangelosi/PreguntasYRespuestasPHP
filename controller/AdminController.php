@@ -42,7 +42,10 @@ class AdminController
         $type = $input['type'] ?? null;
 
         $datos = $this->model->getDataCharts($type, $date);
-
+        if(!$datos){
+            http_response_code(404);
+            return;
+        }
         try {
             $dompdf = new Dompdf();
 

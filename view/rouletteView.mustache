@@ -146,9 +146,28 @@
         function obtenerPregunta(categoriaId) {
             let idMatch = document.getElementById('idMatch').value;
 
-            window.location.href = `/PreguntasYRespuestasPHP/game/findQuestions?category=${categoriaId}&idMatch=${idMatch}`;
-        }
+            // Crear un formulario para enviar los datos usando POST
+            let form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/PreguntasYRespuestasPHP/game/findQuestions';
 
+            // Crear campos ocultos para los datos
+            let categoryField = document.createElement('input');
+            categoryField.type = 'hidden';
+            categoryField.name = 'category';
+            categoryField.value = categoriaId;
+            form.appendChild(categoryField);
+
+            let idMatchField = document.createElement('input');
+            idMatchField.type = 'hidden';
+            idMatchField.name = 'idMatch';
+            idMatchField.value = idMatch;
+            form.appendChild(idMatchField);
+
+            // Añadir el formulario al cuerpo y enviarlo
+            document.body.appendChild(form);
+            form.submit();
+        }
 
         function easeOut(t, b, c, d) {
             var ts = (t /= d) * t;

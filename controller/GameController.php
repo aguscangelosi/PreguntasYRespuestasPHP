@@ -59,8 +59,8 @@ class GameController
 
     public function findQuestions()
     {
-        $category = isset($_GET['category']) ? $_GET['category'] : null;
-        $idMatch = isset($_GET['idMatch']) ? $_GET['idMatch'] : null;
+        $category = isset($_POST['category']) ? $_POST['category'] : null;
+        $idMatch = isset($_POST['idMatch']) ? $_POST['idMatch'] : null;
 
         $user = $this->authHelper->getUser();
         $userId = $user["user_id"];

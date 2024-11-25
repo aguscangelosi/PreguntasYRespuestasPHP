@@ -105,7 +105,8 @@ class Router
                                 'homeEdit', "createQuestion",
                                 "createQuestionPost", "deleteQuestion",
                                 "approveQuestion", "approveReport",
-                                "declineReport",
+                                "declineReport", 'suggestQuestion',
+                                 'suggestQuestionPost',
                             ]
                 ],
         ];

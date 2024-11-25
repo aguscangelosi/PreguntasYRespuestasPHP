@@ -10,10 +10,18 @@ class RankingModel
     }
 
     public function getRanking(){
-        $sql = "SELECT DISTINCT u.id, u.username, MAX(ug.puntaje) AS puntaje
-               FROM user_game ug JOIN user u ON ug.user_id = u.id
-               GROUP BY u.id 
-               ORDER BY ug.puntaje DESC";
+        $sql = "SELECT 
+            u.id, 
+            u.username, 
+            MAX(ug.puntaje) AS puntaje, 
+            RANK() OVER (ORDER BY MAX(ug.puntaje) DESC) AS posicion
+        FROM user_game ug 
+        JOIN user u ON ug.user_id = u.id
+        GROUP BY 
+            u.id, u.username
+        ORDER BY 
+            posicion;
+        ";
 
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
@@ -73,17 +81,9 @@ class RankingModel
     }
 
     public function getProfile($idUser){
-        //foto perfil
-        //Nombre de usuario
-        //Mejor partidad (historico)
-        //posicion Ranking
-        //qr -- Se crea a parte
-        //porcentaje de partidas (ganadas/perdidas) -- Ver si tiene sentido
-        //trampitas -- agregar bdd
 
         $position = $this->getPosition($idUser);
         $dataProfile = $this->getDataProfile($idUser);
-//        $dataProfile['img'] = $this->getQrCode($idUser);
 
         return ['position'=>$position, 'dataProfile'=>$dataProfile];
     }

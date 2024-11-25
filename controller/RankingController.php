@@ -17,6 +17,7 @@ class RankingController
     public function rankingPosition()
     {
         $rankingList = $this->model->getRanking();
+
         $data = isset($_GET['id']);
         if($rankingList){
             $this->presenter->show('ranking', ['rankingList' => $rankingList, 'id' => $data]);

@@ -254,7 +254,7 @@ class AdminModel
 
 
     public function ratioAge(){
-        $sql = "SELECT TIMESTAMPDIFF(YEAR, birthday, CURDATE()) AS promedio_edad FROM user";
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(YEAR, birthday, CURDATE()))) AS promedio_edad FROM user";
         $stmt = $this->database->prepare($sql);
         $stmt->execute();
 
@@ -262,7 +262,7 @@ class AdminModel
     }
 
     public function ratioAgeChildren(){
-        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE())), 2) AS promedio_edad_menores
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE()))) AS promedio_edad_menores
         FROM user
         WHERE TIMESTAMPDIFF(year, birthday, CURDATE()) < 18";
         $stmt = $this->database->prepare($sql);
@@ -271,7 +271,7 @@ class AdminModel
         return $stmt->get_result()->fetch_assoc();
     }
     public function ratioAgeAdults(){
-        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE())), 2) AS promedio_edad_adultos
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE()))) AS promedio_edad_adultos
         FROM user
         WHERE TIMESTAMPDIFF(year, birthday, CURDATE()) >= 18 AND TIMESTAMPDIFF(year, birthday, CURDATE()) < 65";
         $stmt = $this->database->prepare($sql);
@@ -281,7 +281,7 @@ class AdminModel
     }
 
     public function ratioAgeMajorAdults(){
-        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE())), 2) AS promedio_edad_adultosMayores
+        $sql = "SELECT ROUND(AVG(TIMESTAMPDIFF(year, birthday, CURDATE()))) AS promedio_edad_adultosMayores
         FROM user
         WHERE TIMESTAMPDIFF(year, birthday, CURDATE()) >= 65";
         $stmt = $this->database->prepare($sql);

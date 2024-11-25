@@ -1,4 +1,4 @@
-<div class="text-center bg-transparent">
+<div class="text-center shadow p-3 mb-2 bg-body-tertiary rounded p-4">
     <h1 class="p-3 f2-bold">Pregunta</h1>
 
     <p class="fs-3 fw-semibold">{{enunciado}}</p>
@@ -7,11 +7,11 @@
     <p class="fs-6 fw-bold">Selecciona la respuesta</p>
     <p id="timer" class="text-danger fs-5 fw-bold">Tiempo: 10 segundos</p> <!-- Temporizador visible -->
 
-    <ul id="respuestas" class="list-group">
+    <ul id="respuestas" class="list-group" style="list-style: none">
         {{#respuestas}}
             <li>
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button id="answer-{{answer_id}}" class="btn btn-outline-dark p-3 m-1 fw-bold fs-4" onclick="sendQuestion({{answer_id}})">
+                    <button id="answer-{{answer_id}}" class="btn respuesta-btn btn-outline-dark p-3 m-1 fw-bold fs-4" onclick="sendQuestion({{answer_id}})">
                         {{texto_respuesta}}
                     </button>
                 </div>
@@ -34,7 +34,7 @@
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
             disableButtons(); // Desactiva y pinta de rojo los botones al expirar el tiempo
-            document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
+            document.getElementById('resultado').innerHTML = '<p class="text-white">El tiempo para responder ha expirado.</p>';
             createForm('/PreguntasYRespuestasPHP/game/finish', document.getElementById('idMatch').value, 'Finalizar partida', 'btn-danger');
         }
     }, 1000);
@@ -70,7 +70,7 @@
                 .then(result => {
                     if (result.error === 'timeout') {
                         disableButtons();
-                        document.getElementById('resultado').innerHTML = '<p class="text-danger">El tiempo para responder ha expirado.</p>';
+                        document.getElementById('resultado').innerHTML = '<p class="text-white">El tiempo para responder ha expirado.</p>';
                         createForm('/PreguntasYRespuestasPHP/game/finish', idMatch, 'Finalizar partida', 'btn-danger');
                         return;
                     }
@@ -97,7 +97,6 @@
                         createForm('/PreguntasYRespuestasPHP/game/finish', idMatch, 'Finalizar partida', 'btn-danger');
                     }
 
-                    // Agregar el botón de "Reportar pregunta" siempre después de responder
                     createReportButton(idQuestion);
                 })
                 .catch(error => {
@@ -146,7 +145,7 @@
                     .then(response => response.json())
                     .then(result => {
                         if (result.status === 'success') {
-                            document.getElementById('resultado').innerHTML += '<p class="text-success">Pregunta reportada exitosamente.</p>';
+                            document.getElementById('resultado').innerHTML += '<p class="text-white">Pregunta reportada exitosamente.</p>';
                         } else {
                             document.getElementById('resultado').innerHTML += `<p class="text-danger">Error: ${result.message}</p>`;
                         }

@@ -31,9 +31,14 @@
                         <a href="/PreguntasYRespuestasPHP/auth/init" class="btn btn-secondary btn-sm m-2">Crear una cuenta</a>
                     </div>
                 </form>
-                <div class="w3-text-red"
-                     style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}</div>
-            </div>
+                {{#error_message}}
+
+
+                <div class="w3-text-red bg-white"
+                     style="display: flex; justify-content: center; align-items: center; padding-bottom: 10px">{{error_message}}
+                 </div>
+                {{/error_message}}
+                </div>
         </div>
     </div>
 </div>
