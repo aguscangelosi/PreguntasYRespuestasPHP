@@ -42,6 +42,31 @@ VALUES
     ('Usuario100.', 'M', '$2y$10$SLGa9bq7dEWBpRViic0Zc.AhBpyRv9kIb1NVgQCWJL.moBMbmUZM6', 2, 'mm25AA@example.com', '1998-09-12', 'Facu1', 'profile5.jpg', '2024-05-20', 'Chile', 'Santiago', true),
     ('Editor100.', 'F', '$2y$10$mc83bpYFDPIy0AQtMHgsyuO.y1WyZ1ku5V7Y20X9j/W06dODW1Bjm', 3, 'mmm25AA@example.com', '1998-09-12', 'Facu2', 'profile6.jpg', '2024-06-20', 'Brazil', 'São Paulo', true),
     ('Admin100.', 'M', '$2y$10$ksupjXLXDjkuev9o8GypfOhYZ06BWh5UM/I6p/5d.6OZ3MqiWV76u', 1, 'mmmm25AA@example.com', '1998-09-12', 'Facu3', 'profile7.jpg', '2024-07-20', 'Spain', 'Madrid', true);
+
+INSERT INTO user (username, sex, password, rol_id, email, birthday, name, profile_picture, register_date, pais, ciudad, hasAccess)
+VALUES
+    ('user1', 'M', '12345', 2, 'user1@example.com', '2005-04-10', 'Lucas Pérez', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-01', 'Mexico', 'Cancún', false),
+    ('user2', 'F', '12345', 2, 'user2@example.com', '2010-09-25', 'Lucía García', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-02', 'USA', 'Los Angeles', false),
+    ('user3', 'M', '12345', 2, 'user3@example.com', '1980-06-15', 'Carlos Santos', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-03', 'Colombia', 'Bogotá', false),
+    ('user4', 'F', '12345', 2, 'user4@example.com', '1965-03-12', 'María Rodríguez', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-04', 'Chile', 'Valparaíso', false),
+    ('user5', 'X', '12345', 2, 'user5@example.com', '2008-11-18', 'Alex Martínez', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-05', 'Peru', 'Lima', false),
+    ('user6', 'M', '12345', 2, 'user6@example.com', '1975-07-08', 'Diego López', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-06', 'Argentina', 'Rosario', false),
+    ('user7', 'F', '12345', 2, 'user7@example.com', '1995-01-30', 'Sofía Torres', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-07', 'Spain', 'Barcelona', false),
+    ('user8', 'M', '12345', 2, 'user8@example.com', '1940-02-05', 'Antonio Fernández', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-08', 'Italy', 'Rome', false),
+    ('user9', 'F', '12345', 2, 'user9@example.com', '2002-12-20', 'Valentina Gómez', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-09', 'France', 'Paris', false),
+    ('user10', 'X', '12345', 2, 'user10@example.com', '2015-08-14', 'Sammy Brown', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-10', 'Germany', 'Berlin', false),
+    ('user11', 'M', '12345', 2, 'user11@example.com', '1990-11-30', 'Jorge Ortega', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-11', 'Ecuador', 'Quito', false),
+    ('user12', 'F', '12345', 2, 'user12@example.com', '2000-05-22', 'Ana Morales', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-12', 'Cuba', 'Havana', false),
+    ('user13', 'M', '12345', 2, 'user13@example.com', '1988-09-01', 'Ricardo Núñez', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-13', 'Uruguay', 'Montevideo', false),
+    ('user14', 'F', '12345', 2, 'user14@example.com', '1970-12-24', 'Mónica Herrera', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-14', 'Venezuela', 'Caracas', false),
+    ('user15', 'M', '12345', 2, 'user15@example.com', '2007-10-17', 'Pedro Díaz', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-15', 'Panama', 'Panama City', false),
+    ('user16', 'F', '12345', 2, 'user16@example.com', '1983-03-11', 'Camila Ruiz', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-16', 'Mexico', 'Guadalajara', false),
+    ('user17', 'X', '12345', 2, 'user17@example.com', '2009-01-20', 'Jordan White', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-17', 'Canada', 'Vancouver', false),
+    ('user18', 'M', '12345', 2, 'user18@example.com', '1955-06-29', 'Luis Vega', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-18', 'Bolivia', 'La Paz', false),
+    ('user19', 'F', '12345', 2, 'user19@example.com', '1993-04-07', 'Sara Silva', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-19', 'Brazil', 'Rio de Janeiro', false),
+    ('user20', 'M', '$2y$10$SLGa9bq7dEWBpRViic0Zc.AhBpyRv9kIb1NVgQCWJL.moBMbmUZM6', 2, 'user20@example.com', '1960-02-15', 'Francisco Ríos', '/PreguntasYRespuestasPHP/img/profile/default.png', '2024-01-20', 'Portugal', 'Lisbon', true);
+
+
 CREATE TABLE category (
                           id INT AUTO_INCREMENT PRIMARY KEY,
                           nombre_categoria VARCHAR(50) NOT NULL UNIQUE
