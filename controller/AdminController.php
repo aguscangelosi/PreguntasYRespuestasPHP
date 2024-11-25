@@ -36,10 +36,17 @@ class AdminController
 
     public function generatePdf()
     {
+        $date = $input['date'] ?? date('Y-m-01');
+        $type = 'genre';
+        if ($type === 'genre') {
+            $datos = $this->model->getSexTotal($date);
+            $label = "sex";
+            $key = "sex_total";
+        }
         try {
             $dompdf = new Dompdf();
 
-            $chartBase64 = $this->renderChart(true);
+            $chartBase64 = $this->renderChart($datos, 'Pie', 'sex', 'sex_total', $isPDF = true);
 
             $html = '
             <h1>Reporte de Gráficos</h1>
