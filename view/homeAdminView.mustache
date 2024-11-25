@@ -87,6 +87,11 @@
 
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchChart("genre");
+            fetchChart("country");
+        });
+
         function fetchChart(type) {
             const filterDate =
                     type === "genre"
@@ -182,7 +187,6 @@
                         a.href = url;
                         a.download = "reporte_graficos.pdf";
                         a.click();
-                        URL.revokeObjectURL(url);
                     })
                     .catch((error) => {
                         console.error("Error:", error);
@@ -190,11 +194,13 @@
         }
 
 
-        document.getElementById("generatePdfGenre").addEventListener("click", function () {
+        document.getElementById("generatePdfGenre").addEventListener("click", function (e) {
+            e.preventDefault();
             generatePdf("genre");
         });
 
-        document.getElementById("generatePdfCountry").addEventListener("click", function () {
+        document.getElementById("generatePdfCountry").addEventListener("click", function (e) {
+            e.preventDefault();
             generatePdf("country");
         });
 
